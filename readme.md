@@ -1,4 +1,4 @@
-...<SubProjectName> module for a decentralized P2P VoIP system
+Random Peer Sampling P2P VoIP system
 ===========================================================
 
 ## Motivation
