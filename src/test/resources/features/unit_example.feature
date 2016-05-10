@@ -1,5 +1,5 @@
 @unit-test
   Feature: Unit
     Scenario: unit
-      When unit
+      When test
 
