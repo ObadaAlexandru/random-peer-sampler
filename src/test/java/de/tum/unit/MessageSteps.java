@@ -10,9 +10,10 @@ import com.google.common.primitives.Bytes;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import de.tum.communication.messages.Message;
-import de.tum.communication.messages.NseQueryMessage;
+import de.tum.communication.protocol.*;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -25,9 +26,31 @@ public class MessageSteps {
     private Message message;
     private List<Byte> messageBytes;
 
-    @Given("^a NSE Query Message$")
+    @Given("^an NSE Query Message$")
     public void aNSEQueryMessage() {
         message = new NseQueryMessage();
+    }
+
+    @Given("^an NSE estimation Message with estimated size \"([^\"]*)\" and standard deviation \"([^\"]*)\"$")
+    public void anNSEEstimationMessageWithEstimatedSizeAndStandardDeviation(Integer size, Integer standardDeviation) {
+        message = NseEstimateMessage.builder()
+                .estimatedPeerNumbers(size)
+                .estimatedStandardDeviation(standardDeviation).build();
+    }
+
+    @Given("^an RPS Query Message$")
+    public void anRPSQueryMessage() {
+        message = new RpsQueryMessage();
+    }
+
+    @Given("^an RPS message with \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\"$")
+    public void anRPSMessageWithAndAnd(String ip, String identifier, Short port) throws UnknownHostException {
+        InetAddress address = InetAddress.getByName(ip);
+        message = RpsPeerMessage.builder()
+                .address(address)
+                .identifier(identifier)
+                .port(port)
+                .build();
     }
 
     @When("^the message is serialized$")
@@ -39,6 +62,6 @@ public class MessageSteps {
     public void theFollowingByteSequenceIsReturned(String byteSequence) {
         String expectedByteSequence = CharMatcher.WHITESPACE.removeFrom(byteSequence);
         String actualByteSequence = BaseEncoding.base16().encode(Bytes.toArray(messageBytes));
-        assertThat(actualByteSequence).isEqualTo(expectedByteSequence);
+        assertThat(actualByteSequence.toUpperCase()).isEqualTo(expectedByteSequence.toUpperCase());
     }
 }

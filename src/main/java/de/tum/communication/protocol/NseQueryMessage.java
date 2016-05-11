@@ -1,5 +1,6 @@
-package de.tum.communication.messages;
+package de.tum.communication.protocol;
 
+import com.google.common.primitives.Bytes;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
@@ -18,11 +19,11 @@ import java.util.List;
 public class NseQueryMessage extends Message {
 
     public NseQueryMessage() {
-        super(HEADER_LENGTH, MessageType.NSE_QUERY);
+        super(WORD_LENGTH, MessageType.NSE_QUERY);
     }
 
     @Override
     public List<Byte> getBytes() {
-        return getHeaderBytes();
+        return Bytes.asList(getHeaderBytes());
     }
 }

@@ -1,4 +1,4 @@
-package de.tum.communication.messages;
+package de.tum.communication.protocol;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
