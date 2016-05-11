@@ -19,6 +19,8 @@
         <init.config.version>0.3.3</init.config.version>
         <common.cli.version>1.2</common.cli.version>
         <cucumber.version>1.2.4</cucumber.version>
+        <guava.version>19.0</guava.version>
+        <google.truth.version>0.28</google.truth.version>
     </properties>
 
     <dependencies>
@@ -67,6 +69,12 @@
             <version>${common.cli.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
         <!-- LogBack dependencies -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -82,6 +90,13 @@
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${slf4j.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.google.truth</groupId>
+            <artifactId>truth</artifactId>
+            <version>${google.truth.version}</version>
         </dependency>
 
 
