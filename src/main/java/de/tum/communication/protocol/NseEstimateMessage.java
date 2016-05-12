@@ -5,6 +5,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.Value;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class NseEstimateMessage extends Message {
     private int estimatedStandardDeviation;
 
     @Builder
-    public NseEstimateMessage(Integer estimatedPeerNumbers, Integer estimatedStandardDeviation) {
+    public NseEstimateMessage(@NonNull  Integer estimatedPeerNumbers, @NonNull Integer estimatedStandardDeviation) {
         super((short) (WORD_LENGTH + PAYLOAD_LENGTH), MessageType.NSE_ESTIMATE);
         this.estimatedPeerNumbers = estimatedPeerNumbers;
         this.estimatedStandardDeviation = estimatedStandardDeviation;

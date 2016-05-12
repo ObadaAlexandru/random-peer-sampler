@@ -5,6 +5,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Shorts;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.Value;
 
 import java.net.InetAddress;
@@ -15,8 +16,8 @@ import java.util.List;
  */
 
 /**
- *  Random Peer Sampling peer message
- *  see Project specification 3.3.2
+ * Random Peer Sampling peer message
+ * see Project specification 3.3.2
  */
 @Value
 @EqualsAndHashCode(callSuper = true)
@@ -27,7 +28,7 @@ public class RpsPeerMessage extends Message {
     private short port;
 
     @Builder
-    public RpsPeerMessage(String identifier, InetAddress address, Short port) {
+    public RpsPeerMessage(@NonNull String identifier, @NonNull InetAddress address, @NonNull Short port) {
         super(computeMessageSize(address), MessageType.RPS_PEER);
         this.identifier = identifier.toUpperCase();
         this.address = address;
@@ -40,7 +41,7 @@ public class RpsPeerMessage extends Message {
         byte[] identifierBytes = BaseEncoding.base16().decode(identifier);
         byte[] portBytes = Shorts.toByteArray(port);
         byte[] addressBytes = address.getAddress();
-        byte[] messageBytes = Bytes.concat(headerBytes, identifierBytes, portBytes, new byte[] {0,0}, addressBytes);
+        byte[] messageBytes = Bytes.concat(headerBytes, identifierBytes, portBytes, new byte[]{0, 0}, addressBytes);
         return Bytes.asList(messageBytes);
     }
 
