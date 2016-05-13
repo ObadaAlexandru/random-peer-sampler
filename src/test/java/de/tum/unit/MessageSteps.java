@@ -6,6 +6,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.mockito.Mockito;
+
 /**
  * Created by Alexandru Obada on 11/05/16.
  */
@@ -29,15 +31,12 @@ public class MessageSteps {
 
     @Given("^a gossip announce message with \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\"$")
     public void aGossipAnnounceMessageWithTtlAndDatatypeAndPayload(Short ttl, Integer datatype, final String payload) {
-		message = GossipAnnounceMessage.builder()
+        ByteSerializable payloadobj = Mockito.mock(ByteSerializable.class);
+        Mockito.when(payloadobj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
+        message = GossipAnnounceMessage.builder()
 				.ttl(ttl)
 				.datatype(datatype)
-				.payload(new ByteSerializable() {
-						@Override
-						public List<Byte> getBytes() {
-							return Bytes.asList(payload.getBytes());
-						}
-				})
+				.payload(payloadobj)
 				.build();
 	}
 
@@ -48,14 +47,11 @@ public class MessageSteps {
 
     @Given("^a gossip notification message with \"([^\"]*)\" and \"([^\"]*)\"$")
     public void aGossipNotificationMessageWithDatatypeAndPayload(Integer datatype, final String payload) {
-		message = GossipNotificationMessage.builder()
+        ByteSerializable payloadobj = Mockito.mock(ByteSerializable.class);
+        Mockito.when(payloadobj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
+        message = GossipNotificationMessage.builder()
 				.datatype(datatype)
-				.payload(new ByteSerializable() {
-						@Override
-						public List<Byte> getBytes() {
-							return Bytes.asList(payload.getBytes());
-						}
-				})
+				.payload(payloadobj)
 				.build();
 	}
 
