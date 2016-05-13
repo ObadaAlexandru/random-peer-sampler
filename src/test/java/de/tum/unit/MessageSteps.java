@@ -1,5 +1,11 @@
 package de.tum.unit;
 
+import static com.google.common.truth.Truth.assertThat;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.List;
+
 /**
  * Created by Alexandru Obada on 11/05/16.
  */
@@ -7,16 +13,11 @@ package de.tum.unit;
 import com.google.common.base.CharMatcher;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Bytes;
+
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.tum.communication.protocol.*;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.List;
-
-import static com.google.common.truth.Truth.assertThat;
 
 /**
  * Cucumber steps for {@link Message} implementations
@@ -25,6 +26,38 @@ public class MessageSteps {
 
     private Message message;
     private List<Byte> messageBytes;
+
+    @Given("^a gossip announce message with \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\"$")
+    public void aGossipAnnounceMessageWithTtlAndDatatypeAndPayload(Short ttl, Integer datatype, final String payload) {
+		message = GossipAnnounceMessage.builder()
+				.ttl(ttl)
+				.datatype(datatype)
+				.payload(new ByteSerializable() {
+						@Override
+						public List<Byte> getBytes() {
+							return Bytes.asList(payload.getBytes());
+						}
+				})
+				.build();
+	}
+
+    @Given("^a Gossip Notify Message$")
+    public void aGossipNotifyMessage() {
+        message = new GossipNotifyMessage();
+    }
+
+    @Given("^a gossip notification message with \"([^\"]*)\" and \"([^\"]*)\"$")
+    public void aGossipNotificationMessageWithDatatypeAndPayload(Integer datatype, final String payload) {
+		message = GossipNotificationMessage.builder()
+				.datatype(datatype)
+				.payload(new ByteSerializable() {
+						@Override
+						public List<Byte> getBytes() {
+							return Bytes.asList(payload.getBytes());
+						}
+				})
+				.build();
+	}
 
     @Given("^an NSE Query Message$")
     public void aNSEQueryMessage() {
