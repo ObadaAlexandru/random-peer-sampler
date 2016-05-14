@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 /**
- * Random Peer Sampling peer message
+ * Random Peer Sampling message
  * see Project specification 3.3.2
  */
 @Value
