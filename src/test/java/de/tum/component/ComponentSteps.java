@@ -1,5 +1,7 @@
 package de.tum.component;
 
+import cucumber.api.PendingException;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.tum.config.AppConfig;
 import de.tum.config.TestInterface;
