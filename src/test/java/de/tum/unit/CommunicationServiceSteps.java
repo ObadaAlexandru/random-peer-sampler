@@ -1,11 +1,12 @@
 package de.tum.unit;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import de.tum.communication.protocol.*;
+import de.tum.communication.protocol.Message;
+import de.tum.communication.protocol.MessageType;
+import de.tum.communication.protocol.Protocol;
 import de.tum.communication.service.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,9 +28,6 @@ public class CommunicationServiceSteps {
     private Client nseMock;
 
     @Mock
-    private Protocol protocolMock;
-
-    @Mock
     private Server rpsServerMock;
 
     private MessageType messageType;
@@ -49,7 +47,6 @@ public class CommunicationServiceSteps {
     public void thatTheCommunicationServiceHasAReceiverOf(MessageType receivedMessageType) {
         receiverMock = (Receiver<Message>) Mockito.mock(Receiver.class);
         messageMock  = getMessage(receivedMessageType);
-        Mockito.when(protocolMock.deserialize(Mockito.anyList())).thenReturn(messageMock);
         Mockito.when(receiverMock.receive(Mockito.any())).thenReturn(Optional.empty());
         communicationService.addReceiver(receiverMock, receivedMessageType);
     }
@@ -67,7 +64,7 @@ public class CommunicationServiceSteps {
 
     @When("^the message is received$")
     public void theMessageIsReceived() {
-        communicationService.receive(new ArrayList<>());
+        communicationService.receive(messageMock);
     }
 
     @Then("^it is forwarded to the client \"([^\"]*)\"$")
@@ -84,7 +81,6 @@ public class CommunicationServiceSteps {
     @Then("^it is forwarded to the receiver$")
     public void itIsForwardedToTheReceiver() {
         Mockito.verify(receiverMock, Mockito.times(1)).receive(Mockito.any());
-        Mockito.verify(protocolMock, Mockito.times(1)).deserialize(Mockito.any());
     }
 
     private Message getMessage(MessageType messageType) {

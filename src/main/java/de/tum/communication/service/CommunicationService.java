@@ -13,6 +13,6 @@ import java.util.List;
  *  Forwards the incoming messages to registered receivers
  *  Forwards the outgoing messages to the respective clients
  */
-public interface CommunicationService extends Receiver<List<Byte>>, Sender<Message> {
+public interface CommunicationService extends Receiver<Message>, Sender<Message> {
     void addReceiver(Receiver<Message> messageReceiver, MessageType type);
 }

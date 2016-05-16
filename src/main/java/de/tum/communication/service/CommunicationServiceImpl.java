@@ -1,17 +1,14 @@
 package de.tum.communication.service;
 
 import de.tum.communication.exceptions.UnknownMessageTypeException;
-import de.tum.communication.protocol.ByteSerializable;
 import de.tum.communication.protocol.Message;
 import de.tum.communication.protocol.MessageType;
-import de.tum.communication.protocol.Protocol;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,9 +24,6 @@ public class CommunicationServiceImpl implements CommunicationService {
 
     @Autowired
     private Server rpsServer;
-
-    @Autowired
-    private Protocol protocol;
 
     @Autowired
     public CommunicationServiceImpl(@Module(Module.Service.GOSSIP) Client gossipClient,
@@ -55,11 +49,10 @@ public class CommunicationServiceImpl implements CommunicationService {
     }
 
     @Override
-    public Optional<List<Byte>> receive(@NonNull List<Byte> data) {
-        Message message = protocol.deserialize(data);
+    public Optional<Message> receive(@NonNull Message message) {
         log.info("Received message type {}", message.getType());
         Receiver<Message> receiver = Optional.ofNullable(receivers.get(message.getType()))
                 .orElseThrow(() -> new UnknownMessageTypeException(String.format("Message type <%s> not supported", message.getType())));
-        return receiver.receive(message).map(ByteSerializable::getBytes);
+        return receiver.receive(message);
     }
 }

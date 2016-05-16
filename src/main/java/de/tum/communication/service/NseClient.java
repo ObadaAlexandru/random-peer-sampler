@@ -12,7 +12,7 @@ import java.util.List;
 @Module(Module.Service.NSE)
 public class NseClient implements Client {
     @Override
-    public void addReceiver(Receiver<List<Byte>> receiver) {
+    public void addReceiver(Receiver<Message> receiver) {
         //TODO
     }
 

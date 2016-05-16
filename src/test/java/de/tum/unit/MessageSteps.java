@@ -7,8 +7,6 @@ package de.tum.unit;
 import com.google.common.base.CharMatcher;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Bytes;
-import com.google.common.truth.Truth;
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -17,6 +15,8 @@ import de.tum.communication.protocol.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+
+import org.mockito.Mockito;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -31,6 +31,32 @@ public class MessageSteps {
 
     private Protocol protocol = new ProtocolImpl();
     private String byteSequence;
+
+    @Given("^a gossip announce message with \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\"$")
+    public void aGossipAnnounceMessageWithTtlAndDatatypeAndPayload(Short ttl, Integer datatype, final String payload) {
+        ByteSerializable payloadobj = Mockito.mock(ByteSerializable.class);
+        Mockito.when(payloadobj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
+        message = GossipAnnounceMessage.builder()
+				.ttl(ttl)
+				.datatype(datatype)
+				.payload(payloadobj)
+				.build();
+	}
+
+    @Given("^a Gossip Notify Message$")
+    public void aGossipNotifyMessage() {
+        message = new GossipNotifyMessage();
+    }
+
+    @Given("^a gossip notification message with \"([^\"]*)\" and \"([^\"]*)\"$")
+    public void aGossipNotificationMessageWithDatatypeAndPayload(Integer datatype, final String payload) {
+        ByteSerializable payloadobj = Mockito.mock(ByteSerializable.class);
+        Mockito.when(payloadobj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
+        message = GossipNotificationMessage.builder()
+				.datatype(datatype)
+				.payload(payloadobj)
+				.build();
+	}
 
     @Given("^an NSE Query Message$")
     public void aNSEQueryMessage() {
@@ -83,7 +109,7 @@ public class MessageSteps {
     }
 
     @Then("^a message of type \"([^\"]*)\" is returned$")
-    public void aMessageOfTypeIsReturned(MessageType messageType) throws Throwable {
+    public void aMessageOfTypeIsReturned(MessageType messageType) {
         assertThat(message.getType()).isEqualTo(messageType);
     }
 }

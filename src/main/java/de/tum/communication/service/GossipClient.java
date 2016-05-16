@@ -12,8 +12,8 @@ import java.util.List;
 @Module(Module.Service.GOSSIP)
 public class GossipClient implements Client {
     @Override
-    public void addReceiver(Receiver<List<Byte>> receiver) {
-        //TODO
+    public void addReceiver(Receiver<Message> receiver) {
+
     }
 
     @Override
