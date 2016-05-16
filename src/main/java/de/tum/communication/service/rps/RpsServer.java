@@ -1,13 +1,13 @@
 package de.tum.communication.service.rps;
 
+import de.tum.communication.protocol.Message;
+import de.tum.communication.service.Receiver;
 import de.tum.communication.service.Server;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,30 +17,39 @@ import java.net.InetSocketAddress;
  * Created by Alexandru Obada on 12/05/16.
  */
 @Service
-@Value
 @Slf4j
-public class RpsServer implements Server, Runnable {
+public class RpsServer implements Server {
 
     //TODO this has to be injected via configuration
     private int port;
 
-    private EventLoopGroup group;
+    private EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+    private EventLoopGroup workerGroup = new NioEventLoopGroup();
+
+
+    private final RpsChannelInitializer channelInitializer = new RpsChannelInitializer();
 
     public RpsServer(int port) {
         this.port = port;
-        group = new NioEventLoopGroup();
+        bossGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
+    }
+
+    @Override
+    public void setReceiver(Receiver<Message> receiver) {
+        channelInitializer.setReceiver(receiver);
     }
 
     @Override
     public void start() throws Exception {
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(group)
+            bootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .localAddress(new InetSocketAddress(port))
-                    .childHandler(new LengthBasedInitializer());
-            ChannelFuture f = bootstrap.bind().sync();
-            f.channel().closeFuture().sync();
+                    .childHandler(channelInitializer);
+            ChannelFuture channelFuture = bootstrap.bind().sync();
+            channelFuture.channel().closeFuture().sync();
         } finally {
             this.shutdown();
         }
@@ -49,10 +58,11 @@ public class RpsServer implements Server, Runnable {
     @Override
     public void shutdown() {
         try {
-            group.shutdownGracefully().sync();
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
         } catch (Exception e) {
-            //FIXME handle exception properly
-            e.printStackTrace();
+            log.error("Rps server failed to shutdown gracefully");
+            log.error(e.getMessage());
         }
     }
 
@@ -61,8 +71,8 @@ public class RpsServer implements Server, Runnable {
         try {
             this.start();
         } catch (Exception e) {
-            //FIXME handle exception properly
-            e.printStackTrace();
+            log.error("Rps server failed to start");
+            log.error(e.getMessage());
         }
     }
 }

@@ -6,7 +6,6 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.tum.communication.protocol.Message;
 import de.tum.communication.protocol.MessageType;
-import de.tum.communication.protocol.Protocol;
 import de.tum.communication.service.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,9 +26,7 @@ public class CommunicationServiceSteps {
     private Client gossipMock;
     private Client nseMock;
 
-    @Mock
     private Server rpsServerMock;
-
     private MessageType messageType;
     private Receiver<Message> receiverMock;
     private Message messageMock;
@@ -38,7 +35,8 @@ public class CommunicationServiceSteps {
     public void setUp() {
         gossipMock = Mockito.mock(Client.class);
         nseMock = Mockito.mock(Client.class);
-        communicationService = new CommunicationServiceImpl(gossipMock, nseMock);
+        rpsServerMock = Mockito.mock(Server.class);
+        communicationService = new CommunicationServiceImpl(gossipMock, nseMock, rpsServerMock);
         MockitoAnnotations.initMocks(this);
     }
 
