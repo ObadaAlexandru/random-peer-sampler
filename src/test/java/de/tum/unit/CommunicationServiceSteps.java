@@ -8,7 +8,6 @@ import de.tum.communication.protocol.Message;
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.service.*;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
@@ -87,4 +86,5 @@ public class CommunicationServiceSteps {
         Mockito.when(message.getBytes()).thenReturn(new ArrayList<>());
         return message;
     }
+
 }

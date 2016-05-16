@@ -93,8 +93,8 @@ public class MessageSteps {
     @Then("^the following byte sequence is returned: \"([^\"]*)\"$")
     public void theFollowingByteSequenceIsReturned(String byteSequence) {
         String expectedByteSequence = CharMatcher.WHITESPACE.removeFrom(byteSequence);
-        String actualByteSequence = BaseEncoding.base16().encode(Bytes.toArray(messageBytes));
-        assertThat(actualByteSequence.toUpperCase()).isEqualTo(expectedByteSequence.toUpperCase());
+        String actualByteSequence = BaseEncoding.base16().encode(Bytes.toArray(messageBytes)).toUpperCase();
+        assertThat(actualByteSequence).isEqualTo(expectedByteSequence.toUpperCase());
     }
 
     @Given("^the following byte sequence: \"([^\"]*)\"$")

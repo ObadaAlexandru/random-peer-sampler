@@ -24,7 +24,7 @@ class RpsChannelInitializer extends ChannelInitializer<Channel> implements Recei
     protected void initChannel(Channel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast(new IdleStateHandler(15, 15, 15))
-                .addLast(new LengthFieldBasedFrameDecoder(MAX_PACKET_SIZE, 0, LENGTH_FIELD_LENGTH, -2, 0))
+                .addLast()
                 .addLast(new MessageDecoder())
                 .addLast(new MessageEncoder())
                 .addLast(rpsChannelHandler);

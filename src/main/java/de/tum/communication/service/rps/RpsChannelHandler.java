@@ -7,10 +7,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.PackagePrivate;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -19,10 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @NoArgsConstructor
 @ChannelHandler.Sharable
-class RpsChannelHandler extends SimpleChannelInboundHandler<Message> {
+public class RpsChannelHandler extends SimpleChannelInboundHandler<Message> {
 
-    @PackagePrivate
-    @Setter(AccessLevel.PACKAGE)
+    @Setter
     private Receiver<Message> receiver;
 
     @Override

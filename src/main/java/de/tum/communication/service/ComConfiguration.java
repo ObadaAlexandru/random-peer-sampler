@@ -1,5 +1,8 @@
 package de.tum.communication.service;
 
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -7,4 +10,11 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class ComConfiguration {
+
+    @Bean
+    public ChannelHandler lengthFieldBasedDecoder() {
+        final int MAX_PACKET_SIZE = 64000;
+        final int LENGTH_FIELD_LENGTH = 2;
+        return new LengthFieldBasedFrameDecoder(MAX_PACKET_SIZE, 0, LENGTH_FIELD_LENGTH, -2, 0);
+    }
 }
