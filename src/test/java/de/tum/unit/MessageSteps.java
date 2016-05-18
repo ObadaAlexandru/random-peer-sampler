@@ -13,6 +13,7 @@ import cucumber.api.java.en.When;
 import de.tum.communication.protocol.*;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mockito.Mockito;
@@ -78,6 +79,16 @@ public class MessageSteps {
     public void anRPSMessageWithAndAnd(String ip, String identifier, Short port) throws UnknownHostException {
         message = RpsPeerMessage.builder()
                 .peer(CustomMocks.getPeer(ip, port, identifier)).build();
+    }
+
+    @Given("^an RPS view message with \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\"$")
+    public void anRPSViewMessageWithAndAndAndAndAndAndAndAnd(String address, String identifier, Short port, String address2, String identifier2, Short port2, String address3, String identifier3, Short port3) throws UnknownHostException {
+        List<Peer> peerlist = new ArrayList<Peer>();
+        peerlist.add(CustomMocks.getPeer(address2, port2, identifier2));
+        peerlist.add(CustomMocks.getPeer(address3, port3, identifier3));
+        message = RpsViewMessage.builder()
+                .source(CustomMocks.getPeer(address, port, identifier))
+                .peers(peerlist).build();
     }
 
     @When("^the message is serialized$")
