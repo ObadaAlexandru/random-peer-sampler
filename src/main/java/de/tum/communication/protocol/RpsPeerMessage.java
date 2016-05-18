@@ -1,5 +1,6 @@
 package de.tum.communication.protocol;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.primitives.Bytes;
@@ -30,9 +31,9 @@ public class RpsPeerMessage extends Message {
 
     @Override
     public List<Byte> getBytes() {
-        byte[] headerBytes = getHeaderBytes();
-        byte[] messageBytes = Bytes.concat(headerBytes, peer.getBytes());
-        return Bytes.asList(messageBytes);
+        List<Byte> result = new ArrayList<Byte>(Bytes.asList(getHeaderBytes()));
+        result.addAll(peer.getBytes());
+        return result;
     }
 
     private static short computeMessageSize(Peer peer) {
