@@ -12,7 +12,6 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.tum.communication.protocol.*;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -77,12 +76,8 @@ public class MessageSteps {
 
     @Given("^an RPS message with \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\"$")
     public void anRPSMessageWithAndAnd(String ip, String identifier, Short port) throws UnknownHostException {
-        InetAddress address = InetAddress.getByName(ip);
         message = RpsPeerMessage.builder()
-                .address(address)
-                .identifier(identifier)
-                .port(port)
-                .build();
+                .peer(CustomMocks.getPeer(ip, port, identifier)).build();
     }
 
     @When("^the message is serialized$")
