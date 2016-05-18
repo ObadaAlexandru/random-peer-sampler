@@ -23,4 +23,25 @@ public enum MessageType {
     RPS_PEER((short) 541);
 
     private short value;
+
+    public static MessageType getType(short type) {
+        switch (type) {
+            case 500:
+                return GOSSIP_ANNOUNCE;
+            case 501:
+                return GOSSIP_NOTIFY;
+            case 502:
+                return GOSSIP_NOTIFICATION;
+            case 520:
+                return NSE_QUERY;
+            case 521:
+                return NSE_ESTIMATE;
+            case 540:
+                return RPS_QUERY;
+            case 541:
+                return RPS_PEER;
+            default:
+                throw new IllegalArgumentException("");
+        }
+    }
 }

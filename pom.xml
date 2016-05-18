@@ -21,6 +21,7 @@
         <cucumber.version>1.2.4</cucumber.version>
         <guava.version>19.0</guava.version>
         <google.truth.version>0.28</google.truth.version>
+        <mockito.version>1.10.19</mockito.version>
     </properties>
 
     <dependencies>
@@ -36,19 +37,17 @@
         </dependency>
 
         <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.0.36.Final</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -92,13 +91,20 @@
             <version>${slf4j.version}</version>
         </dependency>
 
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.google.truth</groupId>
             <artifactId>truth</artifactId>
             <version>${google.truth.version}</version>
+            <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>info.cukes</groupId>
@@ -127,10 +133,13 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Spring transactions are required by cucumber-spring -->
         <dependency>
-        	<groupId>org.mockito</groupId>
-        	<artifactId>mockito-all</artifactId>
-        	<version>1.10.19</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
