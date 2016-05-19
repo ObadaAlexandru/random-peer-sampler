@@ -1,4 +1,4 @@
-package de.tum.communication.service.rps;
+package de.tum.communication.service.network;
 
 import com.google.common.primitives.Bytes;
 import de.tum.communication.protocol.Message;

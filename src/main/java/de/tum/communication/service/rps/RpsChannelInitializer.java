@@ -3,6 +3,9 @@ package de.tum.communication.service.rps;
 import de.tum.communication.protocol.Message;
 import de.tum.communication.service.Receiver;
 import de.tum.communication.service.ReceiverAware;
+import de.tum.communication.service.network.MessageDecoder;
+import de.tum.communication.service.network.MessageEncoder;
+import de.tum.communication.service.network.ReceiveMessageChannelHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -18,7 +21,7 @@ class RpsChannelInitializer extends ChannelInitializer<Channel> implements Recei
     private final int MAX_PACKET_SIZE = 64000;
     private final int LENGTH_FIELD_LENGTH = 2;
 
-    private final RpsChannelHandler rpsChannelHandler = new RpsChannelHandler();
+    private final ReceiveMessageChannelHandler rpsChannelHandler = new ReceiveMessageChannelHandler();
 
     @Override
     protected void initChannel(Channel ch) throws Exception {

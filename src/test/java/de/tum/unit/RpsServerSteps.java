@@ -14,9 +14,9 @@ import de.tum.communication.protocol.RpsPeerMessage;
 import de.tum.communication.protocol.RpsQueryMessage;
 import de.tum.communication.service.ComConfiguration;
 import de.tum.communication.service.Receiver;
-import de.tum.communication.service.rps.MessageDecoder;
-import de.tum.communication.service.rps.MessageEncoder;
-import de.tum.communication.service.rps.RpsChannelHandler;
+import de.tum.communication.service.network.MessageDecoder;
+import de.tum.communication.service.network.MessageEncoder;
+import de.tum.communication.service.network.ReceiveMessageChannelHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -46,7 +46,7 @@ public class RpsServerSteps {
     @Before
     public void setUp() {
         ComConfiguration conf = new ComConfiguration();
-        RpsChannelHandler rpsChannelHandler = new RpsChannelHandler();
+        ReceiveMessageChannelHandler rpsChannelHandler = new ReceiveMessageChannelHandler();
         receiverMock = (Receiver<Message>) Mockito.mock(Receiver.class);
         rpsChannelHandler.setReceiver(receiverMock);
         embeddedChannel = new EmbeddedChannel(conf.lengthFieldBasedDecoder(), new MessageDecoder(), new MessageEncoder(), rpsChannelHandler);
