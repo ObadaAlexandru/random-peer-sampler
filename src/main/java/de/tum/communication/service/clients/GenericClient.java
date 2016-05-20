@@ -27,20 +27,12 @@ public class GenericClient implements Client {
     private final String host;
     private final int port;
     private ReceiveMessageChannelHandler handler = new ReceiveMessageChannelHandler();
+    private final EventLoopGroup workerGroup = new NioEventLoopGroup();
+    private ChannelFuture chfuture;
 
     public GenericClient(String host, int port) {
         this.host = host;
         this.port = port;
-    }
-
-    @Override
-    public void setReceiver(Receiver<Message> receiver) {
-        handler.setReceiver(receiver);
-    }
-
-    @Override
-    public void send(Message data) {
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
 
         try {
             Bootstrap b = new Bootstrap();
@@ -57,18 +49,33 @@ public class GenericClient implements Client {
             });
 
             // Start the client.
-            ChannelFuture f = b.connect(host, port).sync();
-            
-            // Write data
-            f.channel().writeAndFlush(data);
-
-            // Wait until the connection is closed.
-            f.channel().closeFuture().sync();
+            chfuture = b.connect(this.host, this.port).sync();
         } catch (Exception e) {
             log.error("Client connection failed!");
             log.error(e.getMessage());
-        } finally {
-            workerGroup.shutdownGracefully();
         }
+    }
+
+    public void shutdown() {
+        chfuture.channel().close();
+
+        // Wait until the connection is closed.
+        try {
+            chfuture.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            log.error("Client shutdown failed!");
+            log.error(e.getMessage());
+        }
+        workerGroup.shutdownGracefully();
+    }
+
+    @Override
+    public void setReceiver(Receiver<Message> receiver) {
+        handler.setReceiver(receiver);
+    }
+
+    @Override
+    public void send(Message data) {
+        chfuture.channel().writeAndFlush(data);
     }
 }
