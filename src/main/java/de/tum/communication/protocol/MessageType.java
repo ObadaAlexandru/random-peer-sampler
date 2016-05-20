@@ -20,7 +20,8 @@ public enum MessageType {
     NSE_QUERY((short) 520),
     NSE_ESTIMATE((short) 521),
     RPS_QUERY((short) 540),
-    RPS_PEER((short) 541);
+    RPS_PEER((short) 541),
+    RPS_VIEW((short) 542);
 
     private short value;
 
@@ -40,6 +41,8 @@ public enum MessageType {
                 return RPS_QUERY;
             case 541:
                 return RPS_PEER;
+            case 542:
+                return RPS_VIEW;
             default:
                 throw new IllegalArgumentException("");
         }

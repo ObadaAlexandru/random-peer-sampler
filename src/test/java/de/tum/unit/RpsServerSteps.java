@@ -3,7 +3,6 @@ package de.tum.unit;
 import com.google.common.base.CharMatcher;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Bytes;
-import cucumber.api.PendingException;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -11,7 +10,6 @@ import cucumber.api.java.en.When;
 import de.tum.communication.protocol.Message;
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.RpsPeerMessage;
-import de.tum.communication.protocol.RpsQueryMessage;
 import de.tum.communication.service.ComConfiguration;
 import de.tum.communication.service.Receiver;
 import de.tum.communication.service.rps.MessageDecoder;
@@ -23,7 +21,6 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -74,9 +71,7 @@ public class RpsServerSteps {
     @Given("^an RPS peer message with address \"([^\"]*)\", port \"([^\"]*)\" and id \"([^\"]*)\"$")
     public void anRPSPeerMessageWithAddressPortAndId(String address, short port, String identifier) throws UnknownHostException {
         message = RpsPeerMessage.builder()
-                .address(InetAddress.getByName(address))
-                .port(port)
-                .identifier(identifier).build();
+                .peer(CustomMocks.getPeer(address, port, identifier)).build();
         List<Byte> bytes = message.getBytes();
         byte[] data = Bytes.toArray(bytes);
         buffer = Unpooled.buffer(data.length);

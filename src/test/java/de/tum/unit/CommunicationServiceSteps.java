@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -43,7 +42,7 @@ public class CommunicationServiceSteps {
     @Given("^that the communication service has a receiver of \"([^\"]*)\"$")
     public void thatTheCommunicationServiceHasAReceiverOf(MessageType receivedMessageType) {
         receiverMock = (Receiver<Message>) Mockito.mock(Receiver.class);
-        messageMock  = getMessage(receivedMessageType);
+        messageMock  = CustomMocks.getMessage(receivedMessageType);
         Mockito.when(receiverMock.receive(Mockito.any())).thenReturn(Optional.empty());
         communicationService.addReceiver(receiverMock, receivedMessageType);
     }
@@ -55,7 +54,7 @@ public class CommunicationServiceSteps {
 
     @When("^the message is sent$")
     public void theMessageIsSent() {
-        messageMock = getMessage(messageType);
+        messageMock = CustomMocks.getMessage(messageType);
         communicationService.send(messageMock);
     }
 
@@ -79,12 +78,4 @@ public class CommunicationServiceSteps {
     public void itIsForwardedToTheReceiver() {
         Mockito.verify(receiverMock, Mockito.times(1)).receive(Mockito.any());
     }
-
-    private Message getMessage(MessageType messageType) {
-        Message message = Mockito.mock(Message.class);
-        Mockito.when(message.getType()).thenReturn(messageType);
-        Mockito.when(message.getBytes()).thenReturn(new ArrayList<>());
-        return message;
-    }
-
 }

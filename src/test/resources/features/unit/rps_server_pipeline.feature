@@ -9,4 +9,4 @@
     Scenario: Message sent to peer
       Given an RPS peer message with address "192.168.1.1", port "9090" and id "9d3038c01347716800688830eaf52204deb78affe74a5f0c6e0a48fd414d44be"
       When the message is sent out
-      Then the peer receives the following byte sequence "002C021D9D3038C01347716800688830EAF52204DEB78AFFE74A5F0C6E0A48FD414D44BE23820000C0A80101"
+      Then the peer receives the following byte sequence "002C021D9D3038C01347716800688830EAF52204DEB78AFFE74A5F0C6E0A48FD414D44BE23820004C0A80101"
