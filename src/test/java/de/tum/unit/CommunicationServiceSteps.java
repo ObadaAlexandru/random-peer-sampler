@@ -66,8 +66,10 @@ public class CommunicationServiceSteps {
     @Then("^it is forwarded to the client \"([^\"]*)\"$")
     public void itIsForwardedToTheClient(Module.Service serviceType) {
         if(Module.Service.NSE.equals(serviceType)) {
+            Mockito.verify(nseMock, Mockito.timeout(1000)).send(messageMock);
             Mockito.verify(nseMock, Mockito.times(1)).send(messageMock);
         } else if(Module.Service.GOSSIP.equals(serviceType)) {
+            Mockito.verify(gossipMock, Mockito.timeout(1000)).send(messageMock);
             Mockito.verify(gossipMock, Mockito.times(1)).send(messageMock);
         } else {
             throw new RuntimeException("Message hasn't been handled correctly");
@@ -76,6 +78,7 @@ public class CommunicationServiceSteps {
 
     @Then("^it is forwarded to the receiver$")
     public void itIsForwardedToTheReceiver() {
+        Mockito.verify(receiverMock, Mockito.timeout(1000)).receive(Mockito.any());
         Mockito.verify(receiverMock, Mockito.times(1)).receive(Mockito.any());
     }
 }
