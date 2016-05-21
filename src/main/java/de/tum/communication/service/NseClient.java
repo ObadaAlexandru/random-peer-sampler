@@ -17,7 +17,7 @@ public class NseClient implements Client {
     }
 
     @Override
-    public void send(Message data) {
-        //TODO
+    public Void send(Message data) {
+        return null;
     }
 }

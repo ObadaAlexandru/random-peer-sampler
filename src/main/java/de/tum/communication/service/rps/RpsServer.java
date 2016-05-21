@@ -8,7 +8,9 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
@@ -16,11 +18,12 @@ import java.net.InetSocketAddress;
 /**
  * Created by Alexandru Obada on 12/05/16.
  */
-@Service
 @Slf4j
+@Service
+@NoArgsConstructor
 public class RpsServer implements Server {
 
-    //TODO this has to be injected via configuration
+    @Value("${rps.server.port:8080}")
     private int port;
 
     private EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -42,6 +45,7 @@ public class RpsServer implements Server {
 
     @Override
     public void start() throws Exception {
+        log.info("RPS server starting on port {}", port);
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)

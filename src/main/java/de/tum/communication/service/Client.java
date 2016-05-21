@@ -10,5 +10,5 @@ import de.tum.communication.protocol.Message;
 /**
  *  Communication interface to other modules
  */
-public interface Client extends Sender<Message>, ReceiverAware<Message> {
+public interface Client extends Sender<Message, Void>, ReceiverAware<Message> {
 }

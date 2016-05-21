@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Alexandru Obada on 12/05/16.
@@ -53,9 +54,9 @@ public class CommunicationServiceSteps {
     }
 
     @When("^the message is sent$")
-    public void theMessageIsSent() {
+    public void theMessageIsSent() throws ExecutionException, InterruptedException {
         messageMock = CustomMocks.getMessage(messageType);
-        communicationService.send(messageMock);
+        communicationService.send(messageMock).get();
     }
 
     @When("^the message is received$")

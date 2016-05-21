@@ -4,6 +4,7 @@ import de.tum.communication.protocol.Message;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * Created by Alexandru Obada on 12/05/16.
@@ -17,7 +18,7 @@ public class GossipClient implements Client {
     }
 
     @Override
-    public void send(Message data) {
-        //TODO
+    public Void send(Message data) {
+        return null;
     }
 }

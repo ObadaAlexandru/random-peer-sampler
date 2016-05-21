@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by Alexandru Obada on 12/05/16.
@@ -24,7 +25,7 @@ import java.util.concurrent.Executors;
 public class CommunicationServiceImpl implements CommunicationService {
     private ExecutorService communicationExecutor = Executors.newFixedThreadPool(3);
     private Map<MessageType, Receiver<Message>> receivers = new HashMap<>();
-    private Map<MessageType, Sender<Message>> senders = new HashMap<>();
+    private Map<MessageType, Sender<Message, Void>> senders = new HashMap<>();
     private Server rpsServer;
 
     @Autowired
@@ -47,11 +48,14 @@ public class CommunicationServiceImpl implements CommunicationService {
     }
 
     @Override
-    public void send(@NonNull Message message) {
-        Sender<? super Message> sender = Optional.ofNullable(senders.get(message.getType()))
+    public Future<Void> send(@NonNull Message message) {
+        Sender<Message, Void> sender = Optional.ofNullable(senders.get(message.getType()))
                 .orElseThrow(() -> new UnknownMessageTypeException(String.format("Message type <%s> not supported", message.getType())));
         log.info("Send message type {}", message.getType());
-        communicationExecutor.submit(() -> sender.send(message));
+        return communicationExecutor.submit(() -> {
+            sender.send(message);
+            return null;
+        });
     }
 
     @Override
