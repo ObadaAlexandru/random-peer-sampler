@@ -21,6 +21,7 @@ public class SerializablePeer implements ByteSerializable {
     /**
      * Get byte array to be sent in a Message
      */
+    @Override
     public List<Byte> getBytes() {
         byte[] identifierBytes = BaseEncoding.base16().decode(peer.getIdentifier());
         byte[] portBytes = Shorts.toByteArray(peer.getPort().shortValue());
