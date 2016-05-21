@@ -23,14 +23,14 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
-public class GenericClient implements Client {
+public class ClientImpl implements Client {
     private final String host;
     private final int port;
     private ReceiveMessageChannelHandler handler = new ReceiveMessageChannelHandler();
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
     private ChannelFuture chfuture;
 
-    public GenericClient(String host, int port) {
+    public ClientImpl(String host, int port) {
         this.host = host;
         this.port = port;
 

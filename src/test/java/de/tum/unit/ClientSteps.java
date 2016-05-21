@@ -20,8 +20,7 @@ import de.tum.communication.protocol.NseEstimateMessage;
 import de.tum.communication.protocol.NseQueryMessage;
 import de.tum.communication.service.Client;
 import de.tum.communication.service.Receiver;
-import de.tum.communication.service.clients.GossipClient;
-import de.tum.communication.service.clients.NseClient;
+import de.tum.communication.service.clients.ClientImpl;
 import de.tum.communication.service.network.MessageDecoder;
 import de.tum.communication.service.network.MessageEncoder;
 import io.netty.bootstrap.ServerBootstrap;
@@ -101,14 +100,14 @@ public class ClientSteps {
     @Given("^a nse client$")
     public void aNseClient() {
         startServer();
-        testclient = new NseClient("localhost", serverport);
+        testclient = new ClientImpl("localhost", serverport);
         testclient.setReceiver(receiverMock);
     }
     
     @Given("^a gossip client$")
     public void aGossipClient() {
         startServer();
-        testclient = new GossipClient("localhost", serverport);
+        testclient = new ClientImpl("localhost", serverport);
         testclient.setReceiver(receiverMock);
     }
     

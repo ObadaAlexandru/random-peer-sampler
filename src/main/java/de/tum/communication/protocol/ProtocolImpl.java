@@ -40,12 +40,7 @@ public class ProtocolImpl implements Protocol {
     private Message getGossipNotification(List<Byte> payload) {
         return GossipNotificationMessage.builder()
                 .datatype(Ints.fromBytes(payload.get(4), payload.get(5), payload.get(6), payload.get(7)))
-                .payload(new ByteSerializable() {
-                    @Override
-                    public List<Byte> getBytes() {
-                        return payload.subList(Message.WORD_LENGTH, payload.size());
-                    }
-                }).build();
+                .payload(() -> payload.subList(Message.WORD_LENGTH, payload.size())).build();
     }
 
     private NseEstimateMessage getNseEstimate(List<Byte> payload) {
