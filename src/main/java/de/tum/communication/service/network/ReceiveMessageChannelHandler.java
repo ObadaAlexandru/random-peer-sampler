@@ -1,4 +1,4 @@
-package de.tum.communication.service.rps;
+package de.tum.communication.service.network;
 
 import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.service.Receiver;
@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @NoArgsConstructor
 @ChannelHandler.Sharable
-public class RpsChannelHandler extends SimpleChannelInboundHandler<Message> {
+public class ReceiveMessageChannelHandler extends SimpleChannelInboundHandler<Message> {
 
     @Setter
     private Receiver<Message> receiver;

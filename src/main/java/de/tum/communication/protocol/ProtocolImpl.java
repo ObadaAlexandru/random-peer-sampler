@@ -3,9 +3,7 @@ package de.tum.communication.protocol;
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Shorts;
-import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.protocol.messages.NseEstimateMessage;
-import de.tum.communication.protocol.messages.RpsQueryMessage;
+import de.tum.communication.protocol.messages.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,8 +25,12 @@ public class ProtocolImpl implements Protocol {
         switch (messageType) {
             case RPS_QUERY:
                 return new RpsQueryMessage();
+            case NSE_QUERY:
+                return new NseQueryMessage();
             case NSE_ESTIMATE:
                 return getNseEstimate(payload);
+            case GOSSIP_NOTIFY:
+                return new GossipNotifyMessage();
             case GOSSIP_NOTIFICATION:
                 return getGossipNotification(payload);
             default:
@@ -37,8 +39,9 @@ public class ProtocolImpl implements Protocol {
     }
 
     private Message getGossipNotification(List<Byte> payload) {
-        //TODO implement me
-        throw new UnsupportedOperationException("Not yet implemented");
+        return GossipNotificationMessage.builder()
+                .datatype(Ints.fromBytes(payload.get(4), payload.get(5), payload.get(6), payload.get(7)))
+                .payload(() -> payload.subList(Message.WORD_LENGTH, payload.size())).build();
     }
 
     private NseEstimateMessage getNseEstimate(List<Byte> payload) {
