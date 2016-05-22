@@ -1,6 +1,7 @@
 package de.tum.communication.protocol;
 
 import com.google.common.primitives.Bytes;
+import de.tum.communication.protocol.messages.Message;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 

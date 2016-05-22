@@ -61,6 +61,7 @@ Feature: Serialize messages to byte lists
       | ::1                  | a1dd17db87e4889c74e8f073d3aafc56d7a5be13076c262fb6c1eb04a153ef7e | 7777 | 0038021DA1DD17DB87E4889C74E8F073D3AAFC56D7A5BE13076C262FB6C1EB04A153EF7E1E61000600000000000000000000000000000001 |
 
   Scenario Outline: RPS Peer View message byte serialization
+    ##### THIS HAS TO BE REFACTORED TO A TABLE
     Given an RPS view message with "<address>" and "<digest>" and "<port>" and "<address2>" and "<digest2>" and "<port2>" and "<address3>" and "<digest3>" and "<port3>"
     When the message is serialized
     Then the following byte sequence is returned: "<byteSequence>"

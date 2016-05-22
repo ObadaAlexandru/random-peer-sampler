@@ -3,6 +3,8 @@ package de.tum.communication.protocol;
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Shorts;
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.messages.NseEstimateMessage;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

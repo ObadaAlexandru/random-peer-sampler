@@ -1,6 +1,6 @@
 package de.tum.communication.service.rps;
 
-import de.tum.communication.protocol.Message;
+import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.service.Receiver;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

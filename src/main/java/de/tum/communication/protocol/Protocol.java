@@ -1,5 +1,7 @@
 package de.tum.communication.protocol;
 
+import de.tum.communication.protocol.messages.Message;
+
 import java.util.List;
 
 /**

@@ -1,14 +1,14 @@
 package de.tum.unit;
 
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.MessageType;
+import de.tum.communication.protocol.SerializablePeer;
+import de.tum.sampling.entity.Peer;
+import org.mockito.Mockito;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-
-import org.mockito.Mockito;
-
-import de.tum.communication.protocol.Message;
-import de.tum.communication.protocol.MessageType;
-import de.tum.communication.protocol.Peer;
 
 class CustomMocks {
     static Message getMessage(MessageType messageType) {
@@ -18,7 +18,11 @@ class CustomMocks {
         return message;
     }
     
-    static Peer getPeer(String address, short port, String identifier) throws UnknownHostException {
-        return new Peer(identifier.toUpperCase(), InetAddress.getByName(address), port);
+    static SerializablePeer getPeer(String address, short port, String identifier) throws UnknownHostException {
+        Peer peer = Peer.builder()
+                .address(InetAddress.getByName(address))
+                .identifier(identifier.toUpperCase())
+                .port((int) port).build();
+        return new SerializablePeer(peer);
     }
 }

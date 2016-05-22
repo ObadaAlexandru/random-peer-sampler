@@ -1,6 +1,6 @@
 package de.tum.communication.service;
 
-import de.tum.communication.protocol.Message;
+import de.tum.communication.protocol.messages.Message;
 
 
 /**

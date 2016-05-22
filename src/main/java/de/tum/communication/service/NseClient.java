@@ -1,9 +1,7 @@
 package de.tum.communication.service;
 
-import de.tum.communication.protocol.Message;
+import de.tum.communication.protocol.messages.Message;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Created by Alexandru Obada on 12/05/16.

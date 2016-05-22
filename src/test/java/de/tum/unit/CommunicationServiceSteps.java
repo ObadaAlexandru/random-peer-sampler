@@ -4,7 +4,7 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import de.tum.communication.protocol.Message;
+import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.service.*;
 import org.mockito.InjectMocks;
