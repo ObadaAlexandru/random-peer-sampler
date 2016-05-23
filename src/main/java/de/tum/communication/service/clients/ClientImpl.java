@@ -1,8 +1,6 @@
 package de.tum.communication.service.clients;
 
-import org.springframework.stereotype.Service;
-
-import de.tum.communication.protocol.Message;
+import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.service.Client;
 import de.tum.communication.service.Receiver;
 import de.tum.communication.service.network.MessageDecoder;
@@ -17,6 +15,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by Nicolas Frinker on 19/05/16.
@@ -75,7 +74,8 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public void send(Message data) {
+    public Void send(Message data) {
         chfuture.channel().writeAndFlush(data);
+        return null;
     }
 }

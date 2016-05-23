@@ -1,7 +1,7 @@
 package de.tum.communication.service.network;
 
 import com.google.common.primitives.Bytes;
-import de.tum.communication.protocol.Message;
+import de.tum.communication.protocol.messages.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;

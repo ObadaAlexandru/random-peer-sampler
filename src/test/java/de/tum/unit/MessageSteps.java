@@ -11,12 +11,12 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.tum.communication.protocol.*;
+import de.tum.communication.protocol.messages.*;
+import org.mockito.Mockito;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.mockito.Mockito;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -34,12 +34,12 @@ public class MessageSteps {
 
     @Given("^a gossip announce message with \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\"$")
     public void aGossipAnnounceMessageWithTtlAndDatatypeAndPayload(Short ttl, Integer datatype, final String payload) {
-        ByteSerializable payloadobj = Mockito.mock(ByteSerializable.class);
-        Mockito.when(payloadobj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
+        ByteSerializable payloadObj = Mockito.mock(ByteSerializable.class);
+        Mockito.when(payloadObj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
         message = GossipAnnounceMessage.builder()
 				.ttl(ttl)
 				.datatype(datatype)
-				.payload(payloadobj)
+				.payload(payloadObj)
 				.build();
 	}
 
@@ -49,12 +49,12 @@ public class MessageSteps {
     }
 
     @Given("^a gossip notification message with \"([^\"]*)\" and \"([^\"]*)\"$")
-    public void aGossipNotificationMessageWithDatatypeAndPayload(Integer datatype, final String payload) {
-        ByteSerializable payloadobj = Mockito.mock(ByteSerializable.class);
-        Mockito.when(payloadobj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
+    public void aGossipNotificationMessageWithDatatypeAndPayload(Integer dataType, final String payload) {
+        ByteSerializable payloadObj = Mockito.mock(ByteSerializable.class);
+        Mockito.when(payloadObj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
         message = GossipNotificationMessage.builder()
-				.datatype(datatype)
-				.payload(payloadobj)
+				.datatype(dataType)
+				.payload(payloadObj)
 				.build();
 	}
 
@@ -83,12 +83,13 @@ public class MessageSteps {
 
     @Given("^an RPS view message with \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\"$")
     public void anRPSViewMessageWithAndAndAndAndAndAndAndAnd(String address, String identifier, Short port, String address2, String identifier2, Short port2, String address3, String identifier3, Short port3) throws UnknownHostException {
-        List<Peer> peerlist = new ArrayList<Peer>();
-        peerlist.add(CustomMocks.getPeer(address2, port2, identifier2));
-        peerlist.add(CustomMocks.getPeer(address3, port3, identifier3));
+        //FIXME This has way too many arguments, extremely difficult to read. Has to be refactored.
+        List<SerializablePeer> peerList = new ArrayList<>();
+        peerList.add(CustomMocks.getPeer(address2, port2, identifier2));
+        peerList.add(CustomMocks.getPeer(address3, port3, identifier3));
         message = RpsViewMessage.builder()
                 .source(CustomMocks.getPeer(address, port, identifier))
-                .peers(peerlist).build();
+                .peers(peerList).build();
     }
 
     @When("^the message is serialized$")

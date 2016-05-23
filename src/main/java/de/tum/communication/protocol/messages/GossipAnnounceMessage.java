@@ -1,9 +1,10 @@
-package de.tum.communication.protocol;
+package de.tum.communication.protocol.messages;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Shorts;
-
+import de.tum.communication.protocol.ByteSerializable;
+import de.tum.communication.protocol.MessageType;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -23,14 +24,14 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class GossipAnnounceMessage extends Message {
     private short ttl;
-    private int datatype;
+    private int dataType;
     private ByteSerializable payload;
 
     @Builder
     public GossipAnnounceMessage(Short ttl, Integer datatype, ByteSerializable payload) {
         super((short) (2 * WORD_LENGTH + payload.getBytes().size()), MessageType.GOSSIP_ANNOUNCE);
         this.ttl = ttl;
-        this.datatype = datatype;
+        this.dataType = datatype;
         this.payload = payload;
     }
 
@@ -38,10 +39,10 @@ public class GossipAnnounceMessage extends Message {
     public List<Byte> getBytes() {
         byte[] headerBytes = getHeaderBytes();
         byte[] ttlBytes = Shorts.toByteArray(ttl);
-        byte[] reservedBytes = new byte[1];
-        byte[] datatypeBytes = Ints.toByteArray(datatype);
-        List<Byte> bytelist = new ArrayList<Byte>(Bytes.asList(Bytes.concat(headerBytes, ttlBytes, reservedBytes, datatypeBytes)));
-        bytelist.addAll(payload.getBytes());
-        return bytelist;
+        byte[] reservedBytes = new byte[] {0};
+        byte[] dataTypeBytes = Ints.toByteArray(dataType);
+        List<Byte> byteList = new ArrayList<>(Bytes.asList(Bytes.concat(headerBytes, ttlBytes, reservedBytes, dataTypeBytes)));
+        byteList.addAll(payload.getBytes());
+        return byteList;
     }
 }

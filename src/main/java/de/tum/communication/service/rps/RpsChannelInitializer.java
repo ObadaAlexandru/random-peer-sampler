@@ -1,6 +1,6 @@
 package de.tum.communication.service.rps;
 
-import de.tum.communication.protocol.Message;
+import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.service.Receiver;
 import de.tum.communication.service.ReceiverAware;
 import de.tum.communication.service.network.MessageDecoder;
@@ -9,7 +9,6 @@ import de.tum.communication.service.network.ReceiveMessageChannelHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Value;
 
