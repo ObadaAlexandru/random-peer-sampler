@@ -15,12 +15,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 /**
  * Created by Nicolas Frinker on 19/05/16.
  */
-@Service
 @Slf4j
 public class ClientImpl implements Client {
     private final String host;

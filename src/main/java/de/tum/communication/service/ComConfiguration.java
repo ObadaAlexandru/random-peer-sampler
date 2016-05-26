@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import de.tum.communication.service.clients.ClientImpl;
-import de.tum.config.AppConfig;
+import de.tum.config.IniConfig;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
@@ -23,13 +23,13 @@ public class ComConfiguration {
 
     @Bean
     @Module(Module.Service.GOSSIP)
-    public Client getGossipClient(AppConfig config) {
+    public Client getGossipClient(IniConfig config) {
         return new ClientImpl(config.getGossipHost(), config.getGossipPort());
     }
 
     @Bean
     @Module(Module.Service.NSE)
-    public Client getNseClient(AppConfig config) {
+    public Client getNseClient(IniConfig config) {
         return new ClientImpl(config.getNseHost(), config.getNsePort());
     }
 }
