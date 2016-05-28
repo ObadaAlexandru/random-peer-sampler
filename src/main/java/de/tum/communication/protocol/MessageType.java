@@ -21,8 +21,7 @@ public enum MessageType {
     NSE_ESTIMATE((short) 521),
     RPS_QUERY((short) 540),
     RPS_PEER((short) 541),
-    RPS_VIEW((short) 542),
-    RPS_ACK((short) 543);
+    RPS_VIEW((short) 542);
 
     private short value;
 
@@ -44,8 +43,6 @@ public enum MessageType {
                 return RPS_PEER;
             case 542:
                 return RPS_VIEW;
-            case 543:
-                return RPS_ACK;
             default:
                 throw new IllegalArgumentException("Unknown message type " + type);
         }

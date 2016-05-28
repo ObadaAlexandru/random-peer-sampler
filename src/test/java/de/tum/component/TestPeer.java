@@ -7,9 +7,9 @@ import lombok.EqualsAndHashCode;
  * Created by Alexandru Obada on 22/05/16.
  */
 @Data
-@EqualsAndHashCode(of = "identifier")
+@EqualsAndHashCode(of = "hostkey")
 public class TestPeer {
-    private String identifier;
+    private String hostkey;
     private String address;
     private Integer port;
     private Long age;

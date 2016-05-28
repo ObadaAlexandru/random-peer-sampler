@@ -1,6 +1,15 @@
 package de.tum.component;
 
-import cucumber.api.PendingException;
+import static com.google.common.truth.Truth.assertThat;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -9,17 +18,7 @@ import de.tum.sampling.entity.Peer;
 import de.tum.sampling.repository.PeerRepository;
 import de.tum.sampling.service.ViewManager;
 import de.tum.sampling.service.ViewManagerImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static com.google.common.truth.Truth.assertThat;
+import de.tum.unit.CustomMocks;
 
 
 /**
@@ -38,27 +37,12 @@ public class ViewManagerSteps {
 
     @Given("^the following incoming view:$")
     public void theFollowingIncomingView(List<TestPeer> testPeers) {
-        incomingPeers = testPeerToPeer(testPeers);
-    }
-
-    private Set<Peer> testPeerToPeer(List<TestPeer> testPeers) {
-        return testPeers.stream().map(testPeer -> {
-            try {
-                return Peer.builder()
-                        .identifier(testPeer.getIdentifier())
-                        .address(InetAddress.getByName(testPeer.getAddress()))
-                        .port(testPeer.getPort())
-                        .age(testPeer.getAge())
-                        .build();
-            } catch (UnknownHostException e) {
-                throw new RuntimeException("Unknown host");
-            }
-        }).collect(Collectors.toSet());
+        incomingPeers = CustomMocks.testPeerToPeer(testPeers);
     }
 
     @And("^the current view is as follows:$")
     public void theCurrentViewIsAsFollows(List<TestPeer> testPeers) {
-        currentView = testPeerToPeer(testPeers);
+        currentView = CustomMocks.testPeerToPeer(testPeers);
         peerRepository.save(currentView);
     }
 
@@ -69,7 +53,7 @@ public class ViewManagerSteps {
 
     @Then("^the resulting view is as follows:$")
     public void theResultingViewIsAsFollows(List<TestPeer> testPeers) {
-        Set<Peer> expectedView = testPeerToPeer(testPeers);
+        Set<Peer> expectedView = CustomMocks.testPeerToPeer(testPeers);
         Map<String, Peer> expectedViewMap = expectedView.stream().collect(Collectors.toMap(Peer::getIdentifier, Function.identity()));
         Set<Peer> actualView = viewManager.getPeers();
         assertThat(actualView).hasSize(expectedView.size());
