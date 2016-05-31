@@ -1,39 +1,25 @@
 package de.tum.unit;
 
-import static com.google.common.truth.Truth.assertThat;
+import com.google.common.base.CharMatcher;
+import com.google.common.io.BaseEncoding;
+import com.google.common.primitives.Bytes;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import de.tum.communication.protocol.*;
+import de.tum.communication.protocol.messages.*;
+import de.tum.component.TestPeer;
+import org.mockito.Mockito;
 
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.mockito.Mockito;
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * Created by Alexandru Obada on 11/05/16.
  */
-
-import com.google.common.base.CharMatcher;
-import com.google.common.io.BaseEncoding;
-import com.google.common.primitives.Bytes;
-
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import de.tum.communication.protocol.ByteSerializable;
-import de.tum.communication.protocol.MessageType;
-import de.tum.communication.protocol.Protocol;
-import de.tum.communication.protocol.ProtocolImpl;
-import de.tum.communication.protocol.SerializablePeer;
-import de.tum.communication.protocol.messages.GossipAnnounceMessage;
-import de.tum.communication.protocol.messages.GossipNotificationMessage;
-import de.tum.communication.protocol.messages.GossipNotifyMessage;
-import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.protocol.messages.NseEstimateMessage;
-import de.tum.communication.protocol.messages.NseQueryMessage;
-import de.tum.communication.protocol.messages.RpsPeerMessage;
-import de.tum.communication.protocol.messages.RpsQueryMessage;
-import de.tum.communication.protocol.messages.RpsViewMessage;
-import de.tum.component.TestPeer;
 
 /**
  * Cucumber steps for {@link Message} implementations
@@ -47,7 +33,7 @@ public class MessageSteps {
     private String byteSequence;
 
     @Given("^a gossip announce message with \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\"$")
-    public void aGossipAnnounceMessageWithTtlAndDatatypeAndPayload(Short ttl, Integer datatype, final String payload) {
+    public void aGossipAnnounceMessageWithTtlAndDatatypeAndPayload(Short ttl, Short datatype, final String payload) {
         ByteSerializable payloadObj = Mockito.mock(ByteSerializable.class);
         Mockito.when(payloadObj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
         message = GossipAnnounceMessage.builder()
@@ -98,7 +84,7 @@ public class MessageSteps {
     @Given("^an RPS view message with:$")
     public void anRPSViewMessageWith(List<TestPeer> testPeers) {
         List<SerializablePeer> speers = CustomMocks.testPeerToPeer(testPeers).stream()
-                .map(peer -> SerializablePeer.builder().peer(peer).build()).collect(Collectors.toList());
+                .map(SerializablePeer::new).collect(Collectors.toList());
         message = RpsViewMessage.builder()
                 .source(speers.remove(0))
                 .peers(speers).build();

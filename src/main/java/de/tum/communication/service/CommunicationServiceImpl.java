@@ -1,14 +1,15 @@
 package de.tum.communication.service;
 
 import de.tum.communication.exceptions.UnknownMessageTypeException;
-import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.protocol.MessageType;
+import de.tum.communication.protocol.messages.Message;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -64,5 +65,11 @@ public class CommunicationServiceImpl implements CommunicationService {
         Receiver<Message> receiver = Optional.ofNullable(receivers.get(message.getType()))
                 .orElseThrow(() -> new UnknownMessageTypeException(String.format("Message type <%s> not supported", message.getType())));
         return receiver.receive(message);
+    }
+
+    @PreDestroy
+    private void shutdown() {
+        log.info("Communication service shutting down");
+        communicationExecutor.shutdown();
     }
 }

@@ -9,7 +9,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    UNKNOWN_MESSAGE_TYPE("ERR-001", "Message type unknown");
+    UNKNOWN_MESSAGE_TYPE("ERR-001", "Message type unknown"),
+    INVALID_CONFIGURATION("ERR-002", "Invalid configuration"),
+    INVALID_HOSTKEY("ERR-003", "Invalid host key");
 
     private String code;
     private String defaultMessage;

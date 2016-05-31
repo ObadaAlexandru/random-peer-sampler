@@ -10,9 +10,12 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 /**
@@ -20,11 +23,10 @@ import java.net.InetSocketAddress;
  */
 @Slf4j
 @Service
-@NoArgsConstructor
 public class RpsServer implements Server {
 
-    @Value("${rps.server.port:8080}")
     private int port;
+    private InetAddress address;
 
     private EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     private EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -32,8 +34,10 @@ public class RpsServer implements Server {
 
     private final RpsChannelInitializer channelInitializer = new RpsChannelInitializer();
 
-    public RpsServer(int port) {
+    @Autowired
+    public RpsServer(@Value("#{iniConfig.getRPSPort()}") Integer port, @Value("#{iniConfig.getRPSHost()}") InetAddress address) {
         this.port = port;
+        this.address = address;
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
     }
@@ -45,12 +49,12 @@ public class RpsServer implements Server {
 
     @Override
     public void start() throws Exception {
-        log.info("RPS server starting on port {}", port);
+        log.info("RPS server starting on {}:{}", address.getHostName(), port);
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .localAddress(new InetSocketAddress(port))
+                    .localAddress(new InetSocketAddress(address, port))
                     .childHandler(channelInitializer);
             ChannelFuture channelFuture = bootstrap.bind().sync();
             channelFuture.channel().closeFuture().sync();
@@ -59,11 +63,13 @@ public class RpsServer implements Server {
         }
     }
 
+    @PreDestroy
     @Override
     public void shutdown() {
         try {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
+            log.info("RPS server shutting down");
         } catch (Exception e) {
             log.error("Rps server failed to shutdown gracefully");
             log.error(e.getMessage());

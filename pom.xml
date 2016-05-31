@@ -28,6 +28,7 @@
         <hikaricp.version>2.4.6</hikaricp.version>
         <netty.version>4.0.36.Final</netty.version>
         <ini4j.version>0.5.4</ini4j.version>
+        <bouncycastle.version>1.54</bouncycastle.version>
     </properties>
 
     <dependencies>
@@ -70,6 +71,18 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>${netty.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
         </dependency>
 
         <dependency>

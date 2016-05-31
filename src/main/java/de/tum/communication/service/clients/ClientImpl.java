@@ -16,6 +16,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.PreDestroy;
+
 /**
  * Created by Nicolas Frinker on 19/05/16.
  */
@@ -53,6 +55,7 @@ public class ClientImpl implements Client {
         }
     }
 
+    @PreDestroy
     public void shutdown() {
         chfuture.channel().close();
 
@@ -74,6 +77,7 @@ public class ClientImpl implements Client {
     @Override
     public Void send(Message data) {
         chfuture.channel().writeAndFlush(data);
+        log.info("Sent message of type {}", data.getType());
         return null;
     }
 }

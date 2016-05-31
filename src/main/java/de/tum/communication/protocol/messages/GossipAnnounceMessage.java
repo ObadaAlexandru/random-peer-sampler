@@ -24,11 +24,13 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class GossipAnnounceMessage extends Message {
     private short ttl;
+
+    //FIXME this has to be converted to a short and the tests updated accordingly
     private int dataType;
     private ByteSerializable payload;
 
     @Builder
-    public GossipAnnounceMessage(Short ttl, Integer datatype, ByteSerializable payload) {
+    public GossipAnnounceMessage(Short ttl, Short datatype, ByteSerializable payload) {
         super((short) (2 * WORD_LENGTH + payload.getBytes().size()), MessageType.GOSSIP_ANNOUNCE);
         this.ttl = ttl;
         this.dataType = datatype;

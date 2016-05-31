@@ -1,9 +1,7 @@
 package de.tum.sampling.entity;
 
-import java.net.InetAddress;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
+import com.google.common.io.BaseEncoding;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -12,14 +10,10 @@ import javax.persistence.Id;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import com.google.common.io.BaseEncoding;
-
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import java.net.InetAddress;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 
 /**
  * Created by Alexandru Obada on 22/05/16.

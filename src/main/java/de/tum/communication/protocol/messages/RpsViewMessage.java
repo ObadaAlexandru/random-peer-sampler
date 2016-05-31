@@ -34,7 +34,7 @@ public class RpsViewMessage extends Message {
 
     @Override
     public List<Byte> getBytes() {
-        List<Byte> result = new ArrayList<Byte>(Bytes.asList(getHeaderBytes())); 
+        List<Byte> result = new ArrayList<>(Bytes.asList(getHeaderBytes()));
         result.addAll(this.source.getBytes());
         for (SerializablePeer peer : this.peers) {
             result.addAll(peer.getBytes());

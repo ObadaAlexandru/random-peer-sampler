@@ -1,5 +1,13 @@
 package de.tum.unit;
 
+import com.google.common.io.BaseEncoding;
+import de.tum.communication.protocol.MessageType;
+import de.tum.communication.protocol.SerializablePeer;
+import de.tum.communication.protocol.messages.Message;
+import de.tum.component.TestPeer;
+import de.tum.sampling.entity.Peer;
+import org.mockito.Mockito;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.KeyFactory;
@@ -11,16 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.mockito.Mockito;
-
-import com.google.common.io.BaseEncoding;
-
-import de.tum.communication.protocol.MessageType;
-import de.tum.communication.protocol.SerializablePeer;
-import de.tum.communication.protocol.messages.Message;
-import de.tum.component.TestPeer;
-import de.tum.sampling.entity.Peer;
 
 public class CustomMocks {
     public static Message getMessage(MessageType messageType) {

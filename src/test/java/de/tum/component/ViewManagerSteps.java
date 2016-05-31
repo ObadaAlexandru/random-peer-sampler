@@ -1,15 +1,5 @@
 package de.tum.component;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -19,6 +9,15 @@ import de.tum.sampling.repository.PeerRepository;
 import de.tum.sampling.service.ViewManager;
 import de.tum.sampling.service.ViewManagerImpl;
 import de.tum.unit.CustomMocks;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static com.google.common.truth.Truth.assertThat;
 
 
 /**

@@ -1,7 +1,7 @@
 package de.tum.communication.service;
 
-import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.protocol.MessageType;
+import de.tum.communication.protocol.messages.Message;
 
 import java.util.concurrent.Future;
 

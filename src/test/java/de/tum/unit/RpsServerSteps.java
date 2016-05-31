@@ -1,17 +1,8 @@
 package de.tum.unit;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import java.net.UnknownHostException;
-import java.util.List;
-
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Bytes;
-
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -27,6 +18,13 @@ import de.tum.communication.service.network.ReceiveMessageChannelHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+
+import java.net.UnknownHostException;
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * Created by Alexandru Obada on 16/05/16.

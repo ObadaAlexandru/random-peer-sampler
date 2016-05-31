@@ -2,9 +2,7 @@ package de.tum.component;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
-import de.tum.Application;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 
 /**
  * Created by Alexandru Obada on 09/05/16.
