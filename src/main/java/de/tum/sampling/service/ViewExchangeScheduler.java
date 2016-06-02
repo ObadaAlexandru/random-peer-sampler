@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 
 /**
- *  Periodically announces the partial view to the other peers
+ * Periodically announces the partial view to the other peers
  */
 @Slf4j
 @Service
@@ -72,7 +72,7 @@ public class ViewExchangeScheduler {
     }
 
     private SerializablePeer getSource() {
-        if(source == null) {
+        if (source == null) {
             source = Peer.builder().address(rpsHost).port(rpsPort).hostkey(hostKeyReader.getPublicKey()).build();
         }
         return new SerializablePeer(source);
@@ -86,10 +86,10 @@ public class ViewExchangeScheduler {
             Message viewMessage = RpsViewMessage.builder().source(getSource()).peers(serializablePeers).build();
             Message gossipAnnounce = GossipAnnounceMessage.builder()
                     .payload(viewMessage)
-                    .ttl((short)255)
+                    .ttl((short) 255)
                     .datatype(MessageType.RPS_VIEW.getValue())
                     .payload(viewMessage).build();
-             communicationService.send(gossipAnnounce);
+            communicationService.send(gossipAnnounce);
             log.info("View has been pushed");
         }
     }

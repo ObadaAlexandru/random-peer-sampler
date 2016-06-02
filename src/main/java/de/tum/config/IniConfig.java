@@ -75,7 +75,7 @@ public class IniConfig {
             ConfigAddress address = new ConfigAddress(ini.get(section, "api_address"));
             return address.getPort();
         } catch (URISyntaxException e) {
-            log.error("Gossip api port is invalid!");
+            log.error("{} api port is invalid!", section);
             return null;
         }
     }
@@ -87,7 +87,7 @@ public class IniConfig {
         } catch (URISyntaxException e) {
             log.error("{} api address is invalid fallback to localhost!", section);
             try {
-                return InetAddress.getByName("localhot");
+                return InetAddress.getLocalHost();
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
                 throw new RuntimeException("Invalid address");

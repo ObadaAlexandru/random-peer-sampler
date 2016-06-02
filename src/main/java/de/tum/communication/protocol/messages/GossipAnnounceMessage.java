@@ -24,9 +24,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class GossipAnnounceMessage extends Message {
     private short ttl;
-
-    //FIXME this has to be converted to a short and the tests updated accordingly
-    private int dataType;
+    private short dataType;
     private ByteSerializable payload;
 
     @Builder
@@ -42,7 +40,7 @@ public class GossipAnnounceMessage extends Message {
         byte[] headerBytes = getHeaderBytes();
         byte[] ttlBytes = Shorts.toByteArray(ttl);
         byte[] reservedBytes = new byte[] {0};
-        byte[] dataTypeBytes = Ints.toByteArray(dataType);
+        byte[] dataTypeBytes = Shorts.toByteArray(dataType);
         List<Byte> byteList = new ArrayList<>(Bytes.asList(Bytes.concat(headerBytes, ttlBytes, reservedBytes, dataTypeBytes)));
         byteList.addAll(payload.getBytes());
         return byteList;
