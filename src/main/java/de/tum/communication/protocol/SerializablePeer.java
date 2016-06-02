@@ -1,20 +1,17 @@
 package de.tum.communication.protocol;
 
-import java.net.Inet4Address;
-import java.util.List;
-
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Shorts;
-
 import de.tum.communication.protocol.messages.Message;
 import de.tum.sampling.entity.Peer;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Value;
+
+import java.net.Inet4Address;
+import java.util.List;
 
 @AllArgsConstructor
 @Value
-@Builder
 public class SerializablePeer implements ByteSerializable {
     private Peer peer;
 

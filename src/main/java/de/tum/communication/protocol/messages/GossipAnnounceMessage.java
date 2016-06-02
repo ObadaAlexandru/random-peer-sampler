@@ -24,11 +24,11 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class GossipAnnounceMessage extends Message {
     private short ttl;
-    private int dataType;
+    private short dataType;
     private ByteSerializable payload;
 
     @Builder
-    public GossipAnnounceMessage(Short ttl, Integer datatype, ByteSerializable payload) {
+    public GossipAnnounceMessage(Short ttl, Short datatype, ByteSerializable payload) {
         super((short) (2 * WORD_LENGTH + payload.getBytes().size()), MessageType.GOSSIP_ANNOUNCE);
         this.ttl = ttl;
         this.dataType = datatype;
@@ -40,7 +40,7 @@ public class GossipAnnounceMessage extends Message {
         byte[] headerBytes = getHeaderBytes();
         byte[] ttlBytes = Shorts.toByteArray(ttl);
         byte[] reservedBytes = new byte[] {0};
-        byte[] dataTypeBytes = Ints.toByteArray(dataType);
+        byte[] dataTypeBytes = Shorts.toByteArray(dataType);
         List<Byte> byteList = new ArrayList<>(Bytes.asList(Bytes.concat(headerBytes, ttlBytes, reservedBytes, dataTypeBytes)));
         byteList.addAll(payload.getBytes());
         return byteList;

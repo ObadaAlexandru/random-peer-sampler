@@ -1,20 +1,10 @@
 package de.tum.unit;
 
-import java.net.InetSocketAddress;
-
-import de.tum.communication.protocol.messages.*;
-import io.netty.channel.SimpleChannelInboundHandler;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.rules.ErrorCollector;
-import org.mockito.Mockito;
-import org.springframework.util.SocketUtils;
-
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import de.tum.communication.protocol.messages.*;
 import de.tum.communication.service.Client;
 import de.tum.communication.service.Receiver;
 import de.tum.communication.service.clients.ClientImpl;
@@ -24,9 +14,18 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.rules.ErrorCollector;
+import org.mockito.Mockito;
+import org.springframework.util.SocketUtils;
+
+import java.net.InetSocketAddress;
 
 /**
  * Created by Nicolas Frinker on 19/05/16.

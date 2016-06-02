@@ -1,15 +1,14 @@
 package de.tum.sampling.entity;
 
+import com.google.common.io.BaseEncoding;
+
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-
-import com.google.common.io.BaseEncoding;
 
 /**
  * Created by Nicolas Frinker on 28/05/16.
