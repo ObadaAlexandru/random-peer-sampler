@@ -1,21 +1,35 @@
 package de.tum.unit;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.io.BaseEncoding;
-import com.google.common.primitives.Bytes;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import de.tum.communication.protocol.*;
-import de.tum.communication.protocol.messages.*;
-import de.tum.component.TestPeer;
-import org.mockito.Mockito;
+import static com.google.common.truth.Truth.assertThat;
 
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.google.common.truth.Truth.assertThat;
+import org.mockito.Mockito;
+
+import com.google.common.base.CharMatcher;
+import com.google.common.io.BaseEncoding;
+import com.google.common.primitives.Bytes;
+
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import de.tum.communication.protocol.ByteSerializable;
+import de.tum.communication.protocol.MessageType;
+import de.tum.communication.protocol.Protocol;
+import de.tum.communication.protocol.ProtocolImpl;
+import de.tum.communication.protocol.SerializablePeer;
+import de.tum.communication.protocol.messages.GossipAnnounceMessage;
+import de.tum.communication.protocol.messages.GossipNotificationMessage;
+import de.tum.communication.protocol.messages.GossipNotifyMessage;
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.messages.NseEstimateMessage;
+import de.tum.communication.protocol.messages.NseQueryMessage;
+import de.tum.communication.protocol.messages.RpsPeerMessage;
+import de.tum.communication.protocol.messages.RpsQueryMessage;
+import de.tum.communication.protocol.messages.RpsViewMessage;
+import de.tum.component.TestPeer;
 
 /**
  * Created by Alexandru Obada on 11/05/16.
@@ -90,6 +104,11 @@ public class MessageSteps {
                 .peers(speers).build();
     }
 
+    @Given("^a serialized RPS view message as \"([^\"]*)\"$")
+    public void aMessageOfTypeIsReturned(String bytes) {
+        this.byteSequence = bytes;
+    }
+
     @When("^the message is serialized$")
     public void theMessageIsSerialized() {
         messageBytes = message.getBytes();
@@ -116,5 +135,16 @@ public class MessageSteps {
     @Then("^a message of type \"([^\"]*)\" is returned$")
     public void aMessageOfTypeIsReturned(MessageType messageType) {
         assertThat(message.getType()).isEqualTo(messageType);
+    }
+
+    @Then("^an RPS view message is returned with:$")
+    public void anRPSViewMessageIsReturnedWith(List<TestPeer> testPeers) {
+        List<SerializablePeer> speers = CustomMocks.testPeerToPeer(testPeers).stream()
+                .map(SerializablePeer::new).collect(Collectors.toList());
+        assertThat(message instanceof RpsViewMessage);
+        RpsViewMessage rpsviewmessage = (RpsViewMessage) message;
+        assertThat(speers.size() == rpsviewmessage.getPeers().size() + 1);
+        assertThat(speers.get(0).equals(rpsviewmessage.getSource()));
+        assertThat(speers.subList(1, speers.size() - 1).equals(rpsviewmessage.getPeers()));
     }
 }
