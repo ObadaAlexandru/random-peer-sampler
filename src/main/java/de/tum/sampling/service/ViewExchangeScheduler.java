@@ -43,6 +43,7 @@ public class ViewExchangeScheduler {
     private HostKeyReader hostKeyReader;
 
     private InetAddress rpsHost;
+
     private Integer rpsPort;
 
     private Peer source;
@@ -81,7 +82,7 @@ public class ViewExchangeScheduler {
     private class ViewExchangeTask implements Runnable {
         @Override
         public void run() {
-            Set<Peer> peers = viewManager.getPeers();
+            List<Peer> peers = viewManager.getForPush();
             List<SerializablePeer> serializablePeers = peers.stream().map(SerializablePeer::new).collect(Collectors.toList());
             Message viewMessage = RpsViewMessage.builder().source(getSource()).peers(serializablePeers).build();
             Message gossipAnnounce = GossipAnnounceMessage.builder()

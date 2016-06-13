@@ -1,4 +1,4 @@
-package de.tum.component;
+package feature.common;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,5 +12,4 @@ public class TestPeer {
     private String hostkey;
     private String address;
     private Integer port;
-    private Long age;
 }

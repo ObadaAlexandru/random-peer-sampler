@@ -1,4 +1,4 @@
-package de.tum.component;
+package feature.component;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Cucumber.class)
 @CucumberOptions(strict = true, tags = "@component-test", features = "classpath:features", plugin = {"pretty"},
-        glue = {"de.tum.component"})
+        glue = {"feature.component"})
 public class ComponentTests {
 
 }

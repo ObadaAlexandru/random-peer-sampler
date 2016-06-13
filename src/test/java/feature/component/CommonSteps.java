@@ -1,4 +1,4 @@
-package de.tum.component;
+package feature.component;
 
 import cucumber.api.java.Before;
 import de.tum.Application;

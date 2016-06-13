@@ -1,4 +1,4 @@
-package de.tum.unit;
+package feature.unit;
 
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
@@ -19,6 +19,8 @@ import java.net.UnknownHostException;
 import java.security.PublicKey;
 import java.util.Collections;
 
+import static org.mockito.Mockito.when;
+
 /**
  * Created by Alexandru Obada on 31/05/16.
  */
@@ -38,9 +40,9 @@ public class ViewExchangeSteps {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         PublicKey mockPrivateKey = Mockito.mock(PublicKey.class);
-        Mockito.when(mockPrivateKey.getEncoded()).thenReturn(new byte[] {0, 1, 2, 3, 4 ,5});
-        Mockito.when(hostKeyReader.getPublicKey()).thenReturn(mockPrivateKey);
-        Mockito.when(viewManager.getPeers()).thenReturn(Collections.emptySet());
+        when(mockPrivateKey.getEncoded()).thenReturn(new byte[] {0, 1, 2, 3, 4 ,5});
+        when(hostKeyReader.getPublicKey()).thenReturn(mockPrivateKey);
+        when(viewManager.getForPush()).thenReturn(Collections.emptyList());
     }
 
     @Given("^that the rps port is \"([^\"]*)\"$")

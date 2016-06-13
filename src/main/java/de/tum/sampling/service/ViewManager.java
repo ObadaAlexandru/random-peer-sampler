@@ -6,6 +6,7 @@ package de.tum.sampling.service;
 
 import de.tum.sampling.entity.Peer;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,6 +14,6 @@ import java.util.Set;
  *  Merges and persists incoming views
  */
 public interface ViewManager {
-    void merge(Set<Peer> incoming);
-    Set<Peer> getPeers();
+    void updateView();
+    List<Peer> getForPush();
 }
