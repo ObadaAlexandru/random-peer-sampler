@@ -22,16 +22,12 @@ import java.util.stream.Stream;
 @Service
 public class ViewManagerImpl implements ViewManager {
 
-    @Value("${rps.sampling.view.dynamic_size:30}")
     private Integer dynamicViewSize;
 
-    @Value("${rps.sampling.view.alpha:0.45}")
     private Double alpha;
 
-    @Value("${rps.sampling.view.beta:0.45}")
     private  Double beta;
 
-    @Value("${rps.sampling.view.gamma:0.1}")
     private Double gamma;
 
     @Autowired
@@ -44,10 +40,10 @@ public class ViewManagerImpl implements ViewManager {
     @Autowired
     public ViewManagerImpl(PeerRepository peerRepository,
                            Sampler sampler,
-                           Integer dynamicViewSize,
-                           Double alpha,
-                           Double beta,
-                           Double gamma) {
+                           @Value("${rps.sampling.view.dynamic_size:30}") Integer dynamicViewSize,
+                           @Value("${rps.sampling.view.alpha:0.45}") Double alpha,
+                           @Value("${rps.sampling.view.beta:0.45}") Double beta,
+                           @Value("${rps.sampling.view.gamma:0.1}") Double gamma) {
         this.peerRepository = peerRepository;
         this.sampler = sampler;
         this.dynamicViewSize = dynamicViewSize;
@@ -69,7 +65,7 @@ public class ViewManagerImpl implements ViewManager {
     }
 
     /**
-     * Computes the new dynamic as specified in Brahms
+     * Computes the new dynamic view as specified in Brahms
      */
     @Transactional
     @Override

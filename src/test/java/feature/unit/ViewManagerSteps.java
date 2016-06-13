@@ -1,7 +1,6 @@
 package feature.unit;
 
 
-import cucumber.api.PendingException;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -26,9 +25,8 @@ import java.util.stream.Collectors;
 import static de.tum.sampling.entity.PeerType.*;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static com.google.common.truth.Truth.*;
 
 /**
  * Created by Alexandru Obada on 13/06/16.
@@ -37,6 +35,9 @@ public class ViewManagerSteps {
     List<Peer> pushedPeers;
     List<Peer> pulledPeers;
     List<Peer> sampledPeers;
+    List<Peer> dynamicView;
+
+    List<Peer> peersForPush;
 
     double alpha = 0.4;
     double beta = 0.4;
@@ -57,14 +58,6 @@ public class ViewManagerSteps {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        viewManager = ViewManagerImpl.builder()
-                .dynamicViewSize(dynamicViewSize)
-                .peerRepository(peerRepository)
-                .alpha(alpha)
-                .beta(beta)
-                .gamma(gamma)
-                .sampler(sampler)
-                .build();
     }
 
     @Given("^the following pushed peers:$")
@@ -85,9 +78,38 @@ public class ViewManagerSteps {
         when(peerRepository.getByPeerType(SAMPLED)).thenReturn(this.sampledPeers);
     }
 
+    @Given("^that the dynamic view contains the following peers:$")
+    public void thatTheDynamicViewContainsTheFollowingPeers(List<TestPeer> dynamicView) {
+        this.dynamicView = convertToPeers(dynamicView, DYNAMIC);
+        when(peerRepository.getByPeerType(DYNAMIC)).thenReturn(this.dynamicView);
+    }
+
+    @And("^the alpha parameter is \"([^\"]*)\"$")
+    public void theAlphaParameterIs(Double alpha) {
+        this.alpha = alpha;
+    }
+
+    @When("^the peers for push are queried$")
+    public void thePeersForPushAreQueried() {
+        initViewManager();
+        peersForPush = viewManager.getForPush();
+    }
+
     @When("^the view is updated$")
     public void theViewIsUpdated() {
+        initViewManager();
         viewManager.updateView();
+    }
+
+    private void initViewManager() {
+        viewManager = ViewManagerImpl.builder()
+                .dynamicViewSize(dynamicViewSize)
+                .peerRepository(peerRepository)
+                .alpha(alpha)
+                .beta(beta)
+                .gamma(gamma)
+                .sampler(sampler)
+                .build();
     }
 
     @Then("^the new dynamic view is persisted$")
@@ -110,6 +132,12 @@ public class ViewManagerSteps {
         verify(peerRepository, times(0)).deleteByPeerType(DYNAMIC);
         verify(peerRepository, times(0)).save(anyList());
         verify(sampler).updateSample(anyListOf(Peer.class));
+    }
+
+
+    @Then("^the service returns \"([^\"]*)\" peers$")
+    public void theServiceReturnsPeers(int numPeersForPush) {
+        assertThat(peersForPush).hasSize(numPeersForPush);
     }
 
     private List<Peer> convertToPeers(List<TestPeer> testPeers, PeerType peerType) {
