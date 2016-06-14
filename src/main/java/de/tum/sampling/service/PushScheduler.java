@@ -1,10 +1,9 @@
 package de.tum.sampling.service;
 
-import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.SerializablePeer;
 import de.tum.communication.protocol.messages.GossipAnnounceMessage;
 import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.protocol.messages.RpsViewMessage;
+import de.tum.communication.protocol.messages.RpsPushMessage;
 import de.tum.communication.service.CommunicationService;
 import de.tum.config.HostKeyReader;
 import de.tum.sampling.entity.Peer;
@@ -16,27 +15,22 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import java.net.InetAddress;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * Created by Alexandru Obada on 30/05/16.
  */
 
 /**
- * Periodically announces the partial view to the other peers
+ * Periodically pushes the identity of the current peer via Gossip
  */
 @Slf4j
 @Service
-public class ViewExchangeScheduler {
+public class PushScheduler {
 
     private ScheduledExecutorService schedulingExecutor;
-
-    private ViewManager viewManager;
 
     private CommunicationService communicationService;
 
@@ -50,13 +44,11 @@ public class ViewExchangeScheduler {
 
     @Autowired
     @Builder
-    public ViewExchangeScheduler(ViewManager viewManager,
-                                 CommunicationService communicationService,
-                                 HostKeyReader hostKeyReader,
-                                 @Value("#{iniConfig.getRoundDuration()}") Integer exchangeRate,
-                                 @Value("#{iniConfig.getRPSHost()}") InetAddress rpsHost,
-                                 @Value("#{iniConfig.getRPSPort()}") Integer rpsPort) {
-        this.viewManager = viewManager;
+    public PushScheduler(CommunicationService communicationService,
+                         HostKeyReader hostKeyReader,
+                         @Value("#{iniConfig.getRoundDuration()}") Integer exchangeRate,
+                         @Value("#{iniConfig.getRPSHost()}") InetAddress rpsHost,
+                         @Value("#{iniConfig.getRPSPort()}") Integer rpsPort) {
         this.communicationService = communicationService;
         this.hostKeyReader = hostKeyReader;
         this.rpsPort = rpsPort;
@@ -82,14 +74,13 @@ public class ViewExchangeScheduler {
     private class ViewExchangeTask implements Runnable {
         @Override
         public void run() {
-            List<Peer> peers = viewManager.getForPush();
-            List<SerializablePeer> serializablePeers = peers.stream().map(SerializablePeer::new).collect(Collectors.toList());
-            Message viewMessage = RpsViewMessage.builder().source(getSource()).peers(serializablePeers).build();
+            Message viewMessage = new RpsPushMessage(getSource());
             Message gossipAnnounce = GossipAnnounceMessage.builder()
                     .payload(viewMessage)
                     .ttl((short) 255)
-                    .datatype(MessageType.RPS_VIEW.getValue())
-                    .payload(viewMessage).build();
+                    .payload(viewMessage)
+                    .datatype(viewMessage.getType().getValue())
+                    .build();
             communicationService.send(gossipAnnounce);
             log.info("View has been pushed");
         }

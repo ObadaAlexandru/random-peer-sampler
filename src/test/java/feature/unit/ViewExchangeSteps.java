@@ -8,7 +8,7 @@ import cucumber.api.java.en.When;
 import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.service.CommunicationService;
 import de.tum.config.HostKeyReader;
-import de.tum.sampling.service.ViewExchangeScheduler;
+import de.tum.sampling.service.PushScheduler;
 import de.tum.sampling.service.ViewManager;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -32,8 +32,6 @@ public class ViewExchangeSteps {
     @Mock
     private CommunicationService communicationService;
     @Mock
-    private ViewManager viewManager;
-    @Mock
     private HostKeyReader hostKeyReader;
 
     @Before
@@ -42,7 +40,6 @@ public class ViewExchangeSteps {
         PublicKey mockPrivateKey = Mockito.mock(PublicKey.class);
         when(mockPrivateKey.getEncoded()).thenReturn(new byte[] {0, 1, 2, 3, 4 ,5});
         when(hostKeyReader.getPublicKey()).thenReturn(mockPrivateKey);
-        when(viewManager.getForPush()).thenReturn(Collections.emptyList());
     }
 
     @Given("^that the rps port is \"([^\"]*)\"$")
@@ -62,12 +59,11 @@ public class ViewExchangeSteps {
 
     @When("^the view exchange scheduler starts$")
     public void theViewExchangeSchedulerStarts() {
-        ViewExchangeScheduler.builder()
+        PushScheduler.builder()
                 .exchangeRate(roundDuration)
                 .rpsHost(rpsHost)
                 .rpsPort(rpsPort)
                 .communicationService(communicationService)
-                .viewManager(viewManager)
                 .hostKeyReader(hostKeyReader).build();
     }
 
