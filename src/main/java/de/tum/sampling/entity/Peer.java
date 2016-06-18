@@ -3,10 +3,7 @@ package de.tum.sampling.entity;
 import com.google.common.io.BaseEncoding;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -23,10 +20,14 @@ import java.security.PublicKey;
 @NoArgsConstructor
 @Entity
 public class Peer {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     @NonNull
     @Convert(converter = HostkeyConverter.class)
-    @Column(length=4096)
+    @Column(length = 4096)
     private PublicKey hostkey;
     @NonNull
     @Convert(converter = AddressConverter.class)
@@ -35,20 +36,15 @@ public class Peer {
     @Min(1024)
     @Max(65535)
     private Integer port;
-    @Min(0)
     @NotNull
-    private Long age;
+    private PeerType peerType;
 
     @Builder
-    public Peer(PublicKey hostkey, InetAddress address, Integer port, Long age) {
+    public Peer(PeerType peerType, PublicKey hostkey, InetAddress address, Integer port) {
+        this.peerType = peerType;
         this.hostkey = hostkey;
         this.address = address;
         this.port = port;
-        this.age = age;
-    }
-
-    public void resetAge() {
-        age = 0L;
     }
 
     public String getIdentifier() {

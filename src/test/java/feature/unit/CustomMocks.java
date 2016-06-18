@@ -1,10 +1,10 @@
-package de.tum.unit;
+package feature.unit;
 
 import com.google.common.io.BaseEncoding;
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.SerializablePeer;
 import de.tum.communication.protocol.messages.Message;
-import de.tum.component.TestPeer;
+import feature.common.TestPeer;
 import de.tum.sampling.entity.Peer;
 import org.mockito.Mockito;
 
@@ -55,7 +55,6 @@ public class CustomMocks {
                         .address(InetAddress.getByName(testPeer.getAddress()))
                         .hostkey(CustomMocks.getHostkey(testPeer.getHostkey()))
                         .port(testPeer.getPort())
-                        .age(testPeer.getAge())
                         .build();
             } catch (UnknownHostException e) {
                 throw new RuntimeException("Unknown host");

@@ -1,13 +1,17 @@
 package de.tum.sampling.service;
 
 import de.tum.sampling.entity.Peer;
+import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.repository.PeerRepository;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,73 +22,73 @@ import java.util.stream.Stream;
 @Service
 public class ViewManagerImpl implements ViewManager {
 
-    @Value("${rps.sampling.view.size:30}")
-    @Getter
-    @Setter
-    private Integer viewSize;
+    private Integer dynamicViewSize;
 
-    @Value("${rps.sampling.view.maxAge:30}")
-    @Getter
-    @Setter
-    private Integer maxPeerAge;
+    private Double alpha;
+
+    private  Double beta;
+
+    private Double gamma;
 
     @Autowired
     private PeerRepository peerRepository;
 
+    @Autowired
+    private  Sampler sampler;
+
+    @Builder
+    @Autowired
+    public ViewManagerImpl(PeerRepository peerRepository,
+                           Sampler sampler,
+                           @Value("${rps.sampling.view.dynamic_size:30}") Integer dynamicViewSize,
+                           @Value("${rps.sampling.view.alpha:0.45}") Double alpha,
+                           @Value("${rps.sampling.view.beta:0.45}") Double beta,
+                           @Value("${rps.sampling.view.gamma:0.1}") Double gamma) {
+        this.peerRepository = peerRepository;
+        this.sampler = sampler;
+        this.dynamicViewSize = dynamicViewSize;
+        this.alpha = alpha;
+        this.beta = beta;
+        this.gamma = gamma;
+    }
+
+    /**
+     * Randomly selects a subset of the current dynamic view
+     * According to Brahms this implements Limited pushes
+     * @return a subset of the dynamic view
+     */
     @Override
-    public void merge(Set<Peer> incoming) {
-        Set<Peer> currentPeers = peerRepository.findAll().stream().collect(Collectors.toSet());
-        resetPeerAge(currentPeers, incoming);
-        Set<Peer> merged = mergePeers(currentPeers, incoming);
-        removeExtraPeers(merged, currentPeers);
-        merged.forEach(peerRepository::save);
+    public List<Peer> getForPush() {
+        List<Peer> peers = peerRepository.getByPeerType(PeerType.DYNAMIC);
+        Collections.shuffle(peers);
+        return getRandom(peers, Math.round(alpha * dynamicViewSize));
     }
 
+    /**
+     * Computes the new dynamic view as specified in Brahms
+     */
+    @Transactional
     @Override
-    public Set<Peer> getPeers() {
-        return peerRepository.findAll().stream().collect(Collectors.toSet());
+    public void updateView() {
+        List<Peer> pushed = peerRepository.deleteByPeerType(PeerType.PUSHED);
+        List<Peer> pulled = peerRepository.deleteByPeerType(PeerType.PULLED);
+        double pushedLimit = alpha * dynamicViewSize;
+        if (pushed.size() <= pushedLimit && pushed.size() > 0 && pulled.size() > 0) {
+            pushed = getRandom(pushed, Math.round(pushedLimit));
+            pulled = getRandom(pulled, Math.round(beta * dynamicViewSize));
+            List<Peer> sampled = getRandom(peerRepository.getByPeerType(PeerType.SAMPLED), Math.round(gamma * dynamicViewSize));
+            List<Peer> newDynamicView = Stream.of(pushed, pulled, sampled)
+                    .flatMap(List::stream)
+                    .peek(peer -> peer.setPeerType(PeerType.DYNAMIC))
+                    .collect(Collectors.toList());
+            peerRepository.deleteByPeerType(PeerType.DYNAMIC);
+            peerRepository.save(newDynamicView);
+        }
+        sampler.updateSample(Stream.concat(pushed.stream(), pulled.stream()).collect(Collectors.toList()));
     }
 
-    /**
-     * Merge incoming with current view
-     * from the current set just the peers with age lower than max age
-     * are considered
-     * @return Merge peer set
-     */
-    private Set<Peer> mergePeers(Set<Peer> current, Set<Peer> incoming) {
-        return Stream.concat(current.stream(), incoming.stream())
-                .filter(peer -> peer.getAge() < maxPeerAge)
-                .sorted((p1, p2) -> p1.getAge().compareTo(p2.getAge()))
-                .limit(viewSize)
-                .collect(Collectors.toSet());
-    }
-
-    /**
-     * Remove old peers from the current view to not overflow it
-     *
-     * @param merged  Merged incoming and current view, truncated at viewSize
-     * @param current Current network view
-     */
-    private void removeExtraPeers(Set<Peer> merged, Set<Peer> current) {
-        current.forEach(peer -> {
-            if (!merged.contains(peer)) {
-                peerRepository.delete(peer);
-            }
-        });
-    }
-
-    /**
-     * Refresh the age of the peers that are currently in the local partial view
-     * and also in the incoming partial view
-     *
-     * @param incoming Incoming network view
-     * @param current  Current network view
-     */
-    private void resetPeerAge(Set<Peer> current, Set<Peer> incoming) {
-        current.forEach(peer -> {
-            if (incoming.contains(peer)) {
-                peer.resetAge();
-            }
-        });
+    private List<Peer> getRandom(List<Peer> peers, long n) {
+        Collections.shuffle(peers);
+        return peers.stream().limit(n).collect(Collectors.toList());
     }
 }

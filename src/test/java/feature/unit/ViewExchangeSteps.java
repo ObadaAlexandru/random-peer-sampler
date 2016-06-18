@@ -1,4 +1,4 @@
-package de.tum.unit;
+package feature.unit;
 
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
@@ -8,7 +8,7 @@ import cucumber.api.java.en.When;
 import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.service.CommunicationService;
 import de.tum.config.HostKeyReader;
-import de.tum.sampling.service.ViewExchangeScheduler;
+import de.tum.sampling.service.PushScheduler;
 import de.tum.sampling.service.ViewManager;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -18,6 +18,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.PublicKey;
 import java.util.Collections;
+
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Alexandru Obada on 31/05/16.
@@ -30,17 +32,14 @@ public class ViewExchangeSteps {
     @Mock
     private CommunicationService communicationService;
     @Mock
-    private ViewManager viewManager;
-    @Mock
     private HostKeyReader hostKeyReader;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         PublicKey mockPrivateKey = Mockito.mock(PublicKey.class);
-        Mockito.when(mockPrivateKey.getEncoded()).thenReturn(new byte[] {0, 1, 2, 3, 4 ,5});
-        Mockito.when(hostKeyReader.getPublicKey()).thenReturn(mockPrivateKey);
-        Mockito.when(viewManager.getPeers()).thenReturn(Collections.emptySet());
+        when(mockPrivateKey.getEncoded()).thenReturn(new byte[] {0, 1, 2, 3, 4 ,5});
+        when(hostKeyReader.getPublicKey()).thenReturn(mockPrivateKey);
     }
 
     @Given("^that the rps port is \"([^\"]*)\"$")
@@ -60,12 +59,11 @@ public class ViewExchangeSteps {
 
     @When("^the view exchange scheduler starts$")
     public void theViewExchangeSchedulerStarts() {
-        ViewExchangeScheduler.builder()
+        PushScheduler.builder()
                 .exchangeRate(roundDuration)
                 .rpsHost(rpsHost)
                 .rpsPort(rpsPort)
                 .communicationService(communicationService)
-                .viewManager(viewManager)
                 .hostKeyReader(hostKeyReader).build();
     }
 

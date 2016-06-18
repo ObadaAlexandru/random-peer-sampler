@@ -1,6 +1,13 @@
 rps:
   server:
     port: 9090
+  sampling:
+    view:
+      dynamic_size: 35
+      sampled_size: 35
+      alpha: 0.45
+      beta: 0.45
+      gamma: 0.45
 
 spring:
   datasource:

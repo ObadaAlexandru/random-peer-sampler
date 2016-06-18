@@ -1,6 +1,7 @@
 package de.tum.sampling.repository;
 
 import de.tum.sampling.entity.Peer;
+import de.tum.sampling.entity.PeerType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -10,4 +11,6 @@ import java.util.List;
  */
 public interface PeerRepository extends JpaRepository<Peer, String> {
     List<Peer> findAll();
+    List<Peer> getByPeerType(PeerType peerType);
+    List<Peer> deleteByPeerType(PeerType peerType);
 }

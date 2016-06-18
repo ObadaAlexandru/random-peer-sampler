@@ -1,4 +1,4 @@
-package de.tum.unit;
+package feature.unit;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -29,7 +29,7 @@ import de.tum.communication.protocol.messages.NseQueryMessage;
 import de.tum.communication.protocol.messages.RpsPeerMessage;
 import de.tum.communication.protocol.messages.RpsQueryMessage;
 import de.tum.communication.protocol.messages.RpsViewMessage;
-import de.tum.component.TestPeer;
+import feature.common.TestPeer;
 
 /**
  * Created by Alexandru Obada on 11/05/16.

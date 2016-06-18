@@ -1,4 +1,4 @@
-package de.tum.unit;
+package feature.unit;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.io.BaseEncoding;
