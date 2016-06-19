@@ -23,12 +23,12 @@ public class ComConfiguration {
     @Bean
     @Module(Module.Service.GOSSIP)
     public Client gossipClient(IniConfig config) {
-        return new ClientImpl(config.getGossipHost().getHostName(), config.getGossipPort());
+        return new ClientImpl();
     }
 
     @Bean
     @Module(Module.Service.NSE)
     public Client nseClient(IniConfig config) {
-        return new ClientImpl(config.getNseHost().getHostName(), config.getNsePort());
+        return new ClientImpl();
     }
 }

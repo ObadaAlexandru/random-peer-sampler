@@ -14,25 +14,28 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PreDestroy;
+import java.net.InetAddress;
+import java.util.Optional;
 
 /**
  * Created by Nicolas Frinker on 19/05/16.
  */
 @Slf4j
 public class ClientImpl implements Client {
-    private final String host;
-    private final int port;
-    private ReceiveMessageChannelHandler handler = new ReceiveMessageChannelHandler();
-    private final EventLoopGroup workerGroup = new NioEventLoopGroup();
-    private ChannelFuture chfuture;
+    private final ReceiveMessageChannelHandler handler;
+    private final EventLoopGroup workerGroup;
 
-    public ClientImpl(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public ClientImpl() {
+        handler = new ReceiveMessageChannelHandler();
+        workerGroup = new NioEventLoopGroup();
+    }
 
+    //    @Override
+    public Optional<ChannelFuture> connect(@NonNull InetAddress host, @NonNull Integer port) {
         try {
             Bootstrap b = new Bootstrap();
             b.group(workerGroup);
@@ -48,24 +51,16 @@ public class ClientImpl implements Client {
             });
 
             // Start the client.
-            chfuture = b.connect(this.host, this.port).sync();
+            return Optional.of(b.connect(host, port).sync());
         } catch (Exception e) {
             log.error("Client connection failed!");
             log.error(e.getMessage());
         }
+        return Optional.empty();
     }
 
     @PreDestroy
     public void shutdown() {
-        chfuture.channel().close();
-
-        // Wait until the connection is closed.
-        try {
-            chfuture.channel().closeFuture().sync();
-        } catch (InterruptedException e) {
-            log.error("Client shutdown failed!");
-            log.error(e.getMessage());
-        }
         workerGroup.shutdownGracefully();
     }
 
@@ -76,8 +71,16 @@ public class ClientImpl implements Client {
 
     @Override
     public Void send(Message data) {
-        chfuture.channel().writeAndFlush(data);
-        log.info("Sent message of type {}", data.getType());
+//        if(chfuture.isDone()) {
+//            chfuture = connect().get();
+//        }
+//        chfuture.channel().writeAndFlush(data);
+//        log.info("Sent message of type {}", data.getType());
+        return null;
+    }
+
+    @Override
+    public Void send(Message data, InetAddress peerAddress, Integer port) {
         return null;
     }
 }

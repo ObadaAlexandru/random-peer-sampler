@@ -7,6 +7,7 @@ import de.tum.communication.service.network.MessageDecoder;
 import de.tum.communication.service.network.MessageEncoder;
 import de.tum.communication.service.network.ReceiveMessageChannelHandler;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -26,7 +27,6 @@ class RpsChannelInitializer extends ChannelInitializer<Channel> implements Recei
     protected void initChannel(Channel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast(new IdleStateHandler(15, 15, 15))
-                .addLast()
                 .addLast(new MessageDecoder())
                 .addLast(new MessageEncoder())
                 .addLast(rpsChannelHandler);

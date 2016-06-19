@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -55,6 +56,17 @@ public class CommunicationServiceImpl implements CommunicationService {
         log.info("Send message type {}", message.getType());
         return communicationExecutor.submit(() -> {
             sender.send(message);
+            return null;
+        });
+    }
+
+    @Override
+    public Future<Void> send(@NonNull Message message, InetAddress peerAddress, Integer port) {
+        Sender<Message, Void> sender = Optional.ofNullable(senders.get(message.getType()))
+                .orElseThrow(() -> new UnknownMessageTypeException(String.format("Message type <%s> not supported", message.getType())));
+        log.info("Send message type {}", message.getType());
+        return communicationExecutor.submit(() -> {
+            sender.send(message, peerAddress, port);
             return null;
         });
     }
