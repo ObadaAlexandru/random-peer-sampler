@@ -2,40 +2,51 @@ package de.tum.communication.service.clients;
 
 import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.service.Client;
+import de.tum.communication.service.Module;
 import de.tum.communication.service.Receiver;
 import de.tum.communication.service.network.MessageDecoder;
 import de.tum.communication.service.network.MessageEncoder;
 import de.tum.communication.service.network.ReceiveMessageChannelHandler;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.annotation.PreDestroy;
-import java.net.InetAddress;
+import java.net.SocketAddress;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static de.tum.communication.service.Module.Service.BASE;
 
 /**
  * Created by Nicolas Frinker on 19/05/16.
  */
 @Slf4j
+@Component
+@Module(BASE)
 public class ClientImpl implements Client {
     private final ReceiveMessageChannelHandler handler;
     private final EventLoopGroup workerGroup;
+    private Map<SocketAddress, Channel> persistentConnections;
 
     public ClientImpl() {
+        persistentConnections = new ConcurrentHashMap<>();
         handler = new ReceiveMessageChannelHandler();
         workerGroup = new NioEventLoopGroup();
     }
 
-    //    @Override
-    public Optional<ChannelFuture> connect(@NonNull InetAddress host, @NonNull Integer port) {
+    private Optional<ChannelFuture> connect(SocketAddress address) {
         try {
             Bootstrap b = new Bootstrap();
             b.group(workerGroup);
@@ -50,8 +61,7 @@ public class ClientImpl implements Client {
                 }
             });
 
-            // Start the client.
-            return Optional.of(b.connect(host, port).sync());
+            return Optional.of(b.connect(address).sync());
         } catch (Exception e) {
             log.error("Client connection failed!");
             log.error(e.getMessage());
@@ -71,16 +81,43 @@ public class ClientImpl implements Client {
 
     @Override
     public Void send(Message data) {
-//        if(chfuture.isDone()) {
-//            chfuture = connect().get();
-//        }
-//        chfuture.channel().writeAndFlush(data);
-//        log.info("Sent message of type {}", data.getType());
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
-    public Void send(Message data, InetAddress peerAddress, Integer port) {
+    public void sendPersistent(Message data, SocketAddress address) {
+        Channel channel = persistentConnections.get(address);
+        if(channel == null || !channel.isOpen()) {
+            Optional<ChannelFuture> channelFutureOptional = connect(address);
+            if(channelFutureOptional.isPresent()) {
+                ChannelFuture channelFuture = channelFutureOptional.get();
+                channelFuture.addListener(new PersistentConnectionListener());
+                persistentConnections.put(address, channelFuture.channel());
+            }
+            return;
+        }
+        channel.writeAndFlush(data);
+    }
+
+    @Override
+    public Void send(Message data, SocketAddress address) {
+        Optional<ChannelFuture> channelFutureOptional = connect(address);
+        if(channelFutureOptional.isPresent()) {
+            ChannelFuture channelFuture = channelFutureOptional.get();
+            channelFuture.addListener(ChannelFutureListener.CLOSE);
+            channelFuture.channel().writeAndFlush(data);
+        }
         return null;
+    }
+
+    private class PersistentConnectionListener implements ChannelFutureListener {
+        @Override
+        public void operationComplete(ChannelFuture future) throws Exception {
+            if(future.isDone()) {
+                if(future.isCancelled() || !future.isSuccess()) {
+                    persistentConnections.remove(future.channel().remoteAddress());
+                }
+            }
+        }
     }
 }

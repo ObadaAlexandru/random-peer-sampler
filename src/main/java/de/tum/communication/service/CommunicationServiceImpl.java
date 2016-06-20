@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -33,6 +35,7 @@ public class CommunicationServiceImpl implements CommunicationService {
     @Autowired
     public CommunicationServiceImpl(@Module(Module.Service.GOSSIP) Client gossipClient,
                                     @Module(Module.Service.NSE) Client nseClient,
+                                    @Module(Module.Service.RPS) Client rpsClient,
                                     Server rpsServer) {
         nseClient.setReceiver(this);
         gossipClient.setReceiver(this);
@@ -61,12 +64,12 @@ public class CommunicationServiceImpl implements CommunicationService {
     }
 
     @Override
-    public Future<Void> send(@NonNull Message message, InetAddress peerAddress, Integer port) {
+    public Future<Void> send(Message message, SocketAddress address) {
         Sender<Message, Void> sender = Optional.ofNullable(senders.get(message.getType()))
                 .orElseThrow(() -> new UnknownMessageTypeException(String.format("Message type <%s> not supported", message.getType())));
         log.info("Send message type {}", message.getType());
         return communicationExecutor.submit(() -> {
-            sender.send(message, peerAddress, port);
+            sender.send(message, address);
             return null;
         });
     }

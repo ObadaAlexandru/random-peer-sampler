@@ -21,14 +21,7 @@ public class ComConfiguration {
     }
 
     @Bean
-    @Module(Module.Service.GOSSIP)
-    public Client gossipClient(IniConfig config) {
-        return new ClientImpl();
-    }
-
-    @Bean
-    @Module(Module.Service.NSE)
-    public Client nseClient(IniConfig config) {
+    public Client nseClient() {
         return new ClientImpl();
     }
 }

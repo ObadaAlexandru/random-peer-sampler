@@ -1,10 +1,8 @@
 package de.tum.communication.service;
 
 import de.tum.communication.protocol.messages.Message;
-import io.netty.channel.ChannelFuture;
-import lombok.NonNull;
 
-import java.net.InetAddress;
+import java.net.SocketAddress;
 
 
 /**
@@ -12,9 +10,8 @@ import java.net.InetAddress;
  */
 
 /**
- *  Communication interface to other modules
+ * Communication interface to other modules
  */
 public interface Client extends Sender<Message, Void>, ReceiverAware<Message> {
-//    ChannelFuture connect(@NonNull InetAddress host, @NonNull Integer port);
-//    ChannelFuture connect();
+    void sendPersistent(Message data, SocketAddress address);
 }

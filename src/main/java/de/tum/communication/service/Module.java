@@ -26,6 +26,7 @@ public @interface Module {
     enum Service {
         GOSSIP,
         NSE,
-        RPS
+        RPS,
+        BASE
     }
 }

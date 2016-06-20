@@ -95,14 +95,14 @@ public class ClientSteps {
     @Given("^a nse client$")
     public void aNseClient() {
         startServer();
-        testclient = new ClientImpl("localhost", serverport);
+//        testclient = new ClientImpl("localhost", serverport);
         testclient.setReceiver(receiverMock);
     }
     
     @Given("^a gossip client$")
     public void aGossipClient() {
         startServer();
-        testclient = new ClientImpl("localhost", serverport);
+//        testclient = new ClientImpl("localhost", serverport);
         testclient.setReceiver(receiverMock);
     }
     
