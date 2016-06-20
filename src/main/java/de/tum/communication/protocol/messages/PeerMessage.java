@@ -1,12 +1,13 @@
 package de.tum.communication.protocol.messages;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.primitives.Bytes;
+
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.SerializablePeer;
 import lombok.NonNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Alexandru Obada on 14/06/16.
@@ -28,5 +29,9 @@ abstract class PeerMessage extends Message {
 
     private static short computeMessageSize(SerializablePeer peer) {
         return (short) (WORD_LENGTH + peer.getSize());
+    }
+
+    public SerializablePeer getPeer() {
+        return this.peer;
     }
 }

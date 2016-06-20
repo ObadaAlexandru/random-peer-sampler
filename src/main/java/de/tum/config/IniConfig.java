@@ -1,13 +1,5 @@
 package de.tum.config;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.ini4j.Ini;
-import org.ini4j.Wini;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.stereotype.Component;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -16,6 +8,15 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
+
+import org.ini4j.Ini;
+import org.ini4j.Wini;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.stereotype.Component;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -68,6 +69,18 @@ public class IniConfig {
 
     public Integer getRoundDuration() {
         return Optional.ofNullable(ini.get("RPS", "round_duration")).map(Integer::parseInt).orElse(5000);
+    }
+
+    public Integer getSamplerNum() {
+        return Optional.ofNullable(ini.get("RPS", "sampler_num")).map(Integer::parseInt).orElse(100);
+    }
+
+    public Integer getValidationRate() {
+        return Optional.ofNullable(ini.get("RPS", "validation_rate")).map(Integer::parseInt).orElse(300000);
+    }
+
+    public Integer getSamplerTimeout() {
+        return Optional.ofNullable(ini.get("RPS", "sampler_timeout")).map(Integer::parseInt).orElse(30000);
     }
 
     private Integer getPort(String section) {

@@ -22,7 +22,8 @@ public enum MessageType {
     RPS_QUERY((short) 540),
     RPS_PEER((short) 541),
     RPS_VIEW((short) 542),
-    RPS_PUSH((short) 543);
+    RPS_PUSH((short) 543),
+    RPS_PING((short) 544);
 
     private short value;
 
@@ -46,6 +47,8 @@ public enum MessageType {
                 return RPS_VIEW;
             case 543:
                 return RPS_PUSH;
+            case 544:
+                return RPS_PING;
             default:
                 throw new IllegalArgumentException("Unknown message type " + type);
         }
