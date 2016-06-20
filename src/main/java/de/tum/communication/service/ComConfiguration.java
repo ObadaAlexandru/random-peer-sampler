@@ -19,9 +19,4 @@ public class ComConfiguration {
         final int LENGTH_FIELD_LENGTH = 2;
         return new LengthFieldBasedFrameDecoder(MAX_PACKET_SIZE, 0, LENGTH_FIELD_LENGTH, -2, 0);
     }
-
-    @Bean
-    public Client nseClient() {
-        return new ClientImpl();
-    }
 }

@@ -14,6 +14,9 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockingDetails;
+
 /**
  * Created by Alexandru Obada on 12/05/16.
  */
@@ -24,6 +27,7 @@ public class CommunicationServiceSteps {
 
     private Client gossipMock;
     private Client nseMock;
+    private Client rpsClient;
 
     private Server rpsServerMock;
     private MessageType messageType;
@@ -32,18 +36,19 @@ public class CommunicationServiceSteps {
 
     @Before
     public void setUp() {
-        gossipMock = Mockito.mock(Client.class);
-        nseMock = Mockito.mock(Client.class);
-        rpsServerMock = Mockito.mock(Server.class);
-        communicationService = new CommunicationServiceImpl(gossipMock, nseMock, rpsServerMock);
+        gossipMock = mock(Client.class);
+        nseMock = mock(Client.class);
+        rpsServerMock = mock(Server.class);
+        rpsClient = mock(Client.class);
+        communicationService = new CommunicationServiceImpl(gossipMock, nseMock, rpsClient, rpsServerMock);
         MockitoAnnotations.initMocks(this);
     }
 
     @SuppressWarnings("unchecked")
     @Given("^that the communication service has a receiver of \"([^\"]*)\"$")
     public void thatTheCommunicationServiceHasAReceiverOf(MessageType receivedMessageType) {
-        receiverMock = (Receiver<Message>) Mockito.mock(Receiver.class);
-        messageMock  = CustomMocks.getMessage(receivedMessageType);
+        receiverMock = (Receiver<Message>) mock(Receiver.class);
+        messageMock = CustomMocks.getMessage(receivedMessageType);
         Mockito.when(receiverMock.receive(Mockito.any())).thenReturn(Optional.empty());
         communicationService.addReceiver(receiverMock, receivedMessageType);
     }
@@ -66,10 +71,10 @@ public class CommunicationServiceSteps {
 
     @Then("^it is forwarded to the client \"([^\"]*)\"$")
     public void itIsForwardedToTheClient(Module.Service serviceType) {
-        if(Module.Service.NSE.equals(serviceType)) {
+        if (Module.Service.NSE.equals(serviceType)) {
             Mockito.verify(nseMock, Mockito.timeout(1000)).send(messageMock);
             Mockito.verify(nseMock, Mockito.times(1)).send(messageMock);
-        } else if(Module.Service.GOSSIP.equals(serviceType)) {
+        } else if (Module.Service.GOSSIP.equals(serviceType)) {
             Mockito.verify(gossipMock, Mockito.timeout(1000)).send(messageMock);
             Mockito.verify(gossipMock, Mockito.times(1)).send(messageMock);
         } else {

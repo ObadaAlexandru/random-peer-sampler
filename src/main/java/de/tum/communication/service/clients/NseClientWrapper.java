@@ -4,6 +4,7 @@ import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.service.Client;
 import de.tum.communication.service.Module;
 import de.tum.communication.service.Receiver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -20,6 +21,7 @@ public class NseClientWrapper implements Client {
     private Client client;
     private SocketAddress nseAddress;
 
+    @Autowired
     public NseClientWrapper(@Module(BASE) Client client,
                             @Value("#{iniConfig.getNseHost()}") InetAddress address,
                             @Value("#{iniConfig.getNsePort()}") Integer port) {

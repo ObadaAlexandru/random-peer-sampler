@@ -93,8 +93,10 @@ public class ClientImpl implements Client {
                 ChannelFuture channelFuture = channelFutureOptional.get();
                 channelFuture.addListener(new PersistentConnectionListener());
                 persistentConnections.put(address, channelFuture.channel());
+                channel = channelFuture.channel();
+            } else {
+                return;
             }
-            return;
         }
         channel.writeAndFlush(data);
     }
@@ -104,7 +106,7 @@ public class ClientImpl implements Client {
         Optional<ChannelFuture> channelFutureOptional = connect(address);
         if(channelFutureOptional.isPresent()) {
             ChannelFuture channelFuture = channelFutureOptional.get();
-            channelFuture.addListener(ChannelFutureListener.CLOSE);
+            channelFuture.addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
             channelFuture.channel().writeAndFlush(data);
         }
         return null;
