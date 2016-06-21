@@ -40,5 +40,12 @@
                 <include>*.jar</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/docs</directory>
+            <outputDirectory>/docs</outputDirectory>
+            <includes>
+                <include>**</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>
