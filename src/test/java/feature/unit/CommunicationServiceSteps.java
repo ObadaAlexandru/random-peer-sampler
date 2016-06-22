@@ -6,7 +6,12 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.service.*;
+import de.tum.communication.service.Client;
+import de.tum.communication.service.CommunicationService;
+import de.tum.communication.service.CommunicationServiceImpl;
+import de.tum.communication.service.Module;
+import de.tum.communication.service.Receiver;
+import de.tum.communication.service.Server;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -15,7 +20,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockingDetails;
 
 /**
  * Created by Alexandru Obada on 12/05/16.

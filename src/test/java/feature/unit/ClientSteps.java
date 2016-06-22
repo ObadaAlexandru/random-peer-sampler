@@ -4,7 +4,11 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import de.tum.communication.protocol.messages.*;
+import de.tum.communication.protocol.messages.GossipNotificationMessage;
+import de.tum.communication.protocol.messages.GossipNotifyMessage;
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.messages.NseEstimateMessage;
+import de.tum.communication.protocol.messages.NseQueryMessage;
 import de.tum.communication.service.Client;
 import de.tum.communication.service.Receiver;
 import de.tum.communication.service.clients.ClientImpl;
@@ -33,7 +37,6 @@ import java.net.UnknownHostException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**

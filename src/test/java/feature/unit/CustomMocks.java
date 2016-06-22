@@ -4,8 +4,8 @@ import com.google.common.io.BaseEncoding;
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.SerializablePeer;
 import de.tum.communication.protocol.messages.Message;
-import feature.common.TestPeer;
 import de.tum.sampling.entity.Peer;
+import feature.common.TestPeer;
 import org.mockito.Mockito;
 
 import java.net.InetAddress;

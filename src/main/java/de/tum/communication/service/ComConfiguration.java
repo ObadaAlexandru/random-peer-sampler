@@ -1,7 +1,5 @@
 package de.tum.communication.service;
 
-import de.tum.communication.service.clients.ClientImpl;
-import de.tum.config.IniConfig;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.springframework.context.annotation.Bean;

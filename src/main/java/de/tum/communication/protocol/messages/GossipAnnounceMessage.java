@@ -1,7 +1,6 @@
 package de.tum.communication.protocol.messages;
 
 import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
 import com.google.common.primitives.Shorts;
 import de.tum.communication.protocol.ByteSerializable;
 import de.tum.communication.protocol.MessageType;
