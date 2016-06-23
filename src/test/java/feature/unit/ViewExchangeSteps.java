@@ -9,7 +9,6 @@ import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.service.CommunicationService;
 import de.tum.config.HostKeyReader;
 import de.tum.sampling.service.PushScheduler;
-import de.tum.sampling.service.ViewManager;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -17,7 +16,6 @@ import org.mockito.MockitoAnnotations;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.PublicKey;
-import java.util.Collections;
 
 import static org.mockito.Mockito.when;
 

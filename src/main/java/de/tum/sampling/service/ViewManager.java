@@ -7,7 +7,6 @@ package de.tum.sampling.service;
 import de.tum.sampling.entity.Peer;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  *  Manages the network view

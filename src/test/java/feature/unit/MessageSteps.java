@@ -1,17 +1,8 @@
 package feature.unit;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import java.net.UnknownHostException;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.mockito.Mockito;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Bytes;
-
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -30,6 +21,13 @@ import de.tum.communication.protocol.messages.RpsPeerMessage;
 import de.tum.communication.protocol.messages.RpsQueryMessage;
 import de.tum.communication.protocol.messages.RpsViewMessage;
 import feature.common.TestPeer;
+import org.mockito.Mockito;
+
+import java.net.UnknownHostException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * Created by Alexandru Obada on 11/05/16.

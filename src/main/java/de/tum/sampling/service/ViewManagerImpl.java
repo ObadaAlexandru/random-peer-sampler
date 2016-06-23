@@ -4,7 +4,6 @@ import de.tum.sampling.entity.Peer;
 import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.repository.PeerRepository;
 import lombok.Builder;
-import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

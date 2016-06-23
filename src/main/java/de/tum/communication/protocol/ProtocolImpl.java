@@ -1,18 +1,8 @@
 package de.tum.communication.protocol;
 
-import java.net.InetAddress;
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Shorts;
-
 import de.tum.common.exceptions.PeerDeserialisationException;
 import de.tum.communication.protocol.messages.GossipNotificationMessage;
 import de.tum.communication.protocol.messages.GossipNotifyMessage;
@@ -22,6 +12,14 @@ import de.tum.communication.protocol.messages.NseQueryMessage;
 import de.tum.communication.protocol.messages.RpsQueryMessage;
 import de.tum.communication.protocol.messages.RpsViewMessage;
 import de.tum.sampling.entity.Peer;
+import org.springframework.stereotype.Component;
+
+import java.net.InetAddress;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Alexandru Obada on 12/05/16.

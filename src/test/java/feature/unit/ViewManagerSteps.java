@@ -22,11 +22,16 @@ import java.security.PublicKey;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.tum.sampling.entity.PeerType.*;
+import static com.google.common.truth.Truth.assertThat;
+import static de.tum.sampling.entity.PeerType.DYNAMIC;
+import static de.tum.sampling.entity.PeerType.PULLED;
+import static de.tum.sampling.entity.PeerType.PUSHED;
+import static de.tum.sampling.entity.PeerType.SAMPLED;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.*;
-import static com.google.common.truth.Truth.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Alexandru Obada on 13/06/16.

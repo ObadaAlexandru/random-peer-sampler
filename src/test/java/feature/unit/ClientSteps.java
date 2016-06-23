@@ -4,10 +4,16 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import de.tum.communication.protocol.messages.*;
+import de.tum.communication.protocol.messages.GossipNotificationMessage;
+import de.tum.communication.protocol.messages.GossipNotifyMessage;
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.messages.NseEstimateMessage;
+import de.tum.communication.protocol.messages.NseQueryMessage;
 import de.tum.communication.service.Client;
 import de.tum.communication.service.Receiver;
 import de.tum.communication.service.clients.ClientImpl;
+import de.tum.communication.service.clients.GossipClientWrapper;
+import de.tum.communication.service.clients.NseClientWrapper;
 import de.tum.communication.service.network.MessageDecoder;
 import de.tum.communication.service.network.MessageEncoder;
 import io.netty.bootstrap.ServerBootstrap;
@@ -25,7 +31,13 @@ import org.junit.rules.ErrorCollector;
 import org.mockito.Mockito;
 import org.springframework.util.SocketUtils;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by Nicolas Frinker on 19/05/16.
@@ -93,16 +105,16 @@ public class ClientSteps {
     }
 
     @Given("^a nse client$")
-    public void aNseClient() {
+    public void aNseClient() throws UnknownHostException {
         startServer();
-        testclient = new ClientImpl("localhost", serverport);
+        testclient = new NseClientWrapper(new ClientImpl(), InetAddress.getByName("localhost"), serverport);
         testclient.setReceiver(receiverMock);
     }
     
     @Given("^a gossip client$")
-    public void aGossipClient() {
+    public void aGossipClient() throws UnknownHostException {
         startServer();
-        testclient = new ClientImpl("localhost", serverport);
+        testclient = new GossipClientWrapper(new ClientImpl(), InetAddress.getByName("localhost"), serverport);
         testclient.setReceiver(receiverMock);
     }
     
@@ -118,14 +130,12 @@ public class ClientSteps {
 
     @Then("^a nse estimation is received$")
     public void aValidNseEstimationIsReceived() {
-        Mockito.verify(receiverMock, Mockito.timeout(1000)).receive(Mockito.any());
-        Mockito.verify(receiverMock, Mockito.times(1)).receive(Mockito.any());
+        verify(receiverMock, timeout(3000)).receive(any());
     }
     
     @Then("^some gossip notification is received$")
     public void someGossipNotificationsAreReceived() {
-        Mockito.verify(receiverMock, Mockito.timeout(1000)).receive(Mockito.any());
-        Mockito.verify(receiverMock, Mockito.times(1)).receive(Mockito.any());
+        verify(receiverMock, timeout(3000)).receive(any());
     }
     
     @After
