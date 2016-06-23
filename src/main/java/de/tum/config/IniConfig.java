@@ -1,5 +1,13 @@
 package de.tum.config;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.ini4j.Ini;
+import org.ini4j.Wini;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -8,15 +16,6 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
-
-import org.ini4j.Ini;
-import org.ini4j.Wini;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.stereotype.Component;
-
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
