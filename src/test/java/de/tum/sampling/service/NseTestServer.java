@@ -23,15 +23,6 @@ import static com.google.common.truth.Truth.assertThat;
 @Slf4j
 public class NseTestServer {
 
-    public static void main(String... args) throws IOException {
-
-        Message message = NseEstimateMessage.builder()
-                .estimatedPeerNumbers(15)
-                .estimatedStandardDeviation(2).build();
-        NseTestServer server = new NseTestServer(6002, Bytes.toArray(message.getBytes()));
-        server.start();
-    }
-
     ExecutorService executorService;
     ServerSocketChannel serverSocketChannel;
     private volatile boolean stopped;
@@ -53,18 +44,19 @@ public class NseTestServer {
     public void start() throws IOException {
         serverSocketChannel.bind(new InetSocketAddress(port));
         stopped = false;
+        log.info("Test nse server started ...");
         while (!stopped) {
-            synchronized (this) {
-                SocketChannel channel = serverSocketChannel.accept();
-                log.debug("Connection received");
-                ConnectionHandler connectionHandler = new ConnectionHandler(channel);
-                executorService.submit(connectionHandler);
-            }
+            SocketChannel channel = serverSocketChannel.accept();
+            log.debug("Connection received");
+            ConnectionHandler connectionHandler = new ConnectionHandler(channel);
+            executorService.submit(connectionHandler);
         }
+        log.info("Test nse server stopping ... ");
     }
 
     public synchronized void stop() {
         stopped = true;
+        executorService.shutdown();
     }
 
     @AllArgsConstructor
