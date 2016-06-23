@@ -29,6 +29,7 @@
         <netty.version>4.0.36.Final</netty.version>
         <ini4j.version>0.5.4</ini4j.version>
         <bouncycastle.version>1.54</bouncycastle.version>
+        <snakeyaml.version>1.17</snakeyaml.version>
     </properties>
 
     <dependencies>
@@ -137,6 +138,11 @@
             <artifactId>commons-cli</artifactId>
             <version>${common.cli.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -156,21 +162,6 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptor>src/assembly/release-shippable-assembly.xml</descriptor>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>create-archive</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

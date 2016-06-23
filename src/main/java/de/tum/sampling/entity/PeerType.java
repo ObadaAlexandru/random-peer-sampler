@@ -7,5 +7,5 @@ public enum PeerType {
     PULLED,
     PUSHED,
     SAMPLED,
-    DYNAMIC;
+    DYNAMIC
 }

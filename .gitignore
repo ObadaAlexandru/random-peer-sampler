@@ -153,6 +153,6 @@ local.properties
 .recommenders/
 
 appdb:PEERS.*
-/config/config.ini
+/config/**
 
 *.pem

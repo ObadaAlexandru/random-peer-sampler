@@ -1,0 +1,8 @@
+peers:
+  - address: 192.168.1.125
+    port: 9090
+    key: |
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyKLEAsN77QNbqfjoEkDU
+          qNsjZsvZaxXphKdSYXqMkI6bI8gDbWzGG9UNrjDO9QYD54/etX/8rBnVyCOmqssL
+          zoej98fuP6zjGB6KJbilDpSjQGPTI4aSFsMbZgPLfNNaxZqzAalwP7Q1MtEA0ffg
+          MkVnKiPH

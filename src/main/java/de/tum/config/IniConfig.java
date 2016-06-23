@@ -18,10 +18,12 @@ import org.springframework.stereotype.Component;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 @Component
 @Slf4j
 public class IniConfig {
-    private final static String DEFAULT_CONFIG_PATH = "./config/config.ini";
+    private final static String DEFAULT_CONFIG_PATH = "config.ini";
     private Ini ini;
 
     @Autowired
@@ -30,7 +32,6 @@ public class IniConfig {
         List<String> configpaths = args.getOptionValues("c");
         if (configpaths != null && configpaths.size() > 0) {
             path = configpaths.get(0);
-            log.info("Loading config file: " + path);
         }
         this.load(path);
     }
@@ -39,6 +40,14 @@ public class IniConfig {
         ini = new Wini(new File(path));
     }
 
+    public String getBootstrapPath() {
+        String bootstrapPath = ini.get("RPS", "bootstrap_file");
+        if(null == bootstrapPath) {
+            return "config/bootstrap.yaml";
+        } else {
+            return bootstrapPath;
+        }
+    }
 
     public InetAddress getRPSHost() {
         return getHost("RPS");
