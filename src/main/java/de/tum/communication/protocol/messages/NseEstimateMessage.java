@@ -20,20 +20,20 @@ public class NseEstimateMessage extends Message {
 
     private static final short PAYLOAD_LENGTH = 8;
 
-    private int estimatedPeerNumbers;
+    private int estimatedPeerNumber;
     private int estimatedStandardDeviation;
 
     @Builder
     public NseEstimateMessage(@NonNull  Integer estimatedPeerNumbers, @NonNull Integer estimatedStandardDeviation) {
         super((short) (WORD_LENGTH + PAYLOAD_LENGTH), MessageType.NSE_ESTIMATE);
-        this.estimatedPeerNumbers = estimatedPeerNumbers;
+        this.estimatedPeerNumber = estimatedPeerNumbers;
         this.estimatedStandardDeviation = estimatedStandardDeviation;
     }
 
     @Override
     public List<Byte> getBytes() {
         byte[] headerBytes = getHeaderBytes();
-        byte[] estimatedPeerNumbersBytes = Ints.toByteArray(estimatedPeerNumbers);
+        byte[] estimatedPeerNumbersBytes = Ints.toByteArray(estimatedPeerNumber);
         byte[] estimatedStandardDeviationBytes = Ints.toByteArray(estimatedStandardDeviation);
         return Bytes.asList(Bytes.concat(headerBytes, estimatedPeerNumbersBytes, estimatedStandardDeviationBytes));
     }
