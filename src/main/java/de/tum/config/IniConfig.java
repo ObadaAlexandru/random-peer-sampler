@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 @Component
 @Slf4j
 public class IniConfig {
@@ -39,6 +41,14 @@ public class IniConfig {
         ini = new Wini(new File(path));
     }
 
+    public String getBootstrapPath() {
+        String bootstrapPath = ini.get("RPS", "bootstrap_file");
+        if(null == bootstrapPath) {
+            return "config/bootstrap.yaml";
+        } else {
+            return bootstrapPath;
+        }
+    }
 
     public InetAddress getRPSHost() {
         return getHost("RPS");

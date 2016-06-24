@@ -29,6 +29,7 @@
         <netty.version>4.0.36.Final</netty.version>
         <ini4j.version>0.5.4</ini4j.version>
         <bouncycastle.version>1.54</bouncycastle.version>
+        <snakeyaml.version>1.17</snakeyaml.version>
     </properties>
 
     <dependencies>
@@ -136,6 +137,11 @@
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
             <version>${common.cli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
         </dependency>
     </dependencies>
 
