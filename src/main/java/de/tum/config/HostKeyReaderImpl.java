@@ -1,7 +1,8 @@
 package de.tum.config;
 
-import de.tum.common.exceptions.HostkeyException;
 import de.tum.common.exceptions.InvalidConfigurationException;
+import de.tum.common.exceptions.HostkeyException;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMException;
@@ -36,11 +37,7 @@ public class HostKeyReaderImpl implements HostKeyReader {
     private PEMKeyPair pemKeyPair;
 
     @Autowired
-    public HostKeyReaderImpl(@Value("#{iniConfig.getHostKeyPath()}") String hostKeyPath) {
-        if(hostKeyPath == null) {
-            log.error("Host key path not specified");
-            throw new InvalidConfigurationException("Host key path not specified");
-        }
+    public HostKeyReaderImpl(@NonNull @Value("#{iniConfig.getHostKeyPath()}") String hostKeyPath) {
         Security.addProvider(new BouncyCastleProvider());
         keyConverter = new JcaPEMKeyConverter().setProvider("BC");
         this.hostKeyPath = hostKeyPath;

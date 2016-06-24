@@ -1,8 +1,10 @@
 package de.tum.config;
 
+import de.tum.common.exceptions.InvalidConfigurationException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Wini;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,12 +23,10 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class IniConfig {
-
     private Ini ini;
 
     @Autowired
-    public IniConfig(ApplicationArguments args, @Value("${rps.config.default_config_path}") String defaultConfigPath) throws IOException {
-        //FIXME Translate exception
+    public IniConfig(ApplicationArguments args, @Value("${rps.config.default_config_path}") String defaultConfigPath) {
         String path = defaultConfigPath;
         List<String> configpaths = args.getOptionValues("c");
         if (configpaths != null && configpaths.size() > 0) {
@@ -36,11 +36,26 @@ public class IniConfig {
         this.load(path);
     }
 
-    private void load(String path) throws IOException {
-        //FIXME Exception is too generic
-        ini = new Wini(new File(path));
+    private void load(String path) {
+        try {
+            ini = new Wini(new File(path));
+        } catch(InvalidFileFormatException e) {
+            log.error("Malformed configuration file {}", path);
+            throw new InvalidConfigurationException("Malformed configuration file");
+        } catch (IOException e) {
+            log.error("Failed loading configuration {}", path);
+            throw new InvalidConfigurationException("Failed loading configuration");
+        }
     }
 
+    public String getBootstrapPath() {
+        String bootstrapPath = ini.get("RPS", "bootstrap_file");
+        if (null == bootstrapPath) {
+            return "config/bootstrap.yaml";
+        } else {
+            return bootstrapPath;
+        }
+    }
 
     public InetAddress getRPSHost() {
         return getHost("RPS");
@@ -67,7 +82,11 @@ public class IniConfig {
     }
 
     public String getHostKeyPath() {
-        return ini.get("?", "HOSTKEY");
+        String hostkey = ini.get("?", "HOSTKEY");
+        if(null == hostkey) {
+            throw new InvalidConfigurationException("Hostkey path not specified");
+        }
+        return hostkey;
     }
 
     public Integer getRoundDuration() {
