@@ -22,11 +22,6 @@ public class CommonSteps {
     @Autowired
     private PeerRepository repository;
 
-    @BeforeClass
-    private void setUpConfiguration() {
-        System.setProperty("--c", "/tmp/blah/blah");
-    }
-
     @Before
     public void setUp() throws IOException {
         /**
