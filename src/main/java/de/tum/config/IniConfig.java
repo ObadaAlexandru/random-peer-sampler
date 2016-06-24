@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ini4j.Ini;
 import org.ini4j.Wini;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.stereotype.Component;
 
@@ -20,12 +21,13 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class IniConfig {
-    private final static String DEFAULT_CONFIG_PATH = "./config/config.ini";
+
     private Ini ini;
 
     @Autowired
-    public IniConfig(ApplicationArguments args) throws IOException {
-        String path = DEFAULT_CONFIG_PATH;
+    public IniConfig(ApplicationArguments args, @Value("${rps.config.default_config_path}") String defaultConfigPath) throws IOException {
+        //FIXME Translate exception
+        String path = defaultConfigPath;
         List<String> configpaths = args.getOptionValues("c");
         if (configpaths != null && configpaths.size() > 0) {
             path = configpaths.get(0);
@@ -35,6 +37,7 @@ public class IniConfig {
     }
 
     private void load(String path) throws IOException {
+        //FIXME Exception is too generic
         ini = new Wini(new File(path));
     }
 

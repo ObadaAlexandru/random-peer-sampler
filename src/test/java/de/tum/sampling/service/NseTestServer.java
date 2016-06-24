@@ -25,7 +25,8 @@ public class NseTestServer {
 
     private ExecutorService executorService;
     private ServerSocketChannel serverSocketChannel;
-    private volatile boolean stopped;
+    private volatile boolean running;
+    private volatile boolean stopped = false;
     @Getter
     private int port;
     private static final String NSE_QUERY_MESSAGE = "00 04 02 08";
@@ -34,7 +35,7 @@ public class NseTestServer {
     private AtomicInteger numReceivedMessages;
 
     public NseTestServer() {
-        executorService = Executors.newSingleThreadExecutor();
+        executorService = Executors.newFixedThreadPool(2);
         numReceivedMessages = new AtomicInteger();
     }
 
@@ -45,17 +46,25 @@ public class NseTestServer {
     }
 
     public void setPort(int port) {
+        if (isRunning()) {
+            throw new RuntimeException("Parameters changed while running");
+        }
         this.port = port;
-        restart();
     }
 
     public void setResponse(byte[] response) {
+        if (isRunning()) {
+            throw new RuntimeException("Parameters changed while running");
+        }
         this.response = response;
-        restart();
     }
 
     public Integer getNumReceivedQueries() {
         return numReceivedMessages.get();
+    }
+
+    public Integer resetQueryCounter() {
+        return numReceivedMessages.getAndSet(0);
     }
 
     /**
@@ -68,10 +77,11 @@ public class NseTestServer {
             e.printStackTrace();
             throw new RuntimeException("Failed to open server channel");
         }
-        Thread serverThread = new Thread(() -> {
+        executorService.submit(() -> {
             try {
                 serverSocketChannel.bind(new InetSocketAddress(port));
                 stopped = false;
+                running = true;
                 log.info("Test nse server started ...");
                 while (!stopped) {
                     SocketChannel channel = serverSocketChannel.accept();
@@ -81,21 +91,19 @@ public class NseTestServer {
                 }
                 serverSocketChannel.close();
                 log.info("Test nse server stopping ... ");
+                running = false;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
-        serverThread.start();
     }
 
     public synchronized void stop() {
         stopped = true;
-        executorService.shutdown();
     }
 
-    public synchronized void restart() {
-        stop();
-        start();
+    public synchronized boolean isRunning() {
+        return running;
     }
 
     @AllArgsConstructor
