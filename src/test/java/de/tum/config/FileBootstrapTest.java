@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -24,7 +25,11 @@ public class FileBootstrapTest {
         Truth.assertThat(peers).hasSize(2);
         peers.forEach(peer -> {
             try {
-                Truth.assertThat(peer.getAddress().equals(InetAddress.getByName("192.168.1.125")));
+                if(peer.getAddress() instanceof Inet6Address) {
+                    Truth.assertThat(peer.getAddress()).isEqualTo(InetAddress.getByName("::1"));
+                } else {
+                    Truth.assertThat(peer.getAddress()).isEqualTo(InetAddress.getByName("192.168.1.125"));
+                }
                 Truth.assertThat(peer.getPort()).isEqualTo(9090);
             } catch (UnknownHostException e) {
                 e.printStackTrace();

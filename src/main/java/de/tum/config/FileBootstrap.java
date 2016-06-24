@@ -1,5 +1,6 @@
 package de.tum.config;
 
+import com.google.common.net.InetAddresses;
 import de.tum.common.exceptions.BootstrapException;
 import de.tum.common.exceptions.HostkeyException;
 import de.tum.sampling.entity.HostkeyConverter;
@@ -66,6 +67,10 @@ public class FileBootstrap implements Bootstrap {
         Peer toPeer() {
             HostkeyConverter hostkeyConverter = new HostkeyConverter();
             try {
+                if(!InetAddresses.isInetAddress(address)) {
+                    log.error("Invalid address in bootstrap: {}", address);
+                    throw new BootstrapException("Invalid address in bootstrap");
+                }
                 return Peer.builder()
                         .hostkey(hostkeyConverter.convertToEntityAttribute(key.replaceAll("(\\r|\\n|\\t)", "")))
                         .port(port)
