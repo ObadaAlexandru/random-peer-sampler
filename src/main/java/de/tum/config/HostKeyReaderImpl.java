@@ -1,6 +1,5 @@
 package de.tum.config;
 
-import de.tum.common.exceptions.InvalidConfigurationException;
 import de.tum.common.exceptions.HostkeyException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;

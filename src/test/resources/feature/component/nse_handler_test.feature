@@ -24,7 +24,8 @@ Feature: Nse handler communicates with NSE module
       | networkEstimatedSize | standardDeviation |
       | 30                   | 5                 |
 
-  Scenario: NSE module unexpectedly goes down
+  Scenario: NSE module unexpectedly goes down, but later returns
+    It is expected that the handler will start receiving new nse estimations
     Given that the NSE server is running on the configured port
     And that it responds as follows:
       | networkEstimatedSize | standardDeviation |
