@@ -2,9 +2,6 @@ package de.tum.sampling.service;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.io.BaseEncoding;
-import com.google.common.primitives.Bytes;
-import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.protocol.messages.NseEstimateMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,43 +17,85 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.google.common.truth.Truth.assertThat;
 
+/**
+ * Emulates NSE module
+ */
 @Slf4j
 public class NseTestServer {
 
-    ExecutorService executorService;
-    ServerSocketChannel serverSocketChannel;
+    private ExecutorService executorService;
+    private ServerSocketChannel serverSocketChannel;
     private volatile boolean stopped;
-    int port;
-    private static final String NSE_QUERY_MESSAGE = "00 04 02 08";
-    private final byte[] response;
-
     @Getter
+    private int port;
+    private static final String NSE_QUERY_MESSAGE = "00 04 02 08";
+    private byte[] response;
+
     private AtomicInteger numReceivedMessages;
 
-    public NseTestServer(int port, byte[] response) throws IOException {
-        this.port = port;
-        this.response = response;
+    public NseTestServer() {
         executorService = Executors.newSingleThreadExecutor();
-        serverSocketChannel = ServerSocketChannel.open();
         numReceivedMessages = new AtomicInteger();
     }
 
-    public void start() throws IOException {
-        serverSocketChannel.bind(new InetSocketAddress(port));
-        stopped = false;
-        log.info("Test nse server started ...");
-        while (!stopped) {
-            SocketChannel channel = serverSocketChannel.accept();
-            log.debug("Connection received");
-            ConnectionHandler connectionHandler = new ConnectionHandler(channel);
-            executorService.submit(connectionHandler);
+    public NseTestServer(int port, byte[] response) throws IOException {
+        this();
+        this.port = port;
+        this.response = response;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+        restart();
+    }
+
+    public void setResponse(byte[] response) {
+        this.response = response;
+        restart();
+    }
+
+    public Integer getNumReceivedQueries() {
+        return numReceivedMessages.get();
+    }
+
+    /**
+     * doesn't block
+     */
+    public void start() {
+        try {
+            serverSocketChannel = ServerSocketChannel.open();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to open server channel");
         }
-        log.info("Test nse server stopping ... ");
+        Thread serverThread = new Thread(() -> {
+            try {
+                serverSocketChannel.bind(new InetSocketAddress(port));
+                stopped = false;
+                log.info("Test nse server started ...");
+                while (!stopped) {
+                    SocketChannel channel = serverSocketChannel.accept();
+                    log.debug("Connection received");
+                    ConnectionHandler connectionHandler = new ConnectionHandler(channel);
+                    executorService.submit(connectionHandler);
+                }
+                serverSocketChannel.close();
+                log.info("Test nse server stopping ... ");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        serverThread.start();
     }
 
     public synchronized void stop() {
         stopped = true;
         executorService.shutdown();
+    }
+
+    public synchronized void restart() {
+        stop();
+        start();
     }
 
     @AllArgsConstructor
@@ -87,11 +126,6 @@ public class NseTestServer {
 
                 // Increment the number of received messages
                 numReceivedMessages.incrementAndGet();
-
-                NseEstimateMessage.builder()
-                        .estimatedPeerNumbers(15)
-                        .estimatedStandardDeviation(2)
-                        .build();
 
                 channel.write(ByteBuffer.wrap(response));
             } catch (IOException e) {
