@@ -1,12 +1,11 @@
 package de.tum.sampling.service;
 
+import com.google.common.primitives.Bytes;
+import de.tum.sampling.entity.Peer;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
-
-import com.google.common.primitives.Bytes;
-
-import de.tum.sampling.entity.Peer;
 
 /**
  * Created by Nicolas Frinker on 20/06/16.

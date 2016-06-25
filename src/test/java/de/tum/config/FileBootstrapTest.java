@@ -15,7 +15,6 @@ import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FileBootstrapTest {
-
     @Test
     public void validExistingBootstrapFile() throws IOException {
         Bootstrap bootstrap = new FileBootstrap("src/test/resources/data/sample_bootstrap.yaml");

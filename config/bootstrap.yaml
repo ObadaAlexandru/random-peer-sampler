@@ -1,0 +1,21 @@
+peers:
+  - address: 192.168.1.125
+    port: 9090
+    key: |
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyKLEAsN77QNbqfjoEkDU
+          qNsjZsvZaxXphKdSYXqMkI6bI8gDbWzGG9UNrjDO9QYD54/etX/8rBnVyCOmqssL
+          zoej98fuP6zjGB6KJbilDpSjQGPTI4aSFsMbZgPLfNNaxZqzAalwP7Q1MtEA0ffg
+          MkVnKiPHSoZbYdTqI6v52+5bAalYnXAnPqbLvlAqDglkSd4Cc27BMGNX4QZ4DVFX
+          qDREZLmcX8FddlA6V3k9NWrasNe6I1DWZ0x7miTFO0AxVYqORaQ8pCnSkMHNHPcR
+          JdrwhkmX95M7BObk8UenqbE5KY99s8qtVCceZ7Og0oCuHzzYGb4VUCEkTAWlc521
+          jwIDAQAB
+  - address: 192.168.1.126
+    port: 8080
+    key: |
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyKLEAsN77QNbqfjoEkDU
+          qNsjZsvZaxXphKdSYXqMkI6bI8gDbWzGG9UNrjDO9QYD54/etX/8rBnVyCOmqssL
+          zoej98fuP6zjGB6KJbilDpSjQGPTI4aSFsMbZgPLfNNaxZqzAalwP7Q1MtEA0ffg
+          MkVnKiPHSoZbYdTqI6v52+5bAalYnXAnPqbLvlAqDglkSd4Cc27BMGNX4QZ4DVFX
+          qDREZLmcX8FddlA6V3k9NWrasNe6I1DWZ0x7miTFO0AxVYqORaQ8pCnSkMHNHPcR
+          JdrwhkmX95M7BObk8UenqbE5KY99s8qtVCceZ7Og0oCuHzzYGb4VUCEkTAWlc521
+          jwIDAQAB

@@ -1,5 +1,18 @@
 package de.tum.sampling.service;
 
+import de.tum.communication.protocol.MessageType;
+import de.tum.communication.protocol.SerializablePeer;
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.messages.RpsPingMessage;
+import de.tum.communication.service.CommunicationService;
+import de.tum.communication.service.Receiver;
+import de.tum.config.HostKeyReader;
+import de.tum.sampling.entity.Peer;
+import lombok.Builder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -11,20 +24,6 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import de.tum.communication.protocol.MessageType;
-import de.tum.communication.protocol.SerializablePeer;
-import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.protocol.messages.RpsPingMessage;
-import de.tum.communication.service.CommunicationService;
-import de.tum.communication.service.Receiver;
-import de.tum.config.HostKeyReader;
-import de.tum.sampling.entity.Peer;
-import lombok.Builder;
 
 /**
  * Created by Alexandru Obada on 13/06/16.

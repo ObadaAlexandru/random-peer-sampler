@@ -1,8 +1,8 @@
 package de.tum.sampling.service;
 
-import java.util.List;
-
 import de.tum.sampling.entity.Peer;
+
+import java.util.List;
 
 /**
  * Created by Alexandru Obada on 13/06/16.

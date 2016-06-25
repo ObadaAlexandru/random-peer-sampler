@@ -1,5 +1,16 @@
 package de.tum.config;
 
+import de.tum.common.exceptions.InvalidConfigurationException;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
+import org.ini4j.Wini;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -9,26 +20,14 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
 
-import org.ini4j.Ini;
-import org.ini4j.Wini;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.stereotype.Component;
-
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 @Component
 @Slf4j
 public class IniConfig {
-    private final static String DEFAULT_CONFIG_PATH = "./config/config.ini";
     private Ini ini;
 
     @Autowired
-    public IniConfig(ApplicationArguments args) throws IOException {
-        String path = DEFAULT_CONFIG_PATH;
+    public IniConfig(ApplicationArguments args, @Value("${rps.config.default_config_path}") String defaultConfigPath) {
+        String path = defaultConfigPath;
         List<String> configpaths = args.getOptionValues("c");
         if (configpaths != null && configpaths.size() > 0) {
             path = configpaths.get(0);
@@ -37,13 +36,21 @@ public class IniConfig {
         this.load(path);
     }
 
-    private void load(String path) throws IOException {
-        ini = new Wini(new File(path));
+    private void load(String path) {
+        try {
+            ini = new Wini(new File(path));
+        } catch(InvalidFileFormatException e) {
+            log.error("Malformed configuration file {}", path);
+            throw new InvalidConfigurationException("Malformed configuration file");
+        } catch (IOException e) {
+            log.error("Failed loading configuration {}", path);
+            throw new InvalidConfigurationException("Failed loading configuration");
+        }
     }
 
     public String getBootstrapPath() {
         String bootstrapPath = ini.get("RPS", "bootstrap_file");
-        if(null == bootstrapPath) {
+        if (null == bootstrapPath) {
             return "config/bootstrap.yaml";
         } else {
             return bootstrapPath;
@@ -75,7 +82,11 @@ public class IniConfig {
     }
 
     public String getHostKeyPath() {
-        return ini.get("?", "HOSTKEY");
+        String hostkey = ini.get("?", "HOSTKEY");
+        if(null == hostkey) {
+            throw new InvalidConfigurationException("Hostkey path not specified");
+        }
+        return hostkey;
     }
 
     public Integer getRoundDuration() {
