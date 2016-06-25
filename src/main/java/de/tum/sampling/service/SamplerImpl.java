@@ -1,36 +1,37 @@
 package de.tum.sampling.service;
 
+import java.net.InetAddress;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.SerializablePeer;
 import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.protocol.messages.RpsPingMessage;
 import de.tum.communication.service.CommunicationService;
 import de.tum.communication.service.Receiver;
+import de.tum.config.Bootstrap;
 import de.tum.config.HostKeyReader;
 import de.tum.sampling.entity.Peer;
 import lombok.Builder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.net.InetAddress;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Alexandru Obada on 13/06/16.
  */
 @Service
 public class SamplerImpl implements Sampler, Receiver<Message> {
-    private final Random prng = new Random();
     private final List<SamplingUnit> samplers = new ArrayList<>();
     private final CommunicationService communicationService;
     private final ScheduledExecutorService schedulingExecutor;
@@ -45,7 +46,8 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
             @Value("#{iniConfig.getSamplerTimeout()}") Integer timeout,
             HostKeyReader hostKeyReader,
             @Value("#{iniConfig.getRPSHost()}") InetAddress rpsHost,
-            @Value("#{iniConfig.getRPSPort()}") Integer rpsPort) throws NoSuchAlgorithmException {
+            @Value("#{iniConfig.getRPSPort()}") Integer rpsPort,
+            Bootstrap bootstrap) throws NoSuchAlgorithmException {
         this.communicationService = comservice;
         comservice.addReceiver(this, MessageType.RPS_PING);
         this.timeout = timeout;
@@ -55,6 +57,9 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
         for (int i = 0; i < samplerNum; i++) {
             samplers.add(new SamplingUnit());
         }
+
+        // Initialize samples
+        updateSample(bootstrap.getPeers());
 
         // Schedule validation of samples
         schedulingExecutor = Executors.newSingleThreadScheduledExecutor();
@@ -82,8 +87,11 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
 
     @Override
     public Peer getRandomPeer() {
-        if (this.samplers.size() > 0) {
-            return this.samplers.get(this.prng.nextInt(this.samplers.size())).getPeer();
+        Collections.shuffle(this.samplers);
+        for (SamplingUnit unit : this.samplers) {
+            Peer peer = unit.getPeer();
+            if (peer != null)
+                return peer;
         }
         return null;
     }

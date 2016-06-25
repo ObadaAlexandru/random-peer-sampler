@@ -1,11 +1,12 @@
 package de.tum.sampling.service;
 
-import com.google.common.primitives.Bytes;
-import de.tum.sampling.entity.Peer;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+
+import com.google.common.primitives.Bytes;
+
+import de.tum.sampling.entity.Peer;
 
 /**
  * Created by Nicolas Frinker on 20/06/16.
@@ -45,8 +46,8 @@ public class SamplingUnit {
      */
     public void next(Peer peer) {
         String newpeer = new String(md.digest(Bytes.concat(peer.getIdentifier().getBytes(), rand)));
-        String oldpeer = new String(md.digest(Bytes.concat(this.peer.getIdentifier().getBytes(), rand)));
-        if (peer == null || oldpeer.compareTo(newpeer) > 0)
+        String oldpeer = (this.peer != null) ? new String(md.digest(Bytes.concat(this.peer.getIdentifier().getBytes(), rand))) : null;
+        if (oldpeer == null || oldpeer.compareTo(newpeer) > 0)
             this.peer = peer;
     }
 
