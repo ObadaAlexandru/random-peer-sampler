@@ -1,25 +1,28 @@
 package de.tum.communication.protocol;
 
-import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Shorts;
-import de.tum.common.exceptions.PeerDeserialisationException;
-import de.tum.communication.protocol.messages.GossipNotificationMessage;
-import de.tum.communication.protocol.messages.GossipNotifyMessage;
-import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.protocol.messages.NseEstimateMessage;
-import de.tum.communication.protocol.messages.NseQueryMessage;
-import de.tum.communication.protocol.messages.RpsQueryMessage;
-import de.tum.communication.protocol.messages.RpsViewMessage;
-import de.tum.sampling.entity.Peer;
-import org.springframework.stereotype.Component;
-
 import java.net.InetAddress;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Shorts;
+
+import de.tum.common.exceptions.PeerDeserialisationException;
+import de.tum.communication.protocol.messages.GossipNotificationMessage;
+import de.tum.communication.protocol.messages.GossipNotifyMessage;
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.messages.NseEstimateMessage;
+import de.tum.communication.protocol.messages.NseQueryMessage;
+import de.tum.communication.protocol.messages.RpsPeerMessage;
+import de.tum.communication.protocol.messages.RpsQueryMessage;
+import de.tum.communication.protocol.messages.RpsViewMessage;
+import de.tum.sampling.entity.Peer;
 
 /**
  * Created by Alexandru Obada on 12/05/16.
@@ -42,6 +45,8 @@ public class ProtocolImpl implements Protocol {
         switch (messageType) {
             case RPS_QUERY:
                 return new RpsQueryMessage();
+            case RPS_PEER:
+                return getRpsPeer(payload);
             case NSE_QUERY:
                 return new NseQueryMessage();
             case NSE_ESTIMATE:
@@ -76,36 +81,53 @@ public class ProtocolImpl implements Protocol {
         List<SerializablePeer> peers = new ArrayList<>();
         int cur = 0;
 
-        try {
-            // XXX: Where are this 4 bytes coming from?
-            while (cur < size - 4) {
-                int port = Shorts.fromBytes(payload.get(cur), payload.get(cur + 1));
-                short version = Shorts.fromBytes(payload.get(cur + 2), payload.get(cur + 3));
-                int addrsize = 0;
-                switch (version) {
-                case 4:
-                    addrsize = IPV4_ADDRESS_SIZE;
-                    break;
-                case 6:
-                    addrsize = IPV6_ADDRESS_SIZE;
-                    break;
-                default:
-                    throw new Exception("Invalid address type!");
-                }
-                InetAddress address = InetAddress
-                        .getByAddress(Bytes.toArray(payload.subList(cur + 4, cur + 4 + addrsize)));
-                cur += Message.WORD_LENGTH + addrsize;
-                PublicKey hostkey = KeyFactory.getInstance("RSA").generatePublic(
-                        new X509EncodedKeySpec(Bytes.toArray(payload.subList(cur, cur + HOSTKEY_SIZE))));
-                Peer peer = Peer.builder().port(port).address(address).hostkey(hostkey).build();
-                peers.add(new SerializablePeer(peer));
-                cur += HOSTKEY_SIZE;
-            }
-        } catch (Exception ex) {
-            throw new PeerDeserialisationException();
+        // XXX: Where are this 4 bytes coming from?
+        while (cur < size - 4) {
+            Peer peer = this.bytesToPeer(payload.subList(cur, size - 4));
+            peers.add(new SerializablePeer(peer));
+            cur += new SerializablePeer(peer).getBytes().size();
         }
 
         return RpsViewMessage.builder().source(peers.remove(0)).peers(peers).build();
+    }
+
+    /**
+     * Get peer out of list of bytes
+     *
+     * @param payload
+     * @return
+     * @throws PeerDeserialisationException
+     */
+    private Peer bytesToPeer(List<Byte> payload) throws PeerDeserialisationException {
+        int cur = 0;
+        Peer peer = null;
+        try {
+            int port = Shorts.fromBytes(payload.get(cur), payload.get(cur + 1));
+            short version = Shorts.fromBytes(payload.get(cur + 2), payload.get(cur + 3));
+            int addrsize = 0;
+            switch (version) {
+            case 4:
+                addrsize = IPV4_ADDRESS_SIZE;
+                break;
+            case 6:
+                addrsize = IPV6_ADDRESS_SIZE;
+                break;
+            default:
+                throw new Exception("Invalid address type!");
+            }
+            InetAddress address = InetAddress.getByAddress(Bytes.toArray(payload.subList(cur + 4, cur + 4 + addrsize)));
+            cur += Message.WORD_LENGTH + addrsize;
+            PublicKey hostkey = KeyFactory.getInstance("RSA")
+                    .generatePublic(new X509EncodedKeySpec(Bytes.toArray(payload.subList(cur, cur + HOSTKEY_SIZE))));
+            peer = Peer.builder().port(port).address(address).hostkey(hostkey).build();
+        } catch (Exception ex) {
+            throw new PeerDeserialisationException();
+        }
+        return peer;
+    }
+
+    private RpsPeerMessage getRpsPeer(List<Byte> payload) {
+        return RpsPeerMessage.builder().peer(new SerializablePeer(bytesToPeer(payload))).build();
     }
 
     private MessageType getMessageType(List<Byte> header) {
