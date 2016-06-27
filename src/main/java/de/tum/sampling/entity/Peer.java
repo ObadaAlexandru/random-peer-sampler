@@ -22,6 +22,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.ToString;
 
 /**
  * Created by Alexandru Obada on 22/05/16.
@@ -30,6 +31,7 @@ import lombok.NonNull;
 @EqualsAndHashCode(of = "hostkey")
 @NoArgsConstructor
 @Entity
+@ToString(exclude="hostkey")
 public class Peer {
 
     @Id
@@ -67,10 +69,5 @@ public class Peer {
             e.printStackTrace();
             throw new RuntimeException("SHA256 not available!");
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Peer(" + this.address.getHostAddress() + "," + this.port + ")";
     }
 }

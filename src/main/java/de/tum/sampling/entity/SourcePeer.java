@@ -15,9 +15,8 @@ public class SourcePeer extends Peer {
     public SourcePeer(HostKeyReader hostKeyReader,
             @Value("#{iniConfig.getRPSHost()}") InetAddress rpsHost,
             @Value("#{iniConfig.getRPSPort()}") Integer rpsPort) {
-        super();
-        this.setPort(rpsPort);
-        this.setAddress(rpsHost);
-        this.setHostkey(hostKeyReader.getPublicKey());
+        setPort(rpsPort);
+        setAddress(rpsHost);
+        setHostkey(hostKeyReader.getPublicKey());
     }
 }
