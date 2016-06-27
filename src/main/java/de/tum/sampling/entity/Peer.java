@@ -1,11 +1,9 @@
 package de.tum.sampling.entity;
 
-import com.google.common.io.BaseEncoding;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import java.net.InetAddress;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -16,10 +14,14 @@ import javax.persistence.Id;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.net.InetAddress;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
+
+import com.google.common.io.BaseEncoding;
+
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 /**
  * Created by Alexandru Obada on 22/05/16.
@@ -65,5 +67,10 @@ public class Peer {
             e.printStackTrace();
             throw new RuntimeException("SHA256 not available!");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Peer(" + this.address.getHostAddress() + "," + this.port + ")";
     }
 }

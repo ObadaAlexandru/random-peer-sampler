@@ -1,19 +1,5 @@
 package de.tum.sampling.service;
 
-import de.tum.communication.protocol.MessageType;
-import de.tum.communication.protocol.SerializablePeer;
-import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.protocol.messages.RpsPingMessage;
-import de.tum.communication.service.CommunicationService;
-import de.tum.communication.service.Receiver;
-import de.tum.config.HostKeyReader;
-import de.tum.sampling.entity.Peer;
-import lombok.Builder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,6 +11,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import de.tum.communication.protocol.MessageType;
+import de.tum.communication.protocol.SerializablePeer;
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.messages.RpsPingMessage;
+import de.tum.communication.service.CommunicationService;
+import de.tum.communication.service.Receiver;
+import de.tum.sampling.entity.Peer;
+import de.tum.sampling.entity.SourcePeer;
+import lombok.Builder;
+
 /**
  * Created by Alexandru Obada on 13/06/16.
  */
@@ -35,7 +35,7 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
     private final CommunicationService communicationService;
     private final ScheduledExecutorService schedulingExecutor;
     private final int timeout;
-    private final Peer source;
+    private final SourcePeer source;
     private final Set<Peer> pinged = new HashSet<>();
 
     @Builder
@@ -43,13 +43,11 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
     public SamplerImpl(CommunicationService comservice, @Value("#{iniConfig.getSamplerNum()}") Integer samplerNum,
             @Value("#{iniConfig.getValidationRate()}") Integer validationRate,
             @Value("#{iniConfig.getSamplerTimeout()}") Integer timeout,
-            HostKeyReader hostKeyReader,
-            @Value("#{iniConfig.getRPSHost()}") InetAddress rpsHost,
-            @Value("#{iniConfig.getRPSPort()}") Integer rpsPort) throws NoSuchAlgorithmException {
+            SourcePeer source) throws NoSuchAlgorithmException {
         this.communicationService = comservice;
         comservice.addReceiver(this, MessageType.RPS_PING);
         this.timeout = timeout;
-        this.source = Peer.builder().address(rpsHost).port(rpsPort).hostkey(hostKeyReader.getPublicKey()).build();
+        this.source = source;
 
         // Create given number of sampling units
         for (int i = 0; i < samplerNum; i++) {
