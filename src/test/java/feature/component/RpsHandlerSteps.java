@@ -18,6 +18,7 @@ import de.tum.communication.protocol.messages.RpsQueryMessage;
 import de.tum.communication.service.Receiver;
 import de.tum.sampling.service.RpsHandler;
 import de.tum.sampling.service.RpsTestClient;
+import de.tum.sampling.service.Sampler;
 
 /**
  * Created by Nicolas Frinker on 25/06/16.
@@ -41,11 +42,21 @@ public class RpsHandlerSteps {
     @Autowired
     RpsHandler rpshandler;
 
+    @Autowired
+    Sampler sampler;
+
     @Given("^a running RPS service$")
     public void aRunningRpsService() throws InterruptedException {
         receiverMock = mock(Receiver.class);
         testclient.setReceiver(receiverMock);
         Thread.sleep(roundDuration);
+    }
+
+    @Given("^a running RPS service with no samples$")
+    public void aRunningRpsServiceWithNoSamples() throws InterruptedException {
+        receiverMock = mock(Receiver.class);
+        testclient.setReceiver(receiverMock);
+        sampler.clear();
     }
 
     @When("^the RPS service is queried$")
@@ -57,5 +68,10 @@ public class RpsHandlerSteps {
     @Then("^the handler responds with a random peer message$")
     public void theHandlerRepondsWithARandomPeerMessage() {
         Mockito.verify(receiverMock, Mockito.timeout(1000)).receive(Mockito.any());
+    }
+
+    @Then("^the handler does not respond with a message$")
+    public void theHandlerRepondsWithARandomPeerMessageed() {
+        Mockito.verify(receiverMock, Mockito.times(0)).receive(Mockito.any());
     }
 }

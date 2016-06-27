@@ -10,6 +10,7 @@ import de.tum.communication.protocol.SerializablePeer;
 import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.protocol.messages.RpsPeerMessage;
 import de.tum.communication.service.CommunicationService;
+import de.tum.sampling.entity.Peer;
 import lombok.extern.slf4j.Slf4j;
 /**
  * Created by Nicolas Frinker on 25/06/16.
@@ -35,6 +36,12 @@ public class RpsHandlerImpl implements RpsHandler {
 
         // We were asked for a random peer. Return one.
         log.info("Respond to RPS query.");
+        Peer randompeer = sampler.getRandomPeer();
+        if (randompeer == null) {
+            // Do not return anything
+            log.error("No random peer in samplers found! Returning empty!");
+            return Optional.empty();
+        }
         Optional<Message> o = Optional.of(RpsPeerMessage.builder().peer(new SerializablePeer(sampler.getRandomPeer())).build());
         return o;
     }

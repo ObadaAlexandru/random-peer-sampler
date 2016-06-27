@@ -86,6 +86,13 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
     }
 
     @Override
+    public void clear() {
+        for (SamplingUnit unit : this.samplers) {
+            unit.init();
+        }
+    }
+
+    @Override
     public Peer getRandomPeer() {
         Collections.shuffle(this.samplers);
         for (SamplingUnit unit : this.samplers) {

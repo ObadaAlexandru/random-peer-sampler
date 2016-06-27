@@ -1,6 +1,7 @@
 package de.tum.communication.protocol;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
@@ -29,6 +30,7 @@ import de.tum.sampling.entity.Peer;
  */
 @Component
 public class ProtocolImpl implements Protocol {
+    private static final int ADDR_OFFSET = 4;
     private static final int IPV4_ADDRESS_SIZE = 4;
     private static final int IPV6_ADDRESS_SIZE = 16;
     private static final int HOSTKEY_SIZE = 550;
@@ -101,29 +103,40 @@ public class ProtocolImpl implements Protocol {
     private Peer bytesToPeer(List<Byte> payload) throws PeerDeserialisationException {
         int cur = 0;
         Peer peer = null;
+        int port = Shorts.fromBytes(payload.get(cur), payload.get(cur + 1));
+        int addrsize = this.getAddressSize(payload.subList(cur + 2, cur + ADDR_OFFSET));
+        InetAddress address;
         try {
-            int port = Shorts.fromBytes(payload.get(cur), payload.get(cur + 1));
-            short version = Shorts.fromBytes(payload.get(cur + 2), payload.get(cur + 3));
-            int addrsize = 0;
-            switch (version) {
-            case 4:
-                addrsize = IPV4_ADDRESS_SIZE;
-                break;
-            case 6:
-                addrsize = IPV6_ADDRESS_SIZE;
-                break;
-            default:
-                throw new Exception("Invalid address type!");
-            }
-            InetAddress address = InetAddress.getByAddress(Bytes.toArray(payload.subList(cur + 4, cur + 4 + addrsize)));
-            cur += Message.WORD_LENGTH + addrsize;
-            PublicKey hostkey = KeyFactory.getInstance("RSA")
-                    .generatePublic(new X509EncodedKeySpec(Bytes.toArray(payload.subList(cur, cur + HOSTKEY_SIZE))));
-            peer = Peer.builder().port(port).address(address).hostkey(hostkey).build();
-        } catch (Exception ex) {
-            throw new PeerDeserialisationException();
+            address = InetAddress.getByAddress(Bytes.toArray(payload.subList(cur + ADDR_OFFSET, cur + ADDR_OFFSET + addrsize)));
+        } catch (UnknownHostException e) {
+            throw new PeerDeserialisationException("Invalid address!");
         }
+        cur += Message.WORD_LENGTH + addrsize;
+        PublicKey hostkey;
+        try {
+            hostkey = KeyFactory.getInstance("RSA")
+                    .generatePublic(new X509EncodedKeySpec(Bytes.toArray(payload.subList(cur, cur + HOSTKEY_SIZE))));
+        } catch (Exception ex) {
+            throw new PeerDeserialisationException("Invalid hostkey!");
+        }
+        peer = Peer.builder().port(port).address(address).hostkey(hostkey).build();
         return peer;
+    }
+
+    private int getAddressSize(List<Byte> payload) {
+        int addrsize = 0;
+        short version = Shorts.fromBytes(payload.get(0), payload.get(1));
+        switch (version) {
+        case 4:
+            addrsize = IPV4_ADDRESS_SIZE;
+            break;
+        case 6:
+            addrsize = IPV6_ADDRESS_SIZE;
+            break;
+        default:
+            throw new PeerDeserialisationException("Invalid address type!");
+        }
+        return addrsize;
     }
 
     private RpsPeerMessage getRpsPeer(List<Byte> payload) {
