@@ -1,19 +1,5 @@
 package de.tum.sampling.service;
 
-import de.tum.communication.protocol.MessageType;
-import de.tum.communication.protocol.SerializablePeer;
-import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.protocol.messages.RpsPingMessage;
-import de.tum.communication.service.CommunicationService;
-import de.tum.communication.service.Receiver;
-import de.tum.config.HostKeyReader;
-import de.tum.sampling.entity.Peer;
-import lombok.Builder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,6 +11,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import de.tum.communication.protocol.MessageType;
+import de.tum.communication.protocol.SerializablePeer;
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.messages.RpsPingMessage;
+import de.tum.communication.service.CommunicationService;
+import de.tum.communication.service.Receiver;
+import de.tum.sampling.entity.Peer;
+import de.tum.sampling.entity.PeerType;
+import de.tum.sampling.entity.SourcePeer;
+import de.tum.sampling.repository.PeerRepository;
+import lombok.Builder;
+
 /**
  * Created by Alexandru Obada on 13/06/16.
  */
@@ -35,26 +37,30 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
     private final CommunicationService communicationService;
     private final ScheduledExecutorService schedulingExecutor;
     private final int timeout;
-    private final Peer source;
+    private final SourcePeer source;
     private final Set<Peer> pinged = new HashSet<>();
+    private final PeerRepository peerRepository;
 
     @Builder
     @Autowired
     public SamplerImpl(CommunicationService comservice, @Value("#{iniConfig.getSamplerNum()}") Integer samplerNum,
             @Value("#{iniConfig.getValidationRate()}") Integer validationRate,
             @Value("#{iniConfig.getSamplerTimeout()}") Integer timeout,
-            HostKeyReader hostKeyReader,
-            @Value("#{iniConfig.getRPSHost()}") InetAddress rpsHost,
-            @Value("#{iniConfig.getRPSPort()}") Integer rpsPort) throws NoSuchAlgorithmException {
+            PeerRepository peerRepository,
+            SourcePeer source) throws NoSuchAlgorithmException {
         this.communicationService = comservice;
         comservice.addReceiver(this, MessageType.RPS_PING);
         this.timeout = timeout;
-        this.source = Peer.builder().address(rpsHost).port(rpsPort).hostkey(hostKeyReader.getPublicKey()).build();
+        this.peerRepository = peerRepository;
+        this.source = source;
 
         // Create given number of sampling units
         for (int i = 0; i < samplerNum; i++) {
             samplers.add(new SamplingUnit());
         }
+
+        // Fill samplers with old peers
+        this.updateSample(peerRepository.getByPeerType(PeerType.SAMPLED));
 
         // Schedule validation of samples
         schedulingExecutor = Executors.newSingleThreadScheduledExecutor();
@@ -65,6 +71,8 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
     public void updateSample(List<Peer> peers) {
         for (Peer peer : peers) {
             for (SamplingUnit unit : this.samplers) {
+                peer.setPeerType(PeerType.SAMPLED);
+                this.peerRepository.save(peer);
                 unit.next(peer);
             }
         }
@@ -77,6 +85,7 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
                 // Reinitialize sampler because peer is offline
                 unit.init();
             }
+            this.peerRepository.delete(peer);
         }
     }
 
