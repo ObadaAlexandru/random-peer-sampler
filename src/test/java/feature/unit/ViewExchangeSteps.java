@@ -1,5 +1,15 @@
 package feature.unit;
 
+import static org.mockito.Mockito.when;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.security.PublicKey;
+
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -8,16 +18,9 @@ import cucumber.api.java.en.When;
 import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.service.CommunicationService;
 import de.tum.config.HostKeyReader;
+import de.tum.sampling.entity.SourcePeer;
 import de.tum.sampling.service.PushScheduler;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.PublicKey;
-
-import static org.mockito.Mockito.when;
+import de.tum.sampling.service.ViewManager;
 
 /**
  * Created by Alexandru Obada on 31/05/16.
@@ -31,6 +34,8 @@ public class ViewExchangeSteps {
     private CommunicationService communicationService;
     @Mock
     private HostKeyReader hostKeyReader;
+    @Mock
+    private ViewManager viewManager;
 
     @Before
     public void setUp() {
@@ -59,10 +64,9 @@ public class ViewExchangeSteps {
     public void theViewExchangeSchedulerStarts() {
         PushScheduler.builder()
                 .exchangeRate(roundDuration)
-                .rpsHost(rpsHost)
-                .rpsPort(rpsPort)
-                .communicationService(communicationService)
-                .hostKeyReader(hostKeyReader).build();
+                .viewManager(viewManager)
+                .source(new SourcePeer(hostKeyReader, rpsHost, rpsPort))
+                .communicationService(communicationService).build();
     }
 
     @Then("^it periodically announces the view$")

@@ -3,7 +3,9 @@ package de.tum.communication.protocol;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,7 +118,7 @@ public class ProtocolImpl implements Protocol {
         try {
             hostkey = KeyFactory.getInstance("RSA")
                     .generatePublic(new X509EncodedKeySpec(Bytes.toArray(payload.subList(cur, cur + HOSTKEY_SIZE))));
-        } catch (Exception ex) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
             throw new PeerDeserialisationException("Invalid hostkey!");
         }
         peer = Peer.builder().port(port).address(address).hostkey(hostkey).build();
