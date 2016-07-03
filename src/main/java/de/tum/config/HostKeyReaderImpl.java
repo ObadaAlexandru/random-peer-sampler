@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import de.tum.common.exceptions.HostkeyException;
+import de.tum.sampling.entity.Validator;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +38,9 @@ public class HostKeyReaderImpl implements HostKeyReader {
     private PEMKeyPair pemKeyPair;
 
     @Autowired
+    private Validator validator;
+
+    @Autowired
     public HostKeyReaderImpl(@NonNull @Value("#{iniConfig.getHostKeyPath()}") String hostKeyPath) {
         Security.addProvider(new BouncyCastleProvider());
         keyConverter = new JcaPEMKeyConverter().setProvider("BC");
@@ -45,40 +49,63 @@ public class HostKeyReaderImpl implements HostKeyReader {
 
     @Override
     public PublicKey getPublicKey() {
+        PublicKey pubkey = null;
         PEMKeyPair keyPair = getKeyPair();
         try {
-            return keyConverter.getPublicKey(keyPair.getPublicKeyInfo());
+            pubkey = keyConverter.getPublicKey(keyPair.getPublicKeyInfo());
+            if (!validator.isValidPublicKey(pubkey)) {
+                log.error("Public key is invalid!");
+                throw new HostkeyException("Public key is invalid!");
+            }
         } catch (PEMException e) {
             log.error("Malformed key");
             throw new RuntimeException("Malformed key");
         }
+        return pubkey;
     }
 
     @Override
     public PrivateKey getPrivateKey() {
+        PrivateKey privkey = null;
         PEMKeyPair keyPair = getKeyPair();
         try {
-            return keyConverter.getPrivateKey(keyPair.getPrivateKeyInfo());
+            privkey = keyConverter.getPrivateKey(keyPair.getPrivateKeyInfo());
+            if (!validator.isValidPrivateKey(privkey)) {
+                log.error("Private key is invalid!");
+                throw new HostkeyException("Private key is invalid!");
+            }
         } catch (PEMException e) {
             log.error("Malformed key");
             throw new HostkeyException();
         }
+        return privkey;
     }
 
     private synchronized PEMKeyPair getKeyPair() {
         if (pemKeyPair == null) {
+            PEMParser privatePem = null;
             try {
                 Reader rsaPrivate = new FileReader(hostKeyPath);
-                PEMParser privatePem = new PEMParser(rsaPrivate);
+                privatePem = new PEMParser(rsaPrivate);
                 pemKeyPair = (PEMKeyPair) privatePem.readObject();
+
             } catch (FileNotFoundException e) {
                 log.error("Host key not found in {}", hostKeyPath);
                 throw new HostkeyException(String.format("Missing hostkey at %s", hostKeyPath));
             } catch (IOException e) {
                 log.error("Failed parsing host key");
                 throw new HostkeyException();
+            } finally {
+                try {
+                    if (privatePem != null)
+                        privatePem.close();
+                } catch (IOException e) {
+                    log.error("Failed to close file handle of host key!");
+                    throw new HostkeyException();
+                }
             }
         }
+
         return pemKeyPair;
     }
 }

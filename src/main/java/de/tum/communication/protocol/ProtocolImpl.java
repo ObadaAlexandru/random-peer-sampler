@@ -10,6 +10,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.primitives.Bytes;
@@ -26,6 +27,7 @@ import de.tum.communication.protocol.messages.RpsPeerMessage;
 import de.tum.communication.protocol.messages.RpsQueryMessage;
 import de.tum.communication.protocol.messages.RpsViewMessage;
 import de.tum.sampling.entity.Peer;
+import de.tum.sampling.entity.Validator;
 
 /**
  * Created by Alexandru Obada on 12/05/16.
@@ -36,6 +38,13 @@ public class ProtocolImpl implements Protocol {
     private static final int IPV4_ADDRESS_SIZE = 4;
     private static final int IPV6_ADDRESS_SIZE = 16;
     private static final int HOSTKEY_SIZE = 550;
+
+    private Validator validator;
+
+    @Autowired
+    public ProtocolImpl(Validator validator) {
+        this.validator = validator;
+    }
 
     @Override
     public Message deserialize(List<Byte> data) {
@@ -120,6 +129,9 @@ public class ProtocolImpl implements Protocol {
                     .generatePublic(new X509EncodedKeySpec(Bytes.toArray(payload.subList(cur, cur + HOSTKEY_SIZE))));
         } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
             throw new PeerDeserialisationException("Invalid hostkey!");
+        }
+        if (!validator.isValidPublicKey(hostkey)) {
+            throw new PeerDeserialisationException("Invalid hostkey for this application!");
         }
         peer = Peer.builder().port(port).address(address).hostkey(hostkey).build();
         return peer;
