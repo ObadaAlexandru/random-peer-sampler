@@ -1,19 +1,6 @@
 package de.tum.config;
 
-import com.google.common.net.InetAddresses;
-import de.tum.common.exceptions.BootstrapException;
-import de.tum.common.exceptions.HostkeyException;
-import de.tum.sampling.entity.HostkeyConverter;
-import de.tum.sampling.entity.Peer;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.error.YAMLException;
+import static de.tum.sampling.entity.PeerType.DYNAMIC;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +10,22 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.tum.sampling.entity.PeerType.DYNAMIC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.TypeDescription;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.error.YAMLException;
+
+import com.google.common.net.InetAddresses;
+
+import de.tum.common.exceptions.BootstrapException;
+import de.tum.common.exceptions.HostkeyException;
+import de.tum.sampling.entity.HostkeyConverter;
+import de.tum.sampling.entity.Peer;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  File based bootstrap
@@ -72,7 +74,7 @@ public class FileBootstrap implements Bootstrap {
                     throw new BootstrapException("Invalid address in bootstrap");
                 }
                 return Peer.builder()
-                        .hostkey(hostkeyConverter.convertToEntityAttribute(key.replaceAll("(\\r|\\n|\\t)", "")))
+                        .hostkey(hostkeyConverter.convertToEntityAttribute(key.replaceAll("(\\r|\\n|\\t| )", "")))
                         .port(port)
                         .address(InetAddress.getByName(address))
                         .peerType(DYNAMIC)

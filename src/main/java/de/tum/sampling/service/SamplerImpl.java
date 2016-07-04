@@ -2,10 +2,10 @@ package de.tum.sampling.service;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,6 +21,7 @@ import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.protocol.messages.RpsPingMessage;
 import de.tum.communication.service.CommunicationService;
 import de.tum.communication.service.Receiver;
+import de.tum.config.Bootstrap;
 import de.tum.sampling.entity.Peer;
 import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.entity.SourcePeer;
@@ -32,7 +33,6 @@ import lombok.Builder;
  */
 @Service
 public class SamplerImpl implements Sampler, Receiver<Message> {
-    private final Random prng = new Random();
     private final List<SamplingUnit> samplers = new ArrayList<>();
     private final CommunicationService communicationService;
     private final ScheduledExecutorService schedulingExecutor;
@@ -45,9 +45,8 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
     @Autowired
     public SamplerImpl(CommunicationService comservice, @Value("#{iniConfig.getSamplerNum()}") Integer samplerNum,
             @Value("#{iniConfig.getValidationRate()}") Integer validationRate,
-            @Value("#{iniConfig.getSamplerTimeout()}") Integer timeout,
-            PeerRepository peerRepository,
-            SourcePeer source) throws NoSuchAlgorithmException {
+            @Value("#{iniConfig.getSamplerTimeout()}") Integer timeout, SourcePeer source,
+            PeerRepository peerRepository, Bootstrap bootstrap) throws NoSuchAlgorithmException {
         this.communicationService = comservice;
         comservice.addReceiver(this, MessageType.RPS_PING);
         this.timeout = timeout;
@@ -59,7 +58,8 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
             samplers.add(new SamplingUnit());
         }
 
-        // Fill samplers with old peers
+        // Initialize samples
+        updateSample(bootstrap.getPeers());
         this.updateSample(peerRepository.getByPeerType(PeerType.SAMPLED));
 
         // Schedule validation of samples
@@ -90,9 +90,19 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
     }
 
     @Override
+    public void clear() {
+        for (SamplingUnit unit : this.samplers) {
+            unit.init();
+        }
+    }
+
+    @Override
     public Peer getRandomPeer() {
-        if (this.samplers.size() > 0) {
-            return this.samplers.get(this.prng.nextInt(this.samplers.size())).getPeer();
+        Collections.shuffle(this.samplers);
+        for (SamplingUnit unit : this.samplers) {
+            Peer peer = unit.getPeer();
+            if (peer != null)
+                return peer;
         }
         return null;
     }

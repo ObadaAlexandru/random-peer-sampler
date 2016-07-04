@@ -1,8 +1,13 @@
 package de.tum.config;
 
-import de.tum.common.exceptions.HostkeyException;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Security;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMException;
 import org.bouncycastle.openssl.PEMKeyPair;
@@ -12,13 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Security;
+import de.tum.common.exceptions.HostkeyException;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by Alexandru Obada on 31/05/16.
