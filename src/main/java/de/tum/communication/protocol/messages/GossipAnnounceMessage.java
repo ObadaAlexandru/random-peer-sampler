@@ -1,15 +1,17 @@
 package de.tum.communication.protocol.messages;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Shorts;
+
 import de.tum.communication.protocol.ByteSerializable;
 import de.tum.communication.protocol.MessageType;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Nicolas Frinker on 12/05/16.
@@ -37,7 +39,7 @@ public class GossipAnnounceMessage extends Message {
     @Override
     public List<Byte> getBytes() {
         byte[] headerBytes = getHeaderBytes();
-        byte[] ttlBytes = Shorts.toByteArray(ttl);
+        byte[] ttlBytes = Arrays.copyOfRange(Shorts.toByteArray(ttl), 1, 2);
         byte[] reservedBytes = new byte[] {0};
         byte[] dataTypeBytes = Shorts.toByteArray(dataType);
         List<Byte> byteList = new ArrayList<>(Bytes.asList(Bytes.concat(headerBytes, ttlBytes, reservedBytes, dataTypeBytes)));
