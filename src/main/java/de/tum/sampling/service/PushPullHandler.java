@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.SerializablePeer;
+import de.tum.communication.protocol.messages.GossipNotifyMessage;
 import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.protocol.messages.RpsPushMessage;
 import de.tum.communication.protocol.messages.RpsViewMessage;
@@ -49,6 +50,7 @@ public class PushPullHandler implements Receiver<Message> {
 
         communicationService.addReceiver(this, MessageType.RPS_PUSH);
         communicationService.addReceiver(this, MessageType.RPS_VIEW);
+        communicationService.send(new GossipNotifyMessage(MessageType.RPS_PUSH.getValue()));
     }
 
     @Override
@@ -74,7 +76,7 @@ public class PushPullHandler implements Receiver<Message> {
             p.setPeerType(PeerType.PULLED);
             peerRepository.save(p);
         });
-        log.debug("Received view from peer " + message.getPeers().get(0).getPeer());
+        log.info("Received view from peer " + message.getPeers().get(0).getPeer());
     }
 
     /**
@@ -87,6 +89,7 @@ public class PushPullHandler implements Receiver<Message> {
         Peer peer = message.getPeer().getPeer();
         peer.setPeerType(PeerType.PUSHED);
         this.peerRepository.save(peer);
+        log.info("Received push from " + peer);
 
         // Reply to push with own view in some random cases
         if (random.nextDouble() < this.pullfactor) {
@@ -95,7 +98,7 @@ public class PushPullHandler implements Receiver<Message> {
                             .collect(Collectors.toCollection(ArrayList::new)))
                     .build();
             this.communicationService.send(viewmsg, new InetSocketAddress(peer.getAddress(), peer.getPort()));
-            log.debug("Replied with view to peer " + peer);
+            log.info("Replied with view to peer " + peer);
         }
     }
 }

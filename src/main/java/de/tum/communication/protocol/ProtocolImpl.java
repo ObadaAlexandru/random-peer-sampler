@@ -24,6 +24,7 @@ import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.protocol.messages.NseEstimateMessage;
 import de.tum.communication.protocol.messages.NseQueryMessage;
 import de.tum.communication.protocol.messages.RpsPeerMessage;
+import de.tum.communication.protocol.messages.RpsPushMessage;
 import de.tum.communication.protocol.messages.RpsQueryMessage;
 import de.tum.communication.protocol.messages.RpsViewMessage;
 import de.tum.sampling.entity.Peer;
@@ -60,12 +61,14 @@ public class ProtocolImpl implements Protocol {
                 return new RpsQueryMessage();
             case RPS_PEER:
                 return getRpsPeer(payload);
+            case RPS_PUSH:
+                return getRpsPush(payload);
             case NSE_QUERY:
                 return new NseQueryMessage();
             case NSE_ESTIMATE:
                 return getNseEstimate(payload);
             case GOSSIP_NOTIFY:
-                return new GossipNotifyMessage();
+                return getGossipNotify(payload);
             case GOSSIP_NOTIFICATION:
                 return getGossipNotification(payload);
             case RPS_VIEW:
@@ -75,9 +78,14 @@ public class ProtocolImpl implements Protocol {
         }
     }
 
+    private Message getGossipNotify(List<Byte> payload) {
+        return GossipNotifyMessage.builder()
+                .datatype(Shorts.fromBytes(payload.get(2), payload.get(3))).build();
+    }
+
     private Message getGossipNotification(List<Byte> payload) {
         return GossipNotificationMessage.builder()
-                .datatype(Ints.fromBytes(payload.get(4), payload.get(5), payload.get(6), payload.get(7)))
+                .datatype(Shorts.fromBytes(payload.get(2), payload.get(3)))
                 .payload(() -> payload.subList(Message.WORD_LENGTH, payload.size())).build();
     }
 
@@ -155,6 +163,10 @@ public class ProtocolImpl implements Protocol {
 
     private RpsPeerMessage getRpsPeer(List<Byte> payload) {
         return RpsPeerMessage.builder().peer(new SerializablePeer(bytesToPeer(payload))).build();
+    }
+
+    private RpsPushMessage getRpsPush(List<Byte> payload) {
+        return RpsPushMessage.builder().peer(new SerializablePeer(bytesToPeer(payload))).build();
     }
 
     private MessageType getMessageType(List<Byte> header) {

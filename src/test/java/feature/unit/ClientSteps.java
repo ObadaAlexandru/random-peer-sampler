@@ -1,5 +1,20 @@
 package feature.unit;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.rules.ErrorCollector;
+import org.mockito.Mockito;
+import org.springframework.util.SocketUtils;
+
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -24,20 +39,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.rules.ErrorCollector;
-import org.mockito.Mockito;
-import org.springframework.util.SocketUtils;
-
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * Created by Nicolas Frinker on 19/05/16.
@@ -50,10 +51,10 @@ public class ClientSteps {
     private EventLoopGroup workerGroup;
 
     private Receiver<Message> receiverMock;
-    
+
     @Rule
     public final ErrorCollector collector = new ErrorCollector();
-    
+
     private class TestChannelHandler extends SimpleChannelInboundHandler<Message> {
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
@@ -63,7 +64,7 @@ public class ClientSteps {
                 ctx.flush();
                 break;
             case GOSSIP_NOTIFY:
-                ctx.write(new GossipNotificationMessage(1, new NseQueryMessage()));
+                ctx.write(new GossipNotificationMessage((short) 1, new NseQueryMessage()));
                 ctx.flush();
                 break;
             default:
@@ -76,9 +77,9 @@ public class ClientSteps {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
-        receiverMock = (Receiver<Message>) Mockito.mock(Receiver.class);
+        receiverMock = Mockito.mock(Receiver.class);
     }
-    
+
     private void startServer() {
         // Start test server
         serverport = SocketUtils.findAvailableTcpPort();
@@ -110,34 +111,34 @@ public class ClientSteps {
         testclient = new NseClientWrapper(new ClientImpl(), InetAddress.getByName("localhost"), serverport);
         testclient.setReceiver(receiverMock);
     }
-    
+
     @Given("^a gossip client$")
     public void aGossipClient() throws UnknownHostException {
         startServer();
         testclient = new GossipClientWrapper(new ClientImpl(), InetAddress.getByName("localhost"), serverport);
         testclient.setReceiver(receiverMock);
     }
-    
+
     @When("^a nse query is send$")
     public void aNseQueryIsSend() {
         testclient.send(new NseQueryMessage());
     }
-    
+
     @When("^a gossip notify message is send$")
     public void aGossipNotifyMessageIsSend() {
-        testclient.send(new GossipNotifyMessage());
+        testclient.send(new GossipNotifyMessage((short) 1));
     }
 
     @Then("^a nse estimation is received$")
     public void aValidNseEstimationIsReceived() {
         verify(receiverMock, timeout(3000)).receive(any());
     }
-    
+
     @Then("^some gossip notification is received$")
     public void someGossipNotificationsAreReceived() {
         verify(receiverMock, timeout(3000)).receive(any());
     }
-    
+
     @After
     public void tearDown() {
         try {
