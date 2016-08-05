@@ -63,12 +63,13 @@ public class MessageSteps {
         message = new GossipNotifyMessage(MessageType.RPS_VIEW.getValue());
     }
 
-    @Given("^a gossip notification message with \"([^\"]*)\" and \"([^\"]*)\"$")
-    public void aGossipNotificationMessageWithDatatypeAndPayload(Short dataType, final String payload) {
+    @Given("^a gossip notification message with \"([^\"]*)\", \"([^\"]*)\" and \"([^\"]*)\"$")
+    public void aGossipNotificationMessageWithDatatypeAndPayload(Short dataType, final String payload, Short messageId) {
         ByteSerializable payloadObj = Mockito.mock(ByteSerializable.class);
         Mockito.when(payloadObj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
         message = GossipNotificationMessage.builder()
 				.datatype(dataType)
+                .messageId(messageId)
 				.payload(payloadObj)
 				.build();
 	}

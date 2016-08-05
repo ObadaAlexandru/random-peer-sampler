@@ -26,7 +26,7 @@ public class MessageDecoder extends ByteToMessageDecoder {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         byte[] data = new byte[in.readableBytes()];
         in.readBytes(data);
-        Protocol protocol = new ProtocolImpl(new ValidatorImpl()();
+        Protocol protocol = new ProtocolImpl(new ValidatorImpl());
 
         Message message = protocol.deserialize(Bytes.asList(data));
 

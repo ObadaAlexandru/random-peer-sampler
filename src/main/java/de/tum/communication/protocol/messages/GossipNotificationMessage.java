@@ -10,6 +10,7 @@ import de.tum.communication.protocol.ByteSerializable;
 import de.tum.communication.protocol.MessageType;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.Value;
 
 /**
@@ -23,12 +24,14 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class GossipNotificationMessage extends Message {
-    private short dataType;
+    private Short messageId;
+    private Short dataType;
     private ByteSerializable payload;
 
     @Builder
-    public GossipNotificationMessage(Short datatype, ByteSerializable payload) {
+    public GossipNotificationMessage(@NonNull Short messageId, @NonNull Short datatype, @NonNull ByteSerializable payload) {
         super((short) (2 * WORD_LENGTH + payload.getBytes().size()), MessageType.GOSSIP_NOTIFICATION);
+        this.messageId = messageId;
         this.dataType = datatype;
         this.payload = payload;
     }
@@ -36,9 +39,9 @@ public class GossipNotificationMessage extends Message {
     @Override
     public List<Byte> getBytes() {
         byte[] headerBytes = getHeaderBytes();
-        byte[] reservedBytes = new byte[] {0, 0};
         byte[] dataTypeBytes = Shorts.toByteArray(dataType);
-        List<Byte> byteList = new ArrayList<>(Bytes.asList(Bytes.concat(headerBytes, reservedBytes, dataTypeBytes)));
+        byte[] messageIdBytes = Shorts.toByteArray(messageId);
+        List<Byte> byteList = new ArrayList<>(Bytes.asList(Bytes.concat(headerBytes, messageIdBytes, dataTypeBytes)));
         byteList.addAll(payload.getBytes());
         return byteList;
     }

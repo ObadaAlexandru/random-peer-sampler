@@ -64,7 +64,7 @@ public class ClientSteps {
                 ctx.flush();
                 break;
             case GOSSIP_NOTIFY:
-                ctx.write(new GossipNotificationMessage((short) 1, new NseQueryMessage()));
+                ctx.write(new GossipNotificationMessage((short) 1, (short) 1, new NseQueryMessage()));
                 ctx.flush();
                 break;
             default:
