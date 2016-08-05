@@ -75,7 +75,7 @@ public class PushScheduler {
                     .datatype(viewMessage.getType().getValue())
                     .build();
             communicationService.send(gossipAnnounce);
-            log.info("View has been pushed");
+            log.info("Push message has been sent.");
         }
     }
 }

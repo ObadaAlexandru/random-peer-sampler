@@ -23,7 +23,6 @@ public class TokenRepoImpl implements TokenRepo {
 
     @Override
     public Token newToken() {
-        log.info("Generating new token.");
         Token token = new Token();
         while (this.tokens.contains(token)) {
             log.info("Generated identical token. Redo.");
@@ -37,7 +36,7 @@ public class TokenRepoImpl implements TokenRepo {
     public boolean checkToken(Token token) {
 
         for (Token repotoken : this.tokens) {
-            if (repotoken.equals(token) && repotoken.isValid()) {
+            if (repotoken.equals(token)) {
                 if (repotoken.isValid()) {
                     return true;
                 } else {

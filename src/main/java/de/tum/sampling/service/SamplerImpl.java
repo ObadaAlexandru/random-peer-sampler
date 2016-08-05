@@ -1,5 +1,6 @@
 package de.tum.sampling.service;
 
+import java.net.InetSocketAddress;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,11 +28,13 @@ import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.entity.SourcePeer;
 import de.tum.sampling.repository.PeerRepository;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by Alexandru Obada on 13/06/16.
  */
 @Service
+@Slf4j
 public class SamplerImpl implements Sampler, Receiver<Message> {
     private final List<SamplingUnit> samplers = new ArrayList<>();
     private final CommunicationService communicationService;
@@ -54,6 +57,7 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
         this.source = source;
 
         // Create given number of sampling units
+        log.info("Runnning " + samplerNum + " samplers.");
         for (int i = 0; i < samplerNum; i++) {
             samplers.add(new SamplingUnit());
         }
@@ -69,6 +73,7 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
 
     @Override
     public void updateSample(List<Peer> peers) {
+        log.info("Update sample with " + peers.size() + " peers.");
         for (Peer peer : peers) {
             for (SamplingUnit unit : this.samplers) {
                 peer.setPeerType(PeerType.SAMPLED);
@@ -110,17 +115,26 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
     private class ValidationSchedulerTask implements Runnable {
         @Override
         public void run() {
+            log.info("Ping all sampled peers (timeout="+timeout+")");
+
             // Ping every peer once
             pinged.clear();
             for (SamplingUnit unit : samplers) {
-                pinged.add(unit.sample());
+                Peer peer = unit.sample();
+                if (peer != null)
+                    pinged.add(peer);
             }
 
             for (Peer peer : pinged) {
+
+                // Make sure, we never ping our self (endless loop)
+                if (peer.getAddress().getHostAddress().equals(source.getAddress().getHostAddress())
+                        && (peer.getPort().equals(source.getPort()))) {
+                    continue;
+                }
+
                 // Send ping message
-                // XXX: This will not work yet and needs implementation!
-                // XXX: Will be the same as for the rps pulls
-                communicationService.send(new RpsPingMessage(new SerializablePeer(peer)));
+                communicationService.send(new RpsPingMessage(new SerializablePeer(peer)), new InetSocketAddress(peer.getAddress(), peer.getPort()));
             }
 
             // Add timeout
@@ -133,8 +147,10 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
         @Override
         public void run() {
             // For all pinged peers that did not reply yet, invalidate sampler
+            log.info("Found " + pinged.size() + " offline peers in sample list");
             for (SamplingUnit unit : samplers) {
                 if (pinged.contains(unit.getPeer())) {
+                    log.debug("Peer " + unit.getPeer() + " seems to be offline. Remove from sample list.");
                     unit.init();
                 }
             }
@@ -154,7 +170,7 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
         }
 
         // Peer replied, remove from pending list
-        this.pinged.remove(pingmsg.getPeer());
+        this.pinged.remove(pingmsg.getPeer().getPeer());
 
         return Optional.empty();
     }

@@ -24,6 +24,7 @@ import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.protocol.messages.NseEstimateMessage;
 import de.tum.communication.protocol.messages.NseQueryMessage;
 import de.tum.communication.protocol.messages.RpsPeerMessage;
+import de.tum.communication.protocol.messages.RpsPingMessage;
 import de.tum.communication.protocol.messages.RpsPushMessage;
 import de.tum.communication.protocol.messages.RpsQueryMessage;
 import de.tum.communication.protocol.messages.RpsViewMessage;
@@ -61,6 +62,8 @@ public class ProtocolImpl implements Protocol {
                 return new RpsQueryMessage();
             case RPS_PEER:
                 return getRpsPeer(payload);
+            case RPS_PING:
+                return getRpsPing(payload);
             case RPS_PUSH:
                 return getRpsPush(payload);
             case NSE_QUERY:
@@ -103,6 +106,8 @@ public class ProtocolImpl implements Protocol {
         List<SerializablePeer> peers = new ArrayList<>();
         int cur = 0;
         Token token = new Token(payload.subList(0, Token.TOKEN_LENGTH));
+
+        size -= Token.TOKEN_LENGTH;
         payload = payload.subList(Token.TOKEN_LENGTH, payload.size());
 
         // XXX: Where are this 4 bytes coming from?
@@ -166,6 +171,10 @@ public class ProtocolImpl implements Protocol {
 
     private RpsPeerMessage getRpsPeer(List<Byte> payload) {
         return RpsPeerMessage.builder().peer(new SerializablePeer(bytesToPeer(payload))).build();
+    }
+
+    private RpsPingMessage getRpsPing(List<Byte> payload) {
+        return RpsPingMessage.builder().peer(new SerializablePeer(bytesToPeer(payload))).build();
     }
 
     private RpsPushMessage getRpsPush(List<Byte> payload) {

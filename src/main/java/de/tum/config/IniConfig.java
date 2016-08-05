@@ -106,6 +106,10 @@ public class IniConfig {
         return Optional.ofNullable(ini.get("RPS", "sampler_timeout")).map(Integer::parseInt).orElse(30000);
     }
 
+    public Double getPullRatio() {
+        return Optional.ofNullable(ini.get("RPS", "pull_ratio")).map(Double::parseDouble).orElse(0.10);
+    }
+
     private Integer getPort(String section) {
         try {
             ConfigAddress address = new ConfigAddress(ini.get(section, "api_address"));
