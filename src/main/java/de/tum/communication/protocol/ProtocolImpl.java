@@ -102,6 +102,8 @@ public class ProtocolImpl implements Protocol {
     private RpsViewMessage getRpsView(short size, List<Byte> payload) {
         List<SerializablePeer> peers = new ArrayList<>();
         int cur = 0;
+        Token token = new Token(payload.subList(0, Token.TOKEN_LENGTH));
+        payload = payload.subList(Token.TOKEN_LENGTH, payload.size());
 
         // XXX: Where are this 4 bytes coming from?
         while (cur < size - 4) {
@@ -110,7 +112,7 @@ public class ProtocolImpl implements Protocol {
             cur += new SerializablePeer(peer).getBytes().size();
         }
 
-        return RpsViewMessage.builder().source(peers.remove(0)).peers(peers).build();
+        return RpsViewMessage.builder().token(token).source(peers.remove(0)).peers(peers).build();
     }
 
     /**
@@ -167,7 +169,8 @@ public class ProtocolImpl implements Protocol {
     }
 
     private RpsPushMessage getRpsPush(List<Byte> payload) {
-        return RpsPushMessage.builder().peer(new SerializablePeer(bytesToPeer(payload))).build();
+        return RpsPushMessage.builder().token(new Token(payload.subList(0, Token.TOKEN_LENGTH)))
+                .peer(new SerializablePeer(bytesToPeer(payload.subList(Token.TOKEN_LENGTH, payload.size())))).build();
     }
 
     private MessageType getMessageType(List<Byte> header) {

@@ -1,20 +1,21 @@
 package de.tum.sampling.service;
 
-import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.protocol.messages.NseEstimateMessage;
-import de.tum.communication.protocol.messages.NseQueryMessage;
-import de.tum.communication.service.CommunicationService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import static de.tum.communication.protocol.MessageType.NSE_ESTIMATE;
 
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static de.tum.communication.protocol.MessageType.NSE_ESTIMATE;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.messages.NseEstimateMessage;
+import de.tum.communication.protocol.messages.NseQueryMessage;
+import de.tum.communication.service.CommunicationService;
+import lombok.extern.slf4j.Slf4j;
 /**
  * Created by Alexandru Obada on 22/05/16.
  */
