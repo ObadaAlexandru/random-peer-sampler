@@ -1,15 +1,5 @@
 package de.tum.communication.service;
 
-import de.tum.communication.exceptions.UnknownMessageTypeException;
-import de.tum.communication.protocol.MessageType;
-import de.tum.communication.protocol.messages.Message;
-import lombok.NonNull;
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PreDestroy;
 import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +7,18 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import javax.annotation.PreDestroy;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import de.tum.communication.exceptions.UnknownMessageTypeException;
+import de.tum.communication.protocol.MessageType;
+import de.tum.communication.protocol.messages.Message;
+import lombok.NonNull;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by Alexandru Obada on 12/05/16.
@@ -43,6 +45,8 @@ public class CommunicationServiceImpl implements CommunicationService {
         senders.put(MessageType.GOSSIP_ANNOUNCE, gossipClient);
         senders.put(MessageType.GOSSIP_NOTIFY, gossipClient);
         senders.put(MessageType.GOSSIP_VALIDATION, gossipClient);
+        senders.put(MessageType.RPS_PING, rpsClient);
+        senders.put(MessageType.RPS_VIEW, rpsClient);
         communicationExecutor.submit(rpsServer);
     }
 

@@ -39,7 +39,7 @@ public class PushPullHandler implements Receiver<Message> {
     private ViewManager viewManager;
     private TokenRepo tokenrepo;
 
-    private Double pullfactor;
+    private Double pullratio;
     private SourcePeer source;
 
     @Autowired
@@ -48,12 +48,12 @@ public class PushPullHandler implements Receiver<Message> {
             SourcePeer source,
             PeerRepository peerRepository,
             TokenRepo tokenrepo,
-            @Value("${rps.sampling.pullfactor:0.10}") Double pullfactor) {
+            @Value("#{iniConfig.getPullRatio()}") Double pullratio) {
         this.communicationService = communicationService;
         this.viewManager = viewManager;
         this.peerRepository = peerRepository;
         this.tokenrepo = tokenrepo;
-        this.pullfactor = pullfactor;
+        this.pullratio = pullratio;
         this.source = source;
 
         communicationService.addReceiver(this, MessageType.RPS_PUSH);
@@ -107,7 +107,7 @@ public class PushPullHandler implements Receiver<Message> {
         log.info("Received push from " + peer);
 
         // Reply to push with own view in some random cases
-        if (random.nextDouble() < this.pullfactor) {
+        if (random.nextDouble() < this.pullratio) {
             RpsViewMessage viewMessage = RpsViewMessage.builder().token(message.getToken()).source(new SerializablePeer(this.source))
                     .peers(viewManager.getForPush().stream().map(SerializablePeer::new)
                             .collect(Collectors.toCollection(ArrayList::new)))

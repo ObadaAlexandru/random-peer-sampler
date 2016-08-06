@@ -4,9 +4,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
+import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Bytes;
 
 import de.tum.sampling.entity.Peer;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by Nicolas Frinker on 20/06/16.
@@ -19,6 +21,7 @@ import de.tum.sampling.entity.Peer;
  *
  * A call to init() reinitializes the sampling.
  */
+@Slf4j
 public class SamplingUnit {
     private final MessageDigest md;
     private final Random prng = new Random();
@@ -38,6 +41,7 @@ public class SamplingUnit {
      * Initialize sample
      */
     public void init() {
+        this.peer = null;
         prng.nextBytes(this.rand);
     }
 
@@ -45,10 +49,15 @@ public class SamplingUnit {
      * Update sample with input peer
      */
     public void next(Peer peer) {
-        String newpeer = new String(md.digest(Bytes.concat(peer.getIdentifier().getBytes(), rand)));
-        String oldpeer = (this.peer != null) ? new String(md.digest(Bytes.concat(this.peer.getIdentifier().getBytes(), rand))) : null;
-        if (oldpeer == null || oldpeer.compareTo(newpeer) > 0)
+        String newpeer = BaseEncoding.base16().encode(md.digest(Bytes.concat(peer.getIdentifier().getBytes(), rand)));
+        String oldpeer = (this.peer != null)
+                ? BaseEncoding.base16().encode(md.digest(Bytes.concat(this.peer.getIdentifier().getBytes(), rand)))
+                : null;
+
+        if (oldpeer == null || oldpeer.compareTo(newpeer) > 0) {
+            log.debug("New peer in SamplingUnit: " + peer);
             this.peer = peer;
+        }
     }
 
     /**
