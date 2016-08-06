@@ -45,11 +45,11 @@ public class MessageSteps {
         ByteSerializable payloadObj = Mockito.mock(ByteSerializable.class);
         Mockito.when(payloadObj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
         message = GossipAnnounceMessage.builder()
-				.ttl(ttl)
-				.datatype(datatype)
-				.payload(payloadObj)
-				.build();
-	}
+                .ttl(ttl)
+                .datatype(datatype)
+                .payload(payloadObj)
+                .build();
+    }
 
     @Given("^a Gossip Notify Message$")
     public void aGossipNotifyMessage() {
@@ -61,11 +61,11 @@ public class MessageSteps {
         ByteSerializable payloadObj = Mockito.mock(ByteSerializable.class);
         Mockito.when(payloadObj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
         message = GossipNotificationMessage.builder()
-				.datatype(dataType)
+                .datatype(dataType)
                 .messageId(messageId)
-				.payload(payloadObj)
-				.build();
-	}
+                .payload(payloadObj)
+                .build();
+    }
 
 
     @Given("^a Gossip validation message with \"([^\"]*)\" and validity \"([^\"]*)\"$")
