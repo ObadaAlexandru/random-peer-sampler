@@ -89,6 +89,7 @@ public class ViewManagerImpl implements ViewManager {
         int viewSize = dynamicViewSize.get();
         double pushedLimit = alpha * viewSize;
         if (pushed.size() <= pushedLimit && pushed.size() > 0 && pulled.size() > 0) {
+            log.info("Update view with new dynamic peers");
             pushed = getRandom(pushed, Math.round(pushedLimit));
             pulled = getRandom(pulled, Math.round(beta * viewSize));
             List<Peer> sampled = getRandom(peerRepository.getByPeerType(PeerType.SAMPLED), Math.round(gamma * viewSize));

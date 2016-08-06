@@ -6,13 +6,16 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import de.tum.communication.protocol.messages.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.SerializablePeer;
+import de.tum.communication.protocol.messages.GossipNotifyMessage;
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.messages.RpsPushMessage;
+import de.tum.communication.protocol.messages.RpsViewMessage;
 import de.tum.communication.service.CommunicationService;
 import de.tum.communication.service.Receiver;
 import de.tum.sampling.entity.Peer;
@@ -86,6 +89,10 @@ public class PushPullHandler implements Receiver<Message> {
             return;
         }
 
+        // Save incoming peers
+        Peer viewsourcepeer = message.getSource().getPeer();
+        viewsourcepeer.setPeerType(PeerType.PULLED);
+        peerRepository.save(viewsourcepeer);
         message.getPeers().stream().map(SerializablePeer::getPeer).forEach(p -> {
             p.setPeerType(PeerType.PULLED);
             peerRepository.save(p);
