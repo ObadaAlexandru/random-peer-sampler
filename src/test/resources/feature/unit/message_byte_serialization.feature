@@ -6,7 +6,7 @@ Feature: Serialize messages to byte lists
     When the message is serialized
     Then the following byte sequence is returned: "<byteSequence>"
     Examples:
-      | ttl  | datatype | payload                          | byteSequence                                                                       |
+      | ttl  | datatype | payload                          | byteSequence                                                                     |
       | 1    | 1234     | 571e72a5c0e6d751df489389e7986193 | 002801F4010004D23537316537326135633065366437353164663438393338396537393836313933 |
       | 503  | 9        | 92a8d77cae2579314736837969035532 | 002801F4F70000093932613864373763616532353739333134373336383337393639303335353332 |
       | 9999 | 800      | 0c9823ba4759e89a3987630236d4     | 002401F40F00032030633938323362613437353965383961333938373633303233366434         |
@@ -18,15 +18,24 @@ Feature: Serialize messages to byte lists
     Then the following byte sequence is returned: "00 08 01 F5 00 00 02 1E"
 
   Scenario Outline: Gossip notification message byte serialization
-    Given a gossip notification message with "<datatype>" and "<payload>"
+    Given a gossip notification message with "<datatype>", "<payload>" and "<messageId>"
     When the message is serialized
     Then the following byte sequence is returned: "<byteSequence>"
     Examples:
-      | datatype | payload                          | byteSequence                                                                         |
-      | 1234     | 5a1e72a5c0e6d751df489389e7986193 | 002801F6000004D23561316537326135633065366437353164663438393338396537393836313933 |
-      | 9        | 9218d77cae2579314736837969035532 | 002801F6000000093932313864373763616532353739333134373336383337393639303335353332 |
-      | 800      | 0c9823ba4739e89a3987630236d4     | 002401F60000032030633938323362613437333965383961333938373633303233366434         |
-      | 1        | 0fff                             | 000C01F60000000130666666                                                         |
+      | messageId | datatype | payload                          | byteSequence                                                                     |
+      | 1         | 1234     | 5a1e72a5c0e6d751df489389e7986193 | 002801F6000104D23561316537326135633065366437353164663438393338396537393836313933 |
+      | 2         | 9        | 9218d77cae2579314736837969035532 | 002801F6000200093932313864373763616532353739333134373336383337393639303335353332 |
+      | 3         | 800      | 0c9823ba4739e89a3987630236d4     | 002401F60003032030633938323362613437333965383961333938373633303233366434         |
+      | 4         | 1        | 0fff                             | 000C01F60004000130666666                                                         |
+
+  Scenario Outline: Gossip validation message byte serialization
+    Given a Gossip validation message with "<messageId>" and validity "<validity>"
+    When the message is serialized
+    Then the following byte sequence is returned: "<byteSequence>"
+    Examples:
+      | messageId | validity | byteSequence     |
+      | 1         | true     | 000801F700010001 |
+      | 2         | false    | 000801F700020000 |
 
   Scenario: Query message byte serialization
     Given an NSE Query Message

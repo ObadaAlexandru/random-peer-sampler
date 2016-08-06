@@ -19,7 +19,7 @@ public interface Validator {
     /**
      * Checks, whether given private key is considered valid for this application
      *
-     * @param pubkey
+     * @param privkey
      * @return
      */
     public boolean isValidPrivateKey(PrivateKey privkey);

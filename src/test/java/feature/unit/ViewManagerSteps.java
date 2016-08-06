@@ -9,6 +9,7 @@ import cucumber.api.java.en.When;
 import de.tum.sampling.entity.Peer;
 import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.repository.PeerRepository;
+import de.tum.sampling.service.NseHandler;
 import de.tum.sampling.service.Sampler;
 import de.tum.sampling.service.ViewManager;
 import de.tum.sampling.service.ViewManagerImpl;
@@ -57,6 +58,9 @@ public class ViewManagerSteps {
 
     @Mock
     PeerRepository peerRepository;
+
+    @Mock
+    NseHandler nseHandler;
 
     ViewManager viewManager;
 
@@ -110,10 +114,12 @@ public class ViewManagerSteps {
         viewManager = ViewManagerImpl.builder()
                 .dynamicViewSize(dynamicViewSize)
                 .peerRepository(peerRepository)
+                .nseHandler(nseHandler)
                 .alpha(alpha)
                 .beta(beta)
                 .gamma(gamma)
                 .sampler(sampler)
+                .viewSizeUpdateRate(2000)
                 .build();
     }
 

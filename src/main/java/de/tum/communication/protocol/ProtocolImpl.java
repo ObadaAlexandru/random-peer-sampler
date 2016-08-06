@@ -86,6 +86,7 @@ public class ProtocolImpl implements Protocol {
     private Message getGossipNotification(List<Byte> payload) {
         return GossipNotificationMessage.builder()
                 .datatype(Shorts.fromBytes(payload.get(2), payload.get(3)))
+                .messageId(Shorts.fromBytes(payload.get(4), payload.get(5)))
                 .payload(() -> payload.subList(Message.WORD_LENGTH, payload.size())).build();
     }
 

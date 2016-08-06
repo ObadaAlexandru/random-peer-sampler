@@ -6,6 +6,8 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cucumber.api.PendingException;
+import de.tum.communication.protocol.messages.*;
 import org.mockito.Mockito;
 
 import com.google.common.base.CharMatcher;
@@ -20,15 +22,6 @@ import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.Protocol;
 import de.tum.communication.protocol.ProtocolImpl;
 import de.tum.communication.protocol.SerializablePeer;
-import de.tum.communication.protocol.messages.GossipAnnounceMessage;
-import de.tum.communication.protocol.messages.GossipNotificationMessage;
-import de.tum.communication.protocol.messages.GossipNotifyMessage;
-import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.protocol.messages.NseEstimateMessage;
-import de.tum.communication.protocol.messages.NseQueryMessage;
-import de.tum.communication.protocol.messages.RpsPeerMessage;
-import de.tum.communication.protocol.messages.RpsQueryMessage;
-import de.tum.communication.protocol.messages.RpsViewMessage;
 import de.tum.sampling.entity.ValidatorImpl;
 import feature.common.TestPeer;
 
@@ -52,26 +45,36 @@ public class MessageSteps {
         ByteSerializable payloadObj = Mockito.mock(ByteSerializable.class);
         Mockito.when(payloadObj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
         message = GossipAnnounceMessage.builder()
-				.ttl(ttl)
-				.datatype(datatype)
-				.payload(payloadObj)
-				.build();
-	}
+                .ttl(ttl)
+                .datatype(datatype)
+                .payload(payloadObj)
+                .build();
+    }
 
     @Given("^a Gossip Notify Message$")
     public void aGossipNotifyMessage() {
         message = new GossipNotifyMessage(MessageType.RPS_VIEW.getValue());
     }
 
-    @Given("^a gossip notification message with \"([^\"]*)\" and \"([^\"]*)\"$")
-    public void aGossipNotificationMessageWithDatatypeAndPayload(Short dataType, final String payload) {
+    @Given("^a gossip notification message with \"([^\"]*)\", \"([^\"]*)\" and \"([^\"]*)\"$")
+    public void aGossipNotificationMessageWithDatatypeAndPayload(Short dataType, final String payload, Short messageId) {
         ByteSerializable payloadObj = Mockito.mock(ByteSerializable.class);
         Mockito.when(payloadObj.getBytes()).thenReturn(Bytes.asList(payload.getBytes()));
         message = GossipNotificationMessage.builder()
-				.datatype(dataType)
-				.payload(payloadObj)
-				.build();
-	}
+                .datatype(dataType)
+                .messageId(messageId)
+                .payload(payloadObj)
+                .build();
+    }
+
+
+    @Given("^a Gossip validation message with \"([^\"]*)\" and validity \"([^\"]*)\"$")
+    public void aGossipValidationMessageWithAndValidity(Short messageId, boolean validity) {
+        message = GossipValidationMessage.builder()
+                .messageId(messageId)
+                .valid(validity)
+                .build();
+    }
 
     @Given("^an NSE Query Message$")
     public void aNSEQueryMessage() {
@@ -148,4 +151,5 @@ public class MessageSteps {
         assertThat(speers.get(0).equals(rpsviewmessage.getSource()));
         assertThat(speers.subList(1, speers.size() - 1).equals(rpsviewmessage.getPeers()));
     }
+
 }
