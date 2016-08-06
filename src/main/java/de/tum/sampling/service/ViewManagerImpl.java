@@ -42,6 +42,8 @@ public class ViewManagerImpl implements ViewManager {
 
     private  Sampler sampler;
 
+    private boolean initialized = false;
+
     @Builder
     @Autowired
     public ViewManagerImpl(PeerRepository peerRepository,
@@ -88,8 +90,9 @@ public class ViewManagerImpl implements ViewManager {
         log.info("Received " + pulled.size() + " pulled peers.");
         int viewSize = dynamicViewSize.get();
         double pushedLimit = alpha * viewSize;
-        if (pushed.size() <= pushedLimit && pushed.size() > 0 && pulled.size() > 0) {
+        if ((pushed.size() <= pushedLimit && pushed.size() > 0 && pulled.size() > 0) || (this.initialized && (pushed.size() > 0 || pulled.size() > 0))) {
             log.info("Update view with new dynamic peers");
+            this.initialized = true;
             pushed = getRandom(pushed, Math.round(pushedLimit));
             pulled = getRandom(pulled, Math.round(beta * viewSize));
             List<Peer> sampled = getRandom(peerRepository.getByPeerType(PeerType.SAMPLED), Math.round(gamma * viewSize));
