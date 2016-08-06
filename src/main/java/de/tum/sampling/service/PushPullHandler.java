@@ -18,9 +18,17 @@ import de.tum.communication.service.Receiver;
 import de.tum.sampling.entity.Peer;
 import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.entity.SourcePeer;
+import de.tum.sampling.entity.TokenRepo;
 import de.tum.sampling.repository.PeerRepository;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Created by Nicolas Frinker on 04/08/16.
+ */
+
+/**
+ * Receive push messages and send a view back
+ */
 @Service
 @Slf4j
 public class PushPullHandler implements Receiver<Message> {
@@ -29,6 +37,7 @@ public class PushPullHandler implements Receiver<Message> {
     private CommunicationService communicationService;
     private PeerRepository peerRepository;
     private ViewManager viewManager;
+    private TokenRepo tokenrepo;
 
     private Double pullfactor;
     private SourcePeer source;
@@ -38,10 +47,12 @@ public class PushPullHandler implements Receiver<Message> {
             ViewManager viewManager,
             SourcePeer source,
             PeerRepository peerRepository,
+            TokenRepo tokenrepo,
             @Value("${rps.sampling.pullfactor:0.10}") Double pullfactor) {
         this.communicationService = communicationService;
         this.viewManager = viewManager;
         this.peerRepository = peerRepository;
+        this.tokenrepo = tokenrepo;
         this.pullfactor = pullfactor;
         this.source = source;
 
@@ -67,11 +78,20 @@ public class PushPullHandler implements Receiver<Message> {
      * @return
      */
     private void handleRpsView(RpsViewMessage message) {
+
+        // Validate incoming token
+        if (!this.tokenrepo.checkToken(message.getToken())) {
+            // Skip
+            log.warn("Skipping view message with invalid token!");
+            return;
+        }
+
         message.getPeers().stream().map(SerializablePeer::getPeer).forEach(p -> {
             p.setPeerType(PeerType.PULLED);
             peerRepository.save(p);
         });
-        log.info("Received view from peer " + message.getPeers().get(0).getPeer());
+        log.info("Received view containing " + message.getPeers().size() + " peers from peer "
+                + message.getPeers().get(0).getPeer());
     }
 
     /**
@@ -88,7 +108,7 @@ public class PushPullHandler implements Receiver<Message> {
 
         // Reply to push with own view in some random cases
         if (random.nextDouble() < this.pullfactor) {
-            RpsViewMessage viewMessage = RpsViewMessage.builder().source(new SerializablePeer(this.source))
+            RpsViewMessage viewMessage = RpsViewMessage.builder().token(message.getToken()).source(new SerializablePeer(this.source))
                     .peers(viewManager.getForPush().stream().map(SerializablePeer::new)
                             .collect(Collectors.toCollection(ArrayList::new)))
                     .build();
