@@ -105,8 +105,8 @@ public class ProtocolImpl implements Protocol {
     private RpsViewMessage getRpsView(short size, List<Byte> payload) {
         List<SerializablePeer> peers = new ArrayList<>();
         int cur = 0;
-        Token token = new Token(payload.subList(0, Token.TOKEN_LENGTH));
 
+        Token token = new Token(payload.subList(0, Token.TOKEN_LENGTH));
         size -= Token.TOKEN_LENGTH;
         payload = payload.subList(Token.TOKEN_LENGTH, payload.size());
 

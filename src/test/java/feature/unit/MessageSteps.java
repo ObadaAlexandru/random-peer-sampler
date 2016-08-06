@@ -6,14 +6,13 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import cucumber.api.PendingException;
-import de.tum.communication.protocol.messages.*;
 import org.mockito.Mockito;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Bytes;
 
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -22,6 +21,17 @@ import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.Protocol;
 import de.tum.communication.protocol.ProtocolImpl;
 import de.tum.communication.protocol.SerializablePeer;
+import de.tum.communication.protocol.Token;
+import de.tum.communication.protocol.messages.GossipAnnounceMessage;
+import de.tum.communication.protocol.messages.GossipNotificationMessage;
+import de.tum.communication.protocol.messages.GossipNotifyMessage;
+import de.tum.communication.protocol.messages.GossipValidationMessage;
+import de.tum.communication.protocol.messages.Message;
+import de.tum.communication.protocol.messages.NseEstimateMessage;
+import de.tum.communication.protocol.messages.NseQueryMessage;
+import de.tum.communication.protocol.messages.RpsPeerMessage;
+import de.tum.communication.protocol.messages.RpsQueryMessage;
+import de.tum.communication.protocol.messages.RpsViewMessage;
 import de.tum.sampling.entity.ValidatorImpl;
 import feature.common.TestPeer;
 
@@ -39,6 +49,7 @@ public class MessageSteps {
 
     private Protocol protocol = new ProtocolImpl(new ValidatorImpl());
     private String byteSequence;
+    private Token token;
 
     @Given("^a gossip announce message with \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\"$")
     public void aGossipAnnounceMessageWithTtlAndDatatypeAndPayload(Short ttl, Short datatype, final String payload) {
@@ -99,11 +110,17 @@ public class MessageSteps {
                 .peer(CustomMocks.getPeer(ip, port, hostkey)).build();
     }
 
-    @Given("^an RPS view message with:$")
+    @Given("^a token \"([^\"]*)\"$")
+    public void aToken(String byteSequence) {
+        token = new Token(Bytes.asList(BaseEncoding.base16().decode(CharMatcher.WHITESPACE.removeFrom(byteSequence))));
+    }
+
+    @And("^an RPS view message with:$")
     public void anRPSViewMessageWith(List<TestPeer> testPeers) {
         List<SerializablePeer> speers = CustomMocks.testPeerToPeer(testPeers).stream()
                 .map(SerializablePeer::new).collect(Collectors.toList());
         message = RpsViewMessage.builder()
+                .token(token)
                 .source(speers.remove(0))
                 .peers(speers).build();
     }
@@ -151,5 +168,4 @@ public class MessageSteps {
         assertThat(speers.get(0).equals(rpsviewmessage.getSource()));
         assertThat(speers.subList(1, speers.size() - 1).equals(rpsviewmessage.getPeers()));
     }
-
 }
