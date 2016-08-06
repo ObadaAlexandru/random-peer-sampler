@@ -17,6 +17,7 @@ public enum MessageType {
     GOSSIP_ANNOUNCE((short) 500),
     GOSSIP_NOTIFY((short) 501),
     GOSSIP_NOTIFICATION((short) 502),
+    GOSSIP_VALIDATION((short) 503),
     NSE_QUERY((short) 520),
     NSE_ESTIMATE((short) 521),
     RPS_QUERY((short) 540),

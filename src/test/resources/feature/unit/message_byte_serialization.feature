@@ -28,6 +28,15 @@ Feature: Serialize messages to byte lists
       | 3         | 800      | 0c9823ba4739e89a3987630236d4     | 002401F60003032030633938323362613437333965383961333938373633303233366434         |
       | 4         | 1        | 0fff                             | 000C01F60004000130666666                                                         |
 
+  Scenario Outline: Gossip validation message byte serialization
+    Given a Gossip validation message with "<messageId>" and validity "<validity>"
+    When the message is serialized
+    Then the following byte sequence is returned: "<byteSequence>"
+    Examples:
+      | messageId | validity | byteSequence     |
+      | 1         | true     | 000801F700010001 |
+      | 2         | false    | 000801F700020000 |
+
   Scenario: Query message byte serialization
     Given an NSE Query Message
     When the message is serialized
