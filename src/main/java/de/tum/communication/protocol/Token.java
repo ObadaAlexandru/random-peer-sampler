@@ -60,4 +60,26 @@ public class Token implements ByteSerializable {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Token(" + Bytes.asList(this.token) + ")";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (obj == this)
+            return true;
+        if (!(obj instanceof Token))
+            return false;
+        Token token = (Token) obj;
+
+        if (Bytes.asList(token.token).equals(Bytes.asList(this.token))) {
+            return true;
+        }
+
+        return false;
+    }
 }

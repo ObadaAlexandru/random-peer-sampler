@@ -82,7 +82,7 @@ public class PushPullHandler implements Receiver<Message> {
         // Validate incoming token
         if (!this.tokenrepo.checkToken(message.getToken())) {
             // Skip
-            log.warn("Skipping push message with invalid token!");
+            log.warn("Skipping view message with invalid token!");
             return;
         }
 
@@ -90,7 +90,8 @@ public class PushPullHandler implements Receiver<Message> {
             p.setPeerType(PeerType.PULLED);
             peerRepository.save(p);
         });
-        log.info("Received view from peer " + message.getPeers().get(0).getPeer());
+        log.info("Received view containing " + message.getPeers().size() + " peers from peer "
+                + message.getPeers().get(0).getPeer());
     }
 
     /**
