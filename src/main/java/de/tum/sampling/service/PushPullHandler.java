@@ -6,16 +6,13 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import de.tum.communication.protocol.messages.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.SerializablePeer;
-import de.tum.communication.protocol.messages.GossipNotifyMessage;
-import de.tum.communication.protocol.messages.Message;
-import de.tum.communication.protocol.messages.RpsPushMessage;
-import de.tum.communication.protocol.messages.RpsViewMessage;
 import de.tum.communication.service.CommunicationService;
 import de.tum.communication.service.Receiver;
 import de.tum.sampling.entity.Peer;
@@ -55,13 +52,11 @@ public class PushPullHandler implements Receiver<Message> {
 
     @Override
     public Optional<Message> receive(Message message) {
-
         if (message instanceof RpsViewMessage) {
             this.handleRpsView((RpsViewMessage) message);
         } else if (message instanceof RpsPushMessage) {
             this.handleRpsPush((RpsPushMessage) message);
         }
-
         return Optional.empty();
     }
 
@@ -93,11 +88,11 @@ public class PushPullHandler implements Receiver<Message> {
 
         // Reply to push with own view in some random cases
         if (random.nextDouble() < this.pullfactor) {
-            RpsViewMessage viewmsg = RpsViewMessage.builder().source(new SerializablePeer(this.source))
+            RpsViewMessage viewMessage = RpsViewMessage.builder().source(new SerializablePeer(this.source))
                     .peers(viewManager.getForPush().stream().map(SerializablePeer::new)
                             .collect(Collectors.toCollection(ArrayList::new)))
                     .build();
-            this.communicationService.send(viewmsg, new InetSocketAddress(peer.getAddress(), peer.getPort()));
+            this.communicationService.send(viewMessage, new InetSocketAddress(peer.getAddress(), peer.getPort()));
             log.info("Replied with view to peer " + peer);
         }
     }

@@ -42,6 +42,7 @@ public class CommunicationServiceImpl implements CommunicationService {
         senders.put(MessageType.NSE_QUERY, nseClient);
         senders.put(MessageType.GOSSIP_ANNOUNCE, gossipClient);
         senders.put(MessageType.GOSSIP_NOTIFY, gossipClient);
+        senders.put(MessageType.GOSSIP_VALIDATION, gossipClient);
         communicationExecutor.submit(rpsServer);
     }
 
