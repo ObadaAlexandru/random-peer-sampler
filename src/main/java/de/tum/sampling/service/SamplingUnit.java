@@ -52,7 +52,6 @@ public class SamplingUnit {
 
     /**
      * Update sample with input peer
-     * @return current {@link Peer}, could be the old one or the new one
      */
     public void next(Peer peer) {
         String newpeer = BaseEncoding.base16().encode(md.digest(Bytes.concat(peer.getIdentifier().getBytes(), rand)));
