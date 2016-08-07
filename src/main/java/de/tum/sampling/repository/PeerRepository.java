@@ -9,8 +9,9 @@ import java.util.List;
 /**
  * Created by Alexandru Obada on 22/05/16.
  */
-public interface PeerRepository extends JpaRepository<Peer, String> {
+public interface PeerRepository extends JpaRepository<Peer, Long> {
     List<Peer> findAll();
     List<Peer> getByPeerType(PeerType peerType);
     List<Peer> deleteByPeerType(PeerType peerType);
+    Peer deleteById(Long id);
 }

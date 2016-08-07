@@ -8,7 +8,11 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Bytes;
 
 import de.tum.sampling.entity.Peer;
+import de.tum.sampling.entity.PeerType;
+import de.tum.sampling.repository.PeerRepository;
 import lombok.extern.slf4j.Slf4j;
+
+import static de.tum.sampling.entity.PeerType.SAMPLED;
 
 /**
  * Created by Nicolas Frinker on 20/06/16.
@@ -27,8 +31,9 @@ public class SamplingUnit {
     private final Random prng = new Random();
     private byte[] rand = new byte[50];
     private Peer peer = null;
+    private PeerRepository peerRepository;
 
-    public SamplingUnit() throws NoSuchAlgorithmException {
+    public SamplingUnit(PeerRepository peerRepository) throws NoSuchAlgorithmException {
         this.md = MessageDigest.getInstance("SHA-256");
         this.init();
     }
@@ -47,6 +52,7 @@ public class SamplingUnit {
 
     /**
      * Update sample with input peer
+     * @return current {@link Peer}, could be the old one or the new one
      */
     public void next(Peer peer) {
         String newpeer = BaseEncoding.base16().encode(md.digest(Bytes.concat(peer.getIdentifier().getBytes(), rand)));
@@ -56,7 +62,17 @@ public class SamplingUnit {
 
         if (oldpeer == null || oldpeer.compareTo(newpeer) > 0) {
             log.debug("New peer in SamplingUnit: " + peer);
+            if(this.peer != null) {
+                peerRepository.deleteById(this.peer.getId());
+            }
             this.peer = peer;
+            peerRepository.save(
+                    Peer.builder()
+                    .address(peer.getAddress())
+                    .hostkey(peer.getHostkey())
+                    .port(peer.getPort())
+                    .peerType(SAMPLED)
+                    .build());
         }
     }
 
