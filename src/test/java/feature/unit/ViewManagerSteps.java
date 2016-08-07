@@ -6,6 +6,7 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import de.tum.config.Bootstrap;
 import de.tum.sampling.entity.Peer;
 import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.repository.PeerRepository;
@@ -20,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.PublicKey;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,9 +32,7 @@ import static de.tum.sampling.entity.PeerType.PUSHED;
 import static de.tum.sampling.entity.PeerType.SAMPLED;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Alexandru Obada on 13/06/16.
@@ -62,11 +62,15 @@ public class ViewManagerSteps {
     @Mock
     NseHandler nseHandler;
 
+    @Mock
+    Bootstrap bootstrap;
+
     ViewManager viewManager;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        when(bootstrap.getPeers()).thenReturn(Collections.EMPTY_LIST);
     }
 
     @Given("^the following pushed peers:$")
@@ -115,6 +119,7 @@ public class ViewManagerSteps {
                 .dynamicViewSize(dynamicViewSize)
                 .peerRepository(peerRepository)
                 .nseHandler(nseHandler)
+                .bootstrap(bootstrap)
                 .alpha(alpha)
                 .beta(beta)
                 .gamma(gamma)
@@ -129,7 +134,7 @@ public class ViewManagerSteps {
         verify(peerRepository).deleteByPeerType(PULLED);
         verify(peerRepository).getByPeerType(SAMPLED);
         verify(peerRepository).deleteByPeerType(DYNAMIC);
-        verify(peerRepository).save(anyListOf(Peer.class));
+        verify(peerRepository, times(2)).save(anyListOf(Peer.class));
     }
 
     @And("^the samples are updated$")
@@ -141,7 +146,7 @@ public class ViewManagerSteps {
     public void theDynamicViewIsNotUpdated() {
         verify(peerRepository, times(0)).getByPeerType(SAMPLED);
         verify(peerRepository, times(0)).deleteByPeerType(DYNAMIC);
-        verify(peerRepository, times(0)).save(anyList());
+        verify(peerRepository, times(1)).save(anyList());
         verify(sampler).updateSample(anyListOf(Peer.class));
     }
 

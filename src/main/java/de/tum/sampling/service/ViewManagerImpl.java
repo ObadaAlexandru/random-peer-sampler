@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.tum.config.Bootstrap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,21 +33,24 @@ public class ViewManagerImpl implements ViewManager {
 
     private Double alpha;
 
-    private  Double beta;
+    private Double beta;
 
     private Double gamma;
 
     private ScheduledExecutorService schedulingExecutor;
 
+    private Bootstrap bootstrap;
+
     private PeerRepository peerRepository;
 
-    private  Sampler sampler;
+    private Sampler sampler;
 
     @Builder
     @Autowired
     public ViewManagerImpl(PeerRepository peerRepository,
                            Sampler sampler,
                            NseHandler nseHandler,
+                           Bootstrap bootstrap,
                            @Value("${rps.sampling.view.dynamic_size:30}") Integer dynamicViewSize,
                            @Value("${rps.sampling.view.alpha:0.45}") Double alpha,
                            @Value("${rps.sampling.view.beta:0.45}") Double beta,
@@ -54,19 +58,29 @@ public class ViewManagerImpl implements ViewManager {
                            @Value("#{iniConfig.getRoundDuration()}") Integer viewSizeUpdateRate) {
         this.peerRepository = peerRepository;
         this.sampler = sampler;
+        this.bootstrap = bootstrap;
         this.dynamicViewSize = new AtomicInteger(dynamicViewSize);
         this.alpha = alpha;
         this.beta = beta;
         this.gamma = gamma;
-
+        initDynamicView();
         schedulingExecutor = Executors.newSingleThreadScheduledExecutor();
         schedulingExecutor.scheduleAtFixedRate(new ViewSizeUpdateTask(nseHandler), 0, viewSizeUpdateRate, TimeUnit.MILLISECONDS);
         log.info("View exchange scheduler started with exchange rate {}", viewSizeUpdateRate);
     }
 
+    private void initDynamicView() {
+        List<Peer> dynamicView = peerRepository.getByPeerType(PeerType.DYNAMIC);
+        if (dynamicView.isEmpty()) {
+            List<Peer> bootstrapped = bootstrap.getPeers();
+            peerRepository.save(bootstrapped);
+        }
+    }
+
     /**
      * Randomly selects a subset of the current dynamic view
      * According to Brahms this implements Limited pushes
+     *
      * @return a subset of the dynamic view
      */
     @Override
@@ -115,11 +129,11 @@ public class ViewManagerImpl implements ViewManager {
         public void run() {
             Optional<Integer> nse = nseHandler.getNetworkSizeEstimation();
             Optional<Integer> deviation = nseHandler.getStandardDeviation();
-            if(nse.isPresent() && deviation.isPresent()) {
+            if (nse.isPresent() && deviation.isPresent()) {
                 Integer networkSize = nse.get();
                 Integer sizeDeviation = deviation.get();
-                Integer newSize = (int) Math.pow(networkSize + sizeDeviation, 1/3);
-                if(newSize > dynamicViewSize.get()) {
+                Integer newSize = (int) Math.pow(networkSize + sizeDeviation, 1 / 3);
+                if (newSize > dynamicViewSize.get()) {
                     dynamicViewSize.set(newSize);
                 }
             }

@@ -22,7 +22,6 @@ import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.protocol.messages.RpsPingMessage;
 import de.tum.communication.service.CommunicationService;
 import de.tum.communication.service.Receiver;
-import de.tum.config.Bootstrap;
 import de.tum.sampling.entity.Peer;
 import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.entity.SourcePeer;
@@ -49,7 +48,7 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
     public SamplerImpl(CommunicationService comservice, @Value("#{iniConfig.getSamplerNum()}") Integer samplerNum,
             @Value("#{iniConfig.getValidationRate()}") Integer validationRate,
             @Value("#{iniConfig.getSamplerTimeout()}") Integer timeout, SourcePeer source,
-            PeerRepository peerRepository, Bootstrap bootstrap) throws NoSuchAlgorithmException {
+            PeerRepository peerRepository) throws NoSuchAlgorithmException {
         this.communicationService = comservice;
         comservice.addReceiver(this, MessageType.RPS_PING);
         this.timeout = timeout;
@@ -59,12 +58,8 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
         // Create given number of sampling units
         log.info("Runnning " + samplerNum + " samplers.");
         for (int i = 0; i < samplerNum; i++) {
-            samplers.add(new SamplingUnit());
+            samplers.add(new SamplingUnit(peerRepository));
         }
-
-        // Initialize samples
-        updateSample(bootstrap.getPeers());
-        this.updateSample(peerRepository.getByPeerType(PeerType.SAMPLED));
 
         // Schedule validation of samples
         schedulingExecutor = Executors.newSingleThreadScheduledExecutor();
@@ -76,8 +71,6 @@ public class SamplerImpl implements Sampler, Receiver<Message> {
         log.info("Update sample with " + peers.size() + " peers.");
         for (Peer peer : peers) {
             for (SamplingUnit unit : this.samplers) {
-                peer.setPeerType(PeerType.SAMPLED);
-                this.peerRepository.save(peer);
                 unit.next(peer);
             }
         }
