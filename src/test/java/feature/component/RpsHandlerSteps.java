@@ -62,11 +62,6 @@ public class RpsHandlerSteps {
     public void theRpsServiceIsQueried() {
         SocketAddress socket = new InetSocketAddress(rpsHost, rpsPort);
         testclient.send(new RpsQueryMessage(), socket);
-        try {
-            Thread.sleep(roundDuration);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     @Then("^the handler responds with a random peer message$")
