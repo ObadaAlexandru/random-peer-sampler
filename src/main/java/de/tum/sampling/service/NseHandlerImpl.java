@@ -29,14 +29,20 @@ public class NseHandlerImpl implements NseHandler {
 
     private ScheduledExecutorService scheduler;
     private CommunicationService communicationService;
+    private ViewManager viewManager;
+    private PushPullHandler pushPullHandler;
     private Integer nse;
     private Integer standardDeviation;
 
     @Autowired
     public NseHandlerImpl(CommunicationService communicationService,
+                          ViewManager viewManager,
+                          PushPullHandler pushPullHandler,
                           @Value("#{iniConfig.getRoundDuration()}") Integer exchangeRate) {
         this.communicationService = communicationService;
         this.communicationService.addReceiver(this, NSE_ESTIMATE);
+        this.viewManager = viewManager;
+        this.pushPullHandler = pushPullHandler;
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(new NseQueryTask(), 0, exchangeRate, TimeUnit.MILLISECONDS);
     }
@@ -57,6 +63,19 @@ public class NseHandlerImpl implements NseHandler {
         nse = nseEstimateMessage.getEstimatedPeerNumber();
         standardDeviation = nseEstimateMessage.getEstimatedStandardDeviation();
         log.info("NSE parameters updated size={} deviation={}", nse, standardDeviation);
+
+        // Update view size
+        Integer newSize = (int) Math.pow(nse + standardDeviation, 1/3);
+        if(newSize > this.viewManager.getViewSize()) {
+            this.viewManager.setViewSize(newSize);
+            log.info("Set dynamic view size to " + newSize);
+        }
+
+        // Update pull ratio
+        double pullratio = (nse > 10) ? Math.pow(nse-10, 1/2) : 1.0;
+        this.pushPullHandler.setPullratio(pullratio);
+        log.info("Set pull ratio to " + pullratio);
+
         return Optional.empty();
     }
 
