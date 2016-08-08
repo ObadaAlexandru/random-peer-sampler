@@ -34,6 +34,7 @@ public class SamplingUnit {
     private PeerRepository peerRepository;
 
     public SamplingUnit(PeerRepository peerRepository) throws NoSuchAlgorithmException {
+        this.peerRepository = peerRepository;
         this.md = MessageDigest.getInstance("SHA-256");
         this.init();
     }

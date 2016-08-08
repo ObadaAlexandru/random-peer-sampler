@@ -29,23 +29,22 @@ import static de.tum.sampling.entity.PeerType.DYNAMIC;
 @Slf4j
 @Service
 public class RpsHandlerImpl implements RpsHandler {
-//    private final Sampler sampler;
     private PeerRepository peerRepository;
+    private Random randomizer;
 
     @Autowired
     public RpsHandlerImpl(CommunicationService communicationService, PeerRepository peerRepository) {
+        randomizer = new Random();
         communicationService.addReceiver(this, MessageType.RPS_QUERY);
         this.peerRepository = peerRepository;
     }
 
     @Override
     public Optional<Message> receive(Message message) {
-
         // We were asked for a random peer. Return one.
         log.info("Respond to RPS query.");
         List<Peer> dynamicView = peerRepository.getByPeerType(DYNAMIC);
         if(dynamicView != null) {
-            Random randomizer = new Random();
             Peer randomPeer = dynamicView.get(randomizer.nextInt(dynamicView.size()));
             return Optional.of(RpsPeerMessage.builder().peer(new SerializablePeer(randomPeer)).build());
         }

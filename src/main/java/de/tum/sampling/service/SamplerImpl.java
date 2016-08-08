@@ -1,21 +1,5 @@
 package de.tum.sampling.service;
 
-import java.net.InetSocketAddress;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import de.tum.communication.protocol.MessageType;
 import de.tum.communication.protocol.SerializablePeer;
 import de.tum.communication.protocol.messages.Message;
@@ -23,11 +7,20 @@ import de.tum.communication.protocol.messages.RpsPingMessage;
 import de.tum.communication.service.CommunicationService;
 import de.tum.communication.service.Receiver;
 import de.tum.sampling.entity.Peer;
-import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.entity.SourcePeer;
 import de.tum.sampling.repository.PeerRepository;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.net.InetSocketAddress;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Alexandru Obada on 13/06/16.
