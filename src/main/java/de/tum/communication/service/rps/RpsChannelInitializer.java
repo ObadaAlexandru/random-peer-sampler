@@ -9,6 +9,7 @@ import de.tum.communication.service.network.ReceiveMessageChannelHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Value;
 
@@ -26,6 +27,7 @@ class RpsChannelInitializer extends ChannelInitializer<Channel> implements Recei
     protected void initChannel(Channel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast(new IdleStateHandler(15, 15, 15))
+                .addLast(new LengthFieldBasedFrameDecoder(MAX_PACKET_SIZE, 0, LENGTH_FIELD_LENGTH, -2, 0))
                 .addLast(new MessageDecoder())
                 .addLast(new MessageEncoder())
                 .addLast(rpsChannelHandler);
