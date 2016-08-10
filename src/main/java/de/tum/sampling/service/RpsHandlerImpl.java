@@ -1,11 +1,11 @@
 package de.tum.sampling.service;
 
+import static de.tum.sampling.entity.PeerType.DYNAMIC;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import de.tum.sampling.entity.PeerType;
-import de.tum.sampling.repository.PeerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +15,8 @@ import de.tum.communication.protocol.messages.Message;
 import de.tum.communication.protocol.messages.RpsPeerMessage;
 import de.tum.communication.service.CommunicationService;
 import de.tum.sampling.entity.Peer;
+import de.tum.sampling.repository.PeerRepository;
 import lombok.extern.slf4j.Slf4j;
-
-import static de.tum.sampling.entity.PeerType.DYNAMIC;
 /**
  * Created by Nicolas Frinker on 25/06/16.
  */

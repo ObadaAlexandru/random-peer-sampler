@@ -2,20 +2,16 @@ package de.tum.sampling.service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.tum.config.Bootstrap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.tum.config.Bootstrap;
 import de.tum.sampling.entity.Peer;
 import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.repository.PeerRepository;
@@ -37,8 +33,6 @@ public class ViewManagerImpl implements ViewManager {
 
     private Double gamma;
 
-    private ScheduledExecutorService schedulingExecutor;
-
     private Bootstrap bootstrap;
 
     private PeerRepository peerRepository;
@@ -49,7 +43,6 @@ public class ViewManagerImpl implements ViewManager {
     @Autowired
     public ViewManagerImpl(PeerRepository peerRepository,
                            Sampler sampler,
-                           NseHandler nseHandler,
                            Bootstrap bootstrap,
                            @Value("${rps.sampling.view.dynamic_size:30}") Integer dynamicViewSize,
                            @Value("${rps.sampling.view.alpha:0.45}") Double alpha,
@@ -64,9 +57,26 @@ public class ViewManagerImpl implements ViewManager {
         this.beta = beta;
         this.gamma = gamma;
         initDynamicView();
-        schedulingExecutor = Executors.newSingleThreadScheduledExecutor();
-        schedulingExecutor.scheduleAtFixedRate(new ViewSizeUpdateTask(nseHandler), 0, viewSizeUpdateRate, TimeUnit.MILLISECONDS);
-        log.info("View exchange scheduler started with exchange rate {}", viewSizeUpdateRate);
+    }
+
+    /**
+     * Update viewSize
+     *
+     * @param viewSize
+     */
+    @Override
+    public void setViewSize(int viewSize) {
+        this.dynamicViewSize.set(viewSize);
+    }
+
+    /**
+     * Get current dynamic view size
+     *
+     * @return
+     */
+    @Override
+    public int getViewSize() {
+        return this.dynamicViewSize.get();
     }
 
     private void initDynamicView() {
@@ -120,24 +130,5 @@ public class ViewManagerImpl implements ViewManager {
     private List<Peer> getRandom(List<Peer> peers, long n) {
         Collections.shuffle(peers);
         return peers.stream().limit(n).collect(Collectors.toList());
-    }
-
-    @lombok.Value
-    private class ViewSizeUpdateTask implements Runnable {
-        private NseHandler nseHandler;
-
-        @Override
-        public void run() {
-            Optional<Integer> nse = nseHandler.getNetworkSizeEstimation();
-            Optional<Integer> deviation = nseHandler.getStandardDeviation();
-            if (nse.isPresent() && deviation.isPresent()) {
-                Integer networkSize = nse.get();
-                Integer sizeDeviation = deviation.get();
-                Integer newSize = (int) Math.pow(networkSize + sizeDeviation, 1 / 3);
-                if (newSize > dynamicViewSize.get()) {
-                    dynamicViewSize.set(newSize);
-                }
-            }
-        }
     }
 }

@@ -1,5 +1,7 @@
 package de.tum.sampling.service;
 
+import static de.tum.sampling.entity.PeerType.SAMPLED;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
@@ -8,11 +10,8 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Bytes;
 
 import de.tum.sampling.entity.Peer;
-import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.repository.PeerRepository;
 import lombok.extern.slf4j.Slf4j;
-
-import static de.tum.sampling.entity.PeerType.SAMPLED;
 
 /**
  * Created by Nicolas Frinker on 20/06/16.

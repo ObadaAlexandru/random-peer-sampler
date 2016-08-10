@@ -1,6 +1,27 @@
 package feature.unit;
 
 
+import static com.google.common.truth.Truth.assertThat;
+import static de.tum.sampling.entity.PeerType.DYNAMIC;
+import static de.tum.sampling.entity.PeerType.PULLED;
+import static de.tum.sampling.entity.PeerType.PUSHED;
+import static de.tum.sampling.entity.PeerType.SAMPLED;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.security.PublicKey;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -15,24 +36,6 @@ import de.tum.sampling.service.Sampler;
 import de.tum.sampling.service.ViewManager;
 import de.tum.sampling.service.ViewManagerImpl;
 import feature.common.TestPeer;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.PublicKey;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.google.common.truth.Truth.assertThat;
-import static de.tum.sampling.entity.PeerType.DYNAMIC;
-import static de.tum.sampling.entity.PeerType.PULLED;
-import static de.tum.sampling.entity.PeerType.PUSHED;
-import static de.tum.sampling.entity.PeerType.SAMPLED;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.*;
 
 /**
  * Created by Alexandru Obada on 13/06/16.
@@ -118,7 +121,6 @@ public class ViewManagerSteps {
         viewManager = ViewManagerImpl.builder()
                 .dynamicViewSize(dynamicViewSize)
                 .peerRepository(peerRepository)
-                .nseHandler(nseHandler)
                 .bootstrap(bootstrap)
                 .alpha(alpha)
                 .beta(beta)

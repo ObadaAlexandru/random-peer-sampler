@@ -64,6 +64,15 @@ public class PushPullHandler implements Receiver<Message> {
         communicationService.send(new GossipNotifyMessage(MessageType.RPS_PUSH.getValue()));
     }
 
+    /**
+     * Set new pull ratio
+     *
+     * @param ratio
+     */
+    public void setPullratio(double ratio) {
+        this.pullratio = ratio;
+    }
+
     @Override
     public Optional<Message> receive(Message message) {
         if (message instanceof RpsViewMessage) {
