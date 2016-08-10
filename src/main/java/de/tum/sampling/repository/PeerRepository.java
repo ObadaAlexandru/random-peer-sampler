@@ -1,17 +1,19 @@
 package de.tum.sampling.repository;
 
-import de.tum.sampling.entity.Peer;
-import de.tum.sampling.entity.PeerType;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import de.tum.sampling.entity.Peer;
+import de.tum.sampling.entity.PeerType;
 
 /**
  * Created by Alexandru Obada on 22/05/16.
  */
 public interface PeerRepository extends JpaRepository<Peer, Long> {
+    @Override
     List<Peer> findAll();
     List<Peer> getByPeerType(PeerType peerType);
     List<Peer> deleteByPeerType(PeerType peerType);
-    Peer deleteById(Long id);
+    void deleteById(Long id);
 }
