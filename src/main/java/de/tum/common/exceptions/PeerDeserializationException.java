@@ -3,12 +3,16 @@ package de.tum.common.exceptions;
 /**
  * Created by Nicolas Frinker on 07/06/16.
  */
-public class PeerDeserialisationException extends ErrorCodeException {
-    public PeerDeserialisationException() {
+
+/**
+ * Failed deserializing peer msg
+ */
+public class PeerDeserializationException extends ErrorCodeException {
+    public PeerDeserializationException() {
         super(ErrorCode.INVALID_PEER_SERIALIZATION);
     }
 
-    public PeerDeserialisationException(String message) {
+    public PeerDeserializationException(String message) {
         super(ErrorCode.INVALID_PEER_SERIALIZATION, message);
     }
 }

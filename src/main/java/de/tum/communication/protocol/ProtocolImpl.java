@@ -17,7 +17,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Shorts;
 
-import de.tum.common.exceptions.PeerDeserialisationException;
+import de.tum.common.exceptions.PeerDeserializationException;
 import de.tum.communication.protocol.messages.GossipNotificationMessage;
 import de.tum.communication.protocol.messages.GossipNotifyMessage;
 import de.tum.communication.protocol.messages.Message;
@@ -125,9 +125,9 @@ public class ProtocolImpl implements Protocol {
      *
      * @param payload
      * @return
-     * @throws PeerDeserialisationException
+     * @throws PeerDeserializationException
      */
-    private Peer bytesToPeer(List<Byte> payload) throws PeerDeserialisationException {
+    private Peer bytesToPeer(List<Byte> payload) throws PeerDeserializationException {
         int cur = 0;
         Peer peer = null;
         int port = Shorts.fromBytes(payload.get(cur), payload.get(cur + 1));
@@ -136,7 +136,7 @@ public class ProtocolImpl implements Protocol {
         try {
             address = InetAddress.getByAddress(Bytes.toArray(payload.subList(cur + ADDR_OFFSET, cur + ADDR_OFFSET + addrsize)));
         } catch (UnknownHostException e) {
-            throw new PeerDeserialisationException("Invalid address!");
+            throw new PeerDeserializationException("Invalid address!");
         }
         cur += Message.WORD_LENGTH + addrsize;
         PublicKey hostkey;
@@ -144,10 +144,10 @@ public class ProtocolImpl implements Protocol {
             hostkey = KeyFactory.getInstance("RSA")
                     .generatePublic(new X509EncodedKeySpec(Bytes.toArray(payload.subList(cur, cur + HOSTKEY_SIZE))));
         } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
-            throw new PeerDeserialisationException("Invalid hostkey!");
+            throw new PeerDeserializationException("Invalid hostkey!");
         }
         if (!validator.isValidPublicKey(hostkey)) {
-            throw new PeerDeserialisationException("Invalid hostkey for this application!");
+            throw new PeerDeserializationException("Invalid hostkey for this application!");
         }
         peer = Peer.builder().port(port).address(address).hostkey(hostkey).build();
         return peer;
@@ -164,7 +164,7 @@ public class ProtocolImpl implements Protocol {
             addrsize = IPV6_ADDRESS_SIZE;
             break;
         default:
-            throw new PeerDeserialisationException("Invalid address type!");
+            throw new PeerDeserializationException("Invalid address type!");
         }
         return addrsize;
     }

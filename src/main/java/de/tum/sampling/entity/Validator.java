@@ -12,15 +12,15 @@ public interface Validator {
      * Checks, whether given public key is considered valid for this application
      *
      * @param pubkey
-     * @return
+     * @return true if order is valid, false otherwise
      */
-    public boolean isValidPublicKey(PublicKey pubkey);
+    boolean isValidPublicKey(PublicKey pubkey);
 
     /**
      * Checks, whether given private key is considered valid for this application
      *
      * @param privkey
-     * @return
+     * @return true if order is valid, false otherwise
      */
-    public boolean isValidPrivateKey(PrivateKey privkey);
+    boolean isValidPrivateKey(PrivateKey privkey);
 }

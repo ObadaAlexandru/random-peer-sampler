@@ -12,7 +12,7 @@ public interface TokenRepo {
      *
      * @return
      */
-    public Token newToken();
+    Token newToken();
 
     /**
      * Check, if given token is valid and received view should be accepted
@@ -20,12 +20,12 @@ public interface TokenRepo {
      * @param token
      * @return
      */
-    public boolean checkToken(Token token);
+    boolean checkToken(Token token);
 
     /**
      * Remove token from repo
      *
      * @param token
      */
-    public void removeToken(Token token);
+    void removeToken(Token token);
 }
