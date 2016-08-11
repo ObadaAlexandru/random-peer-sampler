@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 
 /**
- *  Defines the message types as described in the Project Specification A. Message Types
+ * Defines the message types as described in the Project Specification A. Message Types
  */
 
 @Getter
@@ -36,6 +36,8 @@ public enum MessageType {
                 return GOSSIP_NOTIFY;
             case 502:
                 return GOSSIP_NOTIFICATION;
+            case 503:
+                return GOSSIP_VALIDATION;
             case 520:
                 return NSE_QUERY;
             case 521:

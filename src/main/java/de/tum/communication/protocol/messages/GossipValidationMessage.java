@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * Created by Alexandru Obada on 06/08/16.
  */
+
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class GossipValidationMessage extends Message {

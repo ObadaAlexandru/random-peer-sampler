@@ -6,6 +6,10 @@ import lombok.Getter;
 /**
  * Created by Alexandru Obada on 12/05/16.
  */
+
+/**
+ * Used mainly for logging purpose, better exception identification
+ */
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
