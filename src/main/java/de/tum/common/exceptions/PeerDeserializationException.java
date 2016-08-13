@@ -5,7 +5,7 @@ package de.tum.common.exceptions;
  */
 
 /**
- * Failed deserializing peer msg
+ * Failed deserializing peer message
  */
 public class PeerDeserializationException extends ErrorCodeException {
     public PeerDeserializationException() {

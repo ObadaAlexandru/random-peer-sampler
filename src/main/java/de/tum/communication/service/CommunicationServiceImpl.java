@@ -23,6 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Created by Alexandru Obada on 12/05/16.
  */
+
+/**
+ * Responsible for sending and receiving {@link Message} instances.
+ *
+ * It contains a list of senders and receivers responsible for a certain type of
+ * message and forwards {@link Message} instances to them.
+ */
 @Slf4j
 @Service
 @Value

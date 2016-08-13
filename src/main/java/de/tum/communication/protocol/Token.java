@@ -41,12 +41,11 @@ public class Token implements ByteSerializable {
         return Bytes.asList(this.token);
     }
 
+    /**
+     * Get creation date
+     */
     public Date getCreationDate() {
         return this.creationdate;
-    }
-
-    public short getSize() {
-        return TOKEN_LENGTH;
     }
 
     /**

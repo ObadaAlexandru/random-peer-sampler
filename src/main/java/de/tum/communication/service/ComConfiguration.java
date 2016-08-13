@@ -8,6 +8,10 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Created by Alexandru Obada on 16/05/16.
  */
+
+/**
+ * Configuration values for communication purposes
+ */
 @Configuration
 public class ComConfiguration {
 

@@ -1,5 +1,6 @@
 package de.tum.communication.protocol;
 
+import de.tum.communication.exceptions.UnknownMessageTypeException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,9 +9,10 @@ import lombok.Getter;
  */
 
 /**
- * Defines the message types as described in the Project Specification A. Message Types
+ * Defines the message types as described in the Project Specification A.
+ * Message Types Additional, it adds numbers for our self defined messages for
+ * our RPS to RPS communication.
  */
-
 @Getter
 @AllArgsConstructor
 public enum MessageType {
@@ -53,7 +55,7 @@ public enum MessageType {
             case 544:
                 return RPS_PING;
             default:
-                throw new IllegalArgumentException("Unknown message type " + type);
+                throw new UnknownMessageTypeException("Unknown message type " + type);
         }
     }
 }

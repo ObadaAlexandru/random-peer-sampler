@@ -32,6 +32,11 @@ import static de.tum.communication.service.Module.Service.BASE;
 /**
  * Created by Nicolas Frinker on 19/05/16.
  */
+
+/**
+ * A client object for holding a set of connections and open new ones on
+ * request.
+ */
 @Slf4j
 @Component
 @Module(BASE)

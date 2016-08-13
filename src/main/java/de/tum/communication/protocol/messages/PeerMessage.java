@@ -11,6 +11,11 @@ import java.util.List;
 /**
  * Created by Alexandru Obada on 14/06/16.
  */
+
+/**
+ * Abstract message containing just the header and one peer.
+ * Is base class of the RPS peer and RPS ping message for example.
+ */
 abstract class PeerMessage extends Message {
     private SerializablePeer peer;
 

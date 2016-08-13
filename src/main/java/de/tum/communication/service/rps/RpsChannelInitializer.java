@@ -16,6 +16,10 @@ import lombok.Value;
 /**
  * Created by Alexandru Obada on 15/05/16.
  */
+
+/**
+ * Netty channel initializer for our RpsServer
+ */
 @Value
 class RpsChannelInitializer extends ChannelInitializer<Channel> implements ReceiverAware<Message> {
     private final int MAX_PACKET_SIZE = 64000;

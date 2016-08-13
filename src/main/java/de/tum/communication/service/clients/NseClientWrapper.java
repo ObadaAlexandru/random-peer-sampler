@@ -15,6 +15,9 @@ import java.net.SocketAddress;
 
 import static de.tum.communication.service.Module.Service.BASE;
 
+/**
+ * A client to connect to the NSE module
+ */
 @Component
 @Module(Module.Service.NSE)
 public class NseClientWrapper implements Client {

@@ -14,6 +14,11 @@ import java.util.List;
 /**
  * Created by Alexandru Obada on 11/05/16.
  */
+
+/**
+ * NSE Estimate Message
+ * see Project Specification 3.2.2
+ */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class NseEstimateMessage extends Message {

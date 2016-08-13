@@ -15,6 +15,9 @@ import java.net.SocketAddress;
 
 import static de.tum.communication.service.Module.Service.BASE;
 
+/**
+ * A client to connect to the gossip module
+ */
 @Component
 @Module(Module.Service.GOSSIP)
 public class GossipClientWrapper implements Client {

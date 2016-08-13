@@ -11,6 +11,9 @@ import de.tum.sampling.entity.Peer;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 
+/**
+ * A wrapper for peer objects to make them serializable.
+ */
 @AllArgsConstructor
 @Value
 public class SerializablePeer implements ByteSerializable {
