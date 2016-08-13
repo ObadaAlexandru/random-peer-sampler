@@ -58,6 +58,10 @@ public class PushScheduler {
         schedulingExecutor.shutdown();
     }
 
+    /**
+     * Scheduled task
+     * Sends {@link RpsPushMessage} containing the identity of the local peer
+     */
     private class ViewExchangeTask implements Runnable {
         @Override
         public void run() {

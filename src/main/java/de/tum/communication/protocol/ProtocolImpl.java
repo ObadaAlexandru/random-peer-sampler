@@ -29,7 +29,7 @@ import de.tum.communication.protocol.messages.RpsPushMessage;
 import de.tum.communication.protocol.messages.RpsQueryMessage;
 import de.tum.communication.protocol.messages.RpsViewMessage;
 import de.tum.sampling.entity.Peer;
-import de.tum.sampling.entity.Validator;
+import de.tum.sampling.entity.KeyValidator;
 
 /**
  * Created by Alexandru Obada on 12/05/16.
@@ -46,10 +46,10 @@ public class ProtocolImpl implements Protocol {
     private static final int IPV6_ADDRESS_SIZE = 16;
     private static final int HOSTKEY_SIZE = 550;
 
-    private Validator validator;
+    private KeyValidator validator;
 
     @Autowired
-    public ProtocolImpl(Validator validator) {
+    public ProtocolImpl(KeyValidator validator) {
         this.validator = validator;
     }
 

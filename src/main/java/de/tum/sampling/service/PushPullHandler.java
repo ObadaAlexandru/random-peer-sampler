@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 /**
+ * Handles push/pull messages
  * Receive push messages and send a view back
  */
 @Service
@@ -86,6 +87,8 @@ public class PushPullHandler implements Receiver<Message> {
     /**
      * Receive rps view message
      *
+     * Merges the received peers into the pulled peer set
+     *
      * @param message
      * @return
      */
@@ -111,7 +114,9 @@ public class PushPullHandler implements Receiver<Message> {
     }
 
     /**
-     * Receive rps push message and send view in reply in some cases
+     * Receive rps push message
+     * Merge source into push set
+     * Reply with a {@link  RpsViewMessage} containing the dynamic view of the local peer
      *
      * @param message
      * @return

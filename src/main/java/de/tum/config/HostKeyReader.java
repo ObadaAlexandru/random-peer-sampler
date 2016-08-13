@@ -5,6 +5,7 @@ import java.security.PublicKey;
 
 /**
  * Created by Alexandru Obada on 31/05/16.
+ *
  */
 public interface HostKeyReader {
     PublicKey getPublicKey();

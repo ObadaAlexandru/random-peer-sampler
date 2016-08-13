@@ -41,6 +41,9 @@ public class FileBootstrap implements Bootstrap {
         this.bootstrapPath = bootstrapPath;
     }
 
+    /**
+     * Loads the peers from a yaml file
+     */
     @Override
     public List<Peer> getPeers() {
         Constructor constructor = new Constructor(BootstrapPeers.class);

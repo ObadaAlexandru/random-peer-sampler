@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import de.tum.common.exceptions.HostkeyException;
-import de.tum.sampling.entity.Validator;
+import de.tum.sampling.entity.KeyValidator;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 /**
- * Parses the PEM hostkey file and extracts Public/Private key
+ * Hostkey reader implementation for pem format
  */
 @Component
 @Slf4j
@@ -38,7 +38,7 @@ public class HostKeyReaderImpl implements HostKeyReader {
     private PEMKeyPair pemKeyPair;
 
     @Autowired
-    private Validator validator;
+    private KeyValidator validator;
 
     @Autowired
     public HostKeyReaderImpl(@NonNull @Value("#{iniConfig.getHostKeyPath()}") String hostKeyPath) {

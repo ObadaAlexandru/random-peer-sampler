@@ -10,8 +10,19 @@ import java.util.Optional;
 
 /**
  * Interface to Network Size Estimation service
+ *
+ * @see project specification 3.2.2
  */
 public interface NseHandler extends Receiver<Message> {
+    /**
+     * Provides estimated network size
+     * @return if size not available empty optional
+     */
     Optional<Integer> getNetworkSizeEstimation();
+
+    /**
+     * Provides standard deviation
+     * @return if value not available empty optional
+     */
     Optional<Integer> getStandardDeviation();
 }

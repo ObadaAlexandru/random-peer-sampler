@@ -29,6 +29,7 @@ public class TokenRepoImpl implements TokenRepo {
             token = new Token();
         }
         tokens.add(token);
+        evictOldTokens();
         return token;
     }
 
@@ -52,5 +53,9 @@ public class TokenRepoImpl implements TokenRepo {
     @Override
     public void removeToken(Token token) {
         this.tokens.remove(token);
+    }
+
+    private void evictOldTokens() {
+        tokens.removeIf(token -> !token.isValid());
     }
 }

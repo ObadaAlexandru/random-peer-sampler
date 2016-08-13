@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+import java.net.InetAddress;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -14,6 +15,9 @@ import java.security.spec.X509EncodedKeySpec;
 
 /**
  * Created by Nicolas Frinker on 28/05/16.
+ *
+ *  Used by Hibernate to convert {@link PublicKey} to and from {@link String}
+ *  Needed for persistence
  */
 @Slf4j
 @Converter

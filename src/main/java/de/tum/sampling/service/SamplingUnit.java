@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 /**
- * Represents one sampling unit in brahms algorithm Should be fed with a stream
+ * Represents a sampling unit in Brahms algorithm. Should be fed with a stream
  * of incoming peers using next(), stores a single, randomly selected peer
  * in his cache and returns this with method sample().
  *

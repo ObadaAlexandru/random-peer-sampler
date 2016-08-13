@@ -7,7 +7,8 @@ import de.tum.communication.service.Receiver;
  */
 
 /**
- * Random peer sampling service
+ * Handles the RPS queries
+ * Replies with a Randomly selected {@link de.tum.sampling.entity.Peer} from the dynamic view
  */
 public interface RpsHandler extends Receiver<Message> {
 

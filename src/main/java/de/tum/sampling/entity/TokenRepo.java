@@ -4,6 +4,8 @@ import de.tum.communication.protocol.Token;
 
 /**
  * Created by Nicolas Frinker on 04/08/16.
+ *
+ * Stores and tracks the created tokens
  */
 public interface TokenRepo {
 

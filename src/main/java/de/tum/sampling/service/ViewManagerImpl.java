@@ -21,6 +21,7 @@ import static de.tum.sampling.entity.PeerType.DYNAMIC;
 
 /**
  * Created by Alexandru Obada on 22/05/16.
+ *
  */
 @Slf4j
 @Service
@@ -48,8 +49,7 @@ public class ViewManagerImpl implements ViewManager {
                            @Value("${rps.sampling.view.dynamic_size:30}") Integer dynamicViewSize,
                            @Value("${rps.sampling.view.alpha:0.45}") Double alpha,
                            @Value("${rps.sampling.view.beta:0.45}") Double beta,
-                           @Value("${rps.sampling.view.gamma:0.1}") Double gamma,
-                           @Value("#{iniConfig.getRoundDuration()}") Integer viewSizeUpdateRate) {
+                           @Value("${rps.sampling.view.gamma:0.1}") Double gamma) {
         this.peerRepository = peerRepository;
         this.sampler = sampler;
         this.bootstrap = bootstrap;
@@ -60,21 +60,11 @@ public class ViewManagerImpl implements ViewManager {
         initDynamicView();
     }
 
-    /**
-     * Update viewSize
-     *
-     * @param viewSize
-     */
     @Override
     public void setViewSize(int viewSize) {
         this.dynamicViewSize.set(viewSize);
     }
 
-    /**
-     * Get current dynamic view size
-     *
-     * @return
-     */
     @Override
     public int getViewSize() {
         return this.dynamicViewSize.get();
@@ -88,12 +78,7 @@ public class ViewManagerImpl implements ViewManager {
         }
     }
 
-    /**
-     * Randomly selects a subset of the current dynamic view
-     * According to Brahms this implements Limited pushes
-     *
-     * @return a subset of the dynamic view
-     */
+
     @Override
     public List<Peer> getForPush() {
         List<Peer> peers = peerRepository.getByPeerType(DYNAMIC);
@@ -101,9 +86,7 @@ public class ViewManagerImpl implements ViewManager {
         return getRandom(peers, Math.round(alpha * dynamicViewSize.get()));
     }
 
-    /**
-     * Computes the new dynamic view as specified in Brahms
-     */
+
     @Transactional
     @Override
     public void updateView() {

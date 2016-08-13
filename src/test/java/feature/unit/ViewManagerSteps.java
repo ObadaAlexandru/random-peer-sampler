@@ -126,7 +126,6 @@ public class ViewManagerSteps {
                 .beta(beta)
                 .gamma(gamma)
                 .sampler(sampler)
-                .viewSizeUpdateRate(2000)
                 .build();
     }
 

@@ -6,7 +6,8 @@ import java.security.PublicKey;
 /**
  * Created by Nicolas Frinker on 03/07/16.
  *
- *
+ *  Responsible for Public/Private key validation
+ *  e.g. criteria key length
  */
 public interface KeyValidator {
 
