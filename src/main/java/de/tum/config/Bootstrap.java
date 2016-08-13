@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface Bootstrap {
     /**
-     * @return returns the bootstrapped peers
+     * @return bootstrapped peers
      */
     List<Peer> getPeers();
 }

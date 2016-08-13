@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Handles push/pull messages
- * Receive push messages and send a view back
+ * Receive push messages and send a reply with local dynamic view
  */
 @Service
 @Slf4j
