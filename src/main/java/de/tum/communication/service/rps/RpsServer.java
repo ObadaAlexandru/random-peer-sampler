@@ -20,6 +20,10 @@ import java.net.InetSocketAddress;
 /**
  * Created by Alexandru Obada on 12/05/16.
  */
+
+/**
+ * Server listening for incoming RPS to RPS connections.
+ */
 @Slf4j
 @Service
 public class RpsServer implements Server {

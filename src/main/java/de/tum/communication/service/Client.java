@@ -13,5 +13,13 @@ import java.net.SocketAddress;
  * Communication interface to other modules
  */
 public interface Client extends Sender<Message, Void>, ReceiverAware<Message> {
+
+    /**
+     * Open a persistent connection to given address and send given message on
+     * it
+     *
+     * @param data
+     * @param address
+     */
     void sendPersistent(Message data, SocketAddress address);
 }

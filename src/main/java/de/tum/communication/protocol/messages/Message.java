@@ -15,7 +15,6 @@ import lombok.Getter;
  * Base inter module communication message
  * see Project Specification Figure 1: Message header format
  */
-
 @AllArgsConstructor
 @Getter
 abstract public class Message implements ByteSerializable {

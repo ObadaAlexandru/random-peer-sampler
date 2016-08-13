@@ -12,6 +12,9 @@ import java.net.SocketAddress;
 
 import static de.tum.communication.service.Module.Service.BASE;
 
+/**
+ * A client for sending RPS to RPS messages
+ */
 @Component
 @Module(Module.Service.RPS)
 public class RpsClientWrapper implements Client {

@@ -14,6 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Created by Alexandru Obada on 16/05/16.
  */
+
+/**
+ * Netty inbound handler for receiving incoming messages and dispatching them to
+ * the right receivers and optinally sending out responses
+ */
 @Slf4j
 @NoArgsConstructor
 @ChannelHandler.Sharable

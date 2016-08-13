@@ -34,6 +34,11 @@ import de.tum.sampling.entity.Validator;
 /**
  * Created by Alexandru Obada on 12/05/16.
  */
+
+/**
+ * This class is responsible for serializing outgoing and deserializing incoming
+ * messages of all known kinds.
+ */
 @Component
 public class ProtocolImpl implements Protocol {
     private static final int ADDR_OFFSET = 4;
@@ -56,6 +61,14 @@ public class ProtocolImpl implements Protocol {
         return getMessage(messageType, getSize(header), payload);
     }
 
+    /**
+     * Convert given payload into a Message object of given type
+     *
+     * @param messageType
+     * @param size
+     * @param payload
+     * @return Message object deserialized from payload
+     */
     private Message getMessage(MessageType messageType, short size, List<Byte> payload) {
         switch (messageType) {
             case RPS_QUERY:
@@ -81,11 +94,17 @@ public class ProtocolImpl implements Protocol {
         }
     }
 
+    /**
+     * Convert payload to GossipNotifyMessage
+     */
     private Message getGossipNotify(List<Byte> payload) {
         return GossipNotifyMessage.builder()
                 .datatype(Shorts.fromBytes(payload.get(2), payload.get(3))).build();
     }
 
+    /**
+     * Convert payload to GossipNotificationMessage
+     */
     private Message getGossipNotification(List<Byte> payload) {
         return GossipNotificationMessage.builder()
                 .datatype(Shorts.fromBytes(payload.get(2), payload.get(3)))
@@ -93,6 +112,9 @@ public class ProtocolImpl implements Protocol {
                 .payload(() -> payload.subList(Message.WORD_LENGTH, payload.size())).build();
     }
 
+    /**
+     * Convert payload to NseEstimateMessage
+     */
     private NseEstimateMessage getNseEstimate(List<Byte> payload) {
         byte[] bytes = Bytes.toArray(payload.subList(0, Message.WORD_LENGTH));
         Integer nseEstimatedPeerNumber = Ints.fromByteArray(bytes);
@@ -102,6 +124,9 @@ public class ProtocolImpl implements Protocol {
                 .estimatedPeerNumbers(nseEstimatedPeerNumber).build();
     }
 
+    /**
+     * Convert payload to RpsViewMessage
+     */
     private RpsViewMessage getRpsView(short size, List<Byte> payload) {
         List<SerializablePeer> peers = new ArrayList<>();
         int cur = 0;
@@ -153,6 +178,13 @@ public class ProtocolImpl implements Protocol {
         return peer;
     }
 
+    /**
+     * Decode bits that specify, if address in message is IPv4 or IPv6 and
+     * return size of the address in the message
+     *
+     * @param payload
+     * @return Size of address in payload
+     */
     private int getAddressSize(List<Byte> payload) {
         int addrsize = 0;
         short version = Shorts.fromBytes(payload.get(0), payload.get(1));
@@ -169,24 +201,45 @@ public class ProtocolImpl implements Protocol {
         return addrsize;
     }
 
+    /**
+     * Convert payload to RpsPeerMessage
+     */
     private RpsPeerMessage getRpsPeer(List<Byte> payload) {
         return RpsPeerMessage.builder().peer(new SerializablePeer(bytesToPeer(payload))).build();
     }
 
+    /**
+     * Convert payload to RpsPingMessage
+     */
     private RpsPingMessage getRpsPing(List<Byte> payload) {
         return RpsPingMessage.builder().peer(new SerializablePeer(bytesToPeer(payload))).build();
     }
 
+    /**
+     * Convert payload to RpsPushMessage
+     */
     private RpsPushMessage getRpsPush(List<Byte> payload) {
         return RpsPushMessage.builder().token(new Token(payload.subList(0, Token.TOKEN_LENGTH)))
                 .peer(new SerializablePeer(bytesToPeer(payload.subList(Token.TOKEN_LENGTH, payload.size())))).build();
     }
 
+    /**
+     * Extract message type from header of packet
+     *
+     * @param header
+     * @return Type of message
+     */
     private MessageType getMessageType(List<Byte> header) {
         short messageType = Shorts.fromBytes(header.get(2), header.get(3));
         return MessageType.getType(messageType);
     }
 
+    /**
+     * Extract size from given header
+     *
+     * @param header
+     * @return Size of packet encoded in header
+     */
     private short getSize(List<Byte> header) {
         return Shorts.fromBytes(header.get(0), header.get(1));
     }
