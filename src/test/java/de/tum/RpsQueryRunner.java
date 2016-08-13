@@ -16,8 +16,13 @@ public class RpsQueryRunner {
         RpsTestClient rpsTestClient = new RpsTestClient(new ClientImpl());
         RpsTestPeerReceiver receiver = new RpsTestPeerReceiver();
         rpsTestClient.setReceiver(receiver);
-        SocketAddress socket = new InetSocketAddress("localhost", 7005);
-        for(int i=0; i<100; i++) {
+        SocketAddress socket = new InetSocketAddress("localhost", 9001);
+        while (true){
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             rpsTestClient.send(new RpsQueryMessage(), socket);
         }
     }

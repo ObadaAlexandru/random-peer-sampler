@@ -1,22 +1,23 @@
 package de.tum.sampling.service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import de.tum.config.Bootstrap;
 import de.tum.sampling.entity.Peer;
 import de.tum.sampling.entity.PeerType;
 import de.tum.sampling.repository.PeerRepository;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static de.tum.sampling.entity.PeerType.DYNAMIC;
 
 /**
  * Created by Alexandru Obada on 22/05/16.
@@ -80,7 +81,7 @@ public class ViewManagerImpl implements ViewManager {
     }
 
     private void initDynamicView() {
-        List<Peer> dynamicView = peerRepository.getByPeerType(PeerType.DYNAMIC);
+        List<Peer> dynamicView = peerRepository.getByPeerType(DYNAMIC);
         if (dynamicView.isEmpty()) {
             List<Peer> bootstrapped = bootstrap.getPeers();
             peerRepository.save(bootstrapped);
@@ -95,7 +96,7 @@ public class ViewManagerImpl implements ViewManager {
      */
     @Override
     public List<Peer> getForPush() {
-        List<Peer> peers = peerRepository.getByPeerType(PeerType.DYNAMIC);
+        List<Peer> peers = peerRepository.getByPeerType(DYNAMIC);
         Collections.shuffle(peers);
         return getRandom(peers, Math.round(alpha * dynamicViewSize.get()));
     }
@@ -119,12 +120,18 @@ public class ViewManagerImpl implements ViewManager {
             List<Peer> sampled = getRandom(peerRepository.getByPeerType(PeerType.SAMPLED), Math.round(gamma * viewSize));
             List<Peer> newDynamicView = Stream.of(pushed, pulled, sampled)
                     .flatMap(List::stream)
-                    .peek(peer -> peer.setPeerType(PeerType.DYNAMIC))
+                    .map(peer -> Peer.builder()
+                            .address(peer.getAddress())
+                            .port(peer.getPort())
+                            .hostkey(peer.getHostkey())
+                            .peerType(DYNAMIC)
+                            .build())
+                    .distinct()
                     .collect(Collectors.toList());
-            peerRepository.deleteByPeerType(PeerType.DYNAMIC);
+            peerRepository.deleteByPeerType(DYNAMIC);
             peerRepository.save(newDynamicView);
         }
-        sampler.updateSample(Stream.concat(pushed.stream(), pulled.stream()).collect(Collectors.toList()));
+        sampler.updateSample(Stream.concat(pushed.stream(), pulled.stream()).distinct().collect(Collectors.toList()));
     }
 
     private List<Peer> getRandom(List<Peer> peers, long n) {
