@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * Created by Nicolas Frinker on 03/07/16.
  */
 @Service
-public class ValidatorImpl implements Validator {
+public class KeyValidatorImpl implements KeyValidator {
     public final static int EXPECTED_KEY_LENGTH = 4096;
 
     @Override

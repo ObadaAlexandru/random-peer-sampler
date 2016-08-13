@@ -5,8 +5,10 @@ import java.security.PublicKey;
 
 /**
  * Created by Nicolas Frinker on 03/07/16.
+ *
+ *
  */
-public interface Validator {
+public interface KeyValidator {
 
     /**
      * Checks, whether given public key is considered valid for this application
