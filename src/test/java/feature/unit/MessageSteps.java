@@ -32,7 +32,7 @@ import de.tum.communication.protocol.messages.NseQueryMessage;
 import de.tum.communication.protocol.messages.RpsPeerMessage;
 import de.tum.communication.protocol.messages.RpsQueryMessage;
 import de.tum.communication.protocol.messages.RpsViewMessage;
-import de.tum.sampling.entity.ValidatorImpl;
+import de.tum.sampling.entity.KeyValidatorImpl;
 import feature.common.TestPeer;
 
 /**
@@ -47,7 +47,7 @@ public class MessageSteps {
     private Message message;
     private List<Byte> messageBytes;
 
-    private Protocol protocol = new ProtocolImpl(new ValidatorImpl());
+    private Protocol protocol = new ProtocolImpl(new KeyValidatorImpl());
     private String byteSequence;
     private Token token;
 

@@ -1,5 +1,16 @@
 package de.tum.config;
 
+import de.tum.common.exceptions.InvalidConfigurationException;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
+import org.ini4j.Wini;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -9,18 +20,11 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
 
-import org.ini4j.Ini;
-import org.ini4j.InvalidFileFormatException;
-import org.ini4j.Wini;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.stereotype.Component;
-
-import de.tum.common.exceptions.InvalidConfigurationException;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-
+/**
+ *  Configuration parser
+ *  Loads the application configuration from a ini file
+ *  Also is responsible for handling the configuration path command line argument (--c={path})
+ */
 @Component
 @Slf4j
 public class IniConfig {

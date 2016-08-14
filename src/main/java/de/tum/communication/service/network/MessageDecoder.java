@@ -7,7 +7,7 @@ import de.tum.communication.protocol.ProtocolImpl;
 import de.tum.communication.protocol.messages.GossipNotificationMessage;
 import de.tum.communication.protocol.messages.GossipValidationMessage;
 import de.tum.communication.protocol.messages.Message;
-import de.tum.sampling.entity.ValidatorImpl;
+import de.tum.sampling.entity.KeyValidatorImpl;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -26,7 +26,7 @@ public class MessageDecoder extends ByteToMessageDecoder {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         byte[] data = new byte[in.readableBytes()];
         in.readBytes(data);
-        Protocol protocol = new ProtocolImpl(new ValidatorImpl());
+        Protocol protocol = new ProtocolImpl(new KeyValidatorImpl());
 
         Message message = protocol.deserialize(Bytes.asList(data));
 

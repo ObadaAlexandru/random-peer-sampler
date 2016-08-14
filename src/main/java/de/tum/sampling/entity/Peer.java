@@ -27,6 +27,8 @@ import lombok.experimental.Wither;
 
 /**
  * Created by Alexandru Obada on 22/05/16.
+ *
+ * Data model of the Peer
  */
 @Data
 @EqualsAndHashCode(of = "hostkey")

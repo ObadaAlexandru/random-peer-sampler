@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 import de.tum.config.HostKeyReader;
 
+/**
+ *  Self identifier for the local peer
+ */
 @Component
 public class SourcePeer extends Peer {
 

@@ -8,5 +8,8 @@ import java.util.List;
  *  Provides an initial set of Peers
  */
 public interface Bootstrap {
+    /**
+     * @return bootstrapped peers
+     */
     List<Peer> getPeers();
 }

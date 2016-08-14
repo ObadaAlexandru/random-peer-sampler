@@ -7,7 +7,7 @@ rps:
       sampled_size: 35
       alpha: 0.45
       beta: 0.45
-      gamma: 0.45
+      gamma: 0.1
   config:
      default_config_path: config/config.ini
 

@@ -9,6 +9,9 @@ import java.net.UnknownHostException;
 
 /**
  * Created by Alexandru Obada on 22/05/16.
+ *
+ *  Used by Hibernate to convert {@link InetAddress} to and from {@link String}
+ *  Needed for persistence
  */
 @Slf4j
 @Converter

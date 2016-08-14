@@ -21,7 +21,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 /**
- * Monitors the NSE, queries once per round the NSE service.
+ * Provides Network Size Estimation data
+ * Periodically queries the NSE module
  */
 @Slf4j
 @Service
