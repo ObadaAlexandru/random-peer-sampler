@@ -7,16 +7,16 @@ package de.tum.common.exceptions;
 /**
  * Base exception class adding an error code to each exception.
  */
-public class ErrorCodeException extends RuntimeException {
+public class BaseException extends RuntimeException {
     private ErrorCode errorCode;
     private String message;
 
-    public ErrorCodeException(ErrorCode code) {
+    public BaseException(ErrorCode code) {
         errorCode = code;
         message = code.getDefaultMessage();
     }
 
-    public ErrorCodeException(ErrorCode code, String message) {
+    public BaseException(ErrorCode code, String message) {
         errorCode = code;
         this.message = message;
     }

@@ -1,6 +1,6 @@
 package de.tum.communication.exceptions;
 
-import de.tum.common.exceptions.ErrorCodeException;
+import de.tum.common.exceptions.BaseException;
 import lombok.NonNull;
 
 import static de.tum.common.exceptions.ErrorCode.UNKNOWN_MESSAGE_TYPE;
@@ -12,7 +12,7 @@ import static de.tum.common.exceptions.ErrorCode.UNKNOWN_MESSAGE_TYPE;
 /**
  * Exception that is thrown when we receive an unknown message type
  */
-public class UnknownMessageTypeException extends ErrorCodeException {
+public class UnknownMessageTypeException extends BaseException {
     public UnknownMessageTypeException() {
         super(UNKNOWN_MESSAGE_TYPE);
     }

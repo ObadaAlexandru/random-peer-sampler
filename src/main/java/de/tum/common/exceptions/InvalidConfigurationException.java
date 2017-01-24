@@ -7,7 +7,7 @@ package de.tum.common.exceptions;
 /**
  * Invalid configuration detected
  */
-public class InvalidConfigurationException extends ErrorCodeException {
+public class InvalidConfigurationException extends BaseException {
     public InvalidConfigurationException(String message) {
         super(ErrorCode.INVALID_CONFIGURATION, message);
     }

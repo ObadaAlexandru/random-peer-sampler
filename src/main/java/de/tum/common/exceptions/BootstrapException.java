@@ -5,7 +5,7 @@ import static de.tum.common.exceptions.ErrorCode.UNSUCCESSFUL_BOOTSTRAP;
 /**
  *  Failed loading bootstrap file
  */
-public class BootstrapException extends ErrorCodeException {
+public class BootstrapException extends BaseException {
     public BootstrapException() {
         super(UNSUCCESSFUL_BOOTSTRAP);
     }

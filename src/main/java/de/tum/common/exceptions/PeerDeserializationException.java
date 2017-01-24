@@ -7,7 +7,7 @@ package de.tum.common.exceptions;
 /**
  * Failed deserializing peer message
  */
-public class PeerDeserializationException extends ErrorCodeException {
+public class PeerDeserializationException extends BaseException {
     public PeerDeserializationException() {
         super(ErrorCode.INVALID_PEER_SERIALIZATION);
     }

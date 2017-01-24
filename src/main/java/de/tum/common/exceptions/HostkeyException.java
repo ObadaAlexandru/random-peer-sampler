@@ -7,7 +7,7 @@ package de.tum.common.exceptions;
 /**
  * Invalid or missing hostkey
  */
-public class HostkeyException extends ErrorCodeException {
+public class HostkeyException extends BaseException {
     public HostkeyException() {
         super(ErrorCode.INVALID_HOSTKEY);
     }
